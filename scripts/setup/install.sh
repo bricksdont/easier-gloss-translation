@@ -19,7 +19,7 @@ source activate $venvs/sockeye3
 # CUDA version on instance
 CUDA_VERSION=112
 
-pip install sockeye
+pip install sockeye==3.1.7
 
 # install Moses scripts for preprocessing
 
@@ -28,3 +28,7 @@ git clone https://github.com/bricksdont/moses-scripts $tools/moses-scripts
 # install BPE library and sentencepiece for subword regularization
 
 pip install subword-nmt sentencepiece
+
+# install tfds SL datasets
+
+pip install sign-language-datasets
