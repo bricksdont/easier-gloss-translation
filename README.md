@@ -1,1 +1,1 @@
-# sockeye-sign-translation-scripts
+# EASIER gloss translation models
