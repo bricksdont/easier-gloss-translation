@@ -7,6 +7,7 @@
 #
 # optional:
 # $dry_run
+# $training_corpora
 # $testing_corpora
 # $bslcp_username
 # $bslcp_password
@@ -44,6 +45,10 @@ mkdir -p $logs_sub_sub
 
 if [ -z "$dry_run" ]; then
     dry_run="false"
+fi
+
+if [ -z "$training_corpora" ]; then
+    training_corpora="test"
 fi
 
 if [ -z "$testing_corpora" ]; then
