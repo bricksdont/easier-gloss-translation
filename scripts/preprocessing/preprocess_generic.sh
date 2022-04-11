@@ -5,23 +5,21 @@
 # $src
 # $trg
 # $model_name
-# $preprocess_copy_noise_probability
 # $dry_run
-# $wmt_testset_available
-# $create_slice_dev
-# $preprocess_additional_test_corpora
-# $preprocess_langid
+# $training_corpora
+# $seed
+# $multilingual
+# $language_pairs
 
 base=$1
 src=$2
 trg=$3
 model_name=$4
-preprocess_copy_noise_probability=$5
-dry_run=$6
-wmt_testset_available=$7
-create_slice_dev=$8
-preprocess_additional_test_corpora=$9
-preprocess_langid=${10}
+dry_run=$5
+training_corpora=$6
+seed=$7
+multilingual=$8
+language_pairs=$9
 
 data=$base/data
 venvs=$base/venvs
@@ -42,7 +40,7 @@ shared_models_sub=$shared_models_sub/$model_name
 
 mkdir -p $shared_models_sub
 
-source $venvs/sockeye3-cpu/bin/activate
+source activate $venvs/sockeye3
 
 MOSES=$base/tools/moses-scripts/scripts
 TOKENIZER=$MOSES/tokenizer
@@ -64,31 +62,8 @@ TRAIN_SLICE_LARGE=5000
 
 SENTENCEPIECE_MAX_LINES=10000000
 
-DEFAULT_CORPORA_EXCEPT_TRAIN="dev test slice-test"
-DEFAULT_SLICE_CORPORA="slice-test"
-
-# hold out training data for development only if requested
-
-if [[ $create_slice_dev == "true" ]]; then
-    corpora_except_train="$DEFAULT_CORPORA_EXCEPT_TRAIN slice-dev"
-    slice_corpora="$DEFAULT_SLICE_CORPORA slice-dev"
-else
-    corpora_except_train="$DEFAULT_CORPORA_EXCEPT_TRAIN"
-    slice_corpora="$DEFAULT_SLICE_CORPORA"
-fi
-
-# if wmt test set available, preprocess it regardless of whether it is going
-# to be used later
-
-if [[ $wmt_testset_available == "true" ]]; then
-    corpora_except_train="$corpora_except_train wmt"
-fi
-
-# add any additional test corpora
-
-corpora_except_train="$corpora_except_train $preprocess_additional_test_corpora"
-
-all_corpora="$corpora_except_train train"
+CORPORA_EXCEPT_TRAIN="dev test"
+ALL_CORPORA="$corpora_except_train train"
 
 echo "data_sub: $data_sub"
 
@@ -103,6 +78,24 @@ if [[ -f $data_sub/test.pieces.src ]]; then
     echo "Skipping. Delete files to repeat step."
     exit 0
 fi
+
+# put together training data and correctly assign ".src" and ".trg" suffixes
+
+echo -n "" > $data_sub/train.src
+echo -n "" > $data_sub/train.trg
+
+for pair in "${language_pairs[@]}"; do
+    pair=($pair)
+
+    corpus=${pair[0]}
+    src=${pair[1]}
+    trg=${pair[2]}
+
+    cat $data_sub/$corpus.$src >> $data_sub/train.src
+    cat $data_sub/$corpus.$trg >> $data_sub/train.trg
+done
+
+exit 0
 
 # set aside held-out slices of the training data (size of slice depending on total size)
 # for testing (always) and development (optional)
@@ -134,7 +127,7 @@ for slice_corpus in $slice_corpora; do
 
         paste $data_sub/train.src $data_sub/train.trg > $data_sub/train.both
 
-        shuf $data_sub/train.both > $data_sub/train.shuffled.both
+        shuf --random-source=<(seeding $seed) $data_sub/train.both > $data_sub/train.shuffled.both
     fi
 
     head -n $train_slice_size $data_sub/train.shuffled.both | cut -f1 > $data_sub/$slice_corpus.src
@@ -306,18 +299,6 @@ done
 # ratio etc filter
 
 $MOSES/training/clean-corpus-n.perl $data_sub/train.pieces src trg $data_sub/train.clean 1 250
-
-# maybe modify training data to introduce copies into the final training data, depending on $copy_noise_probability
-
-cp $data_sub/train.clean.src $data_sub/train.nocopies.src
-cp $data_sub/train.clean.trg $data_sub/train.nocopies.trg
-
-python $scripts/introduce_copy_noise.py \
-    --input-src $data_sub/train.nocopies.src \
-    --input-trg $data_sub/train.nocopies.trg \
-    --output-src $data_sub/train.clean.src \
-    --output-trg $data_sub/train.clean.trg \
-    --copy-noise-probability $preprocess_copy_noise_probability
 
 # sizes
 echo "Sizes of all files:"

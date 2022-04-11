@@ -47,8 +47,8 @@ def extract_and_write(json_path: str, output_folder: str) -> None:
     :param output_folder:
     :return:
     """
-    outfile_path_de = os.path.join(output_folder, "data.de")
-    outfile_path_dgs = os.path.join(output_folder, "data.dgs")
+    outfile_path_de = os.path.join(output_folder, "uhh.de")
+    outfile_path_dgs = os.path.join(output_folder, "uhh.dgs")
 
     outfile_handle_de = open(outfile_path_de, "w")
     outfile_handle_dgs = open(outfile_path_dgs, "w")

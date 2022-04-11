@@ -59,8 +59,8 @@ def load_and_extract(data_dir: str, bslcp_username: str, bslcp_password: str, ou
 
     dataset = load(data_dir=data_dir, bslcp_username=bslcp_username, bslcp_password=bslcp_password)
 
-    outfile_path_en = os.path.join(output_folder, "data.en")
-    outfile_path_bsl = os.path.join(output_folder, "data.bsl")
+    outfile_path_en = os.path.join(output_folder, "bslcp.en")
+    outfile_path_bsl = os.path.join(output_folder, "bslcp.bsl")
 
     outfile_handle_en = open(outfile_path_en, "w")
     outfile_handle_bsl = open(outfile_path_bsl, "w")

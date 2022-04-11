@@ -2,8 +2,7 @@
 
 # calling process needs to set:
 # $base
-# $src
-# $trg
+# $language_pairs
 # $model_name
 #
 # optional:
@@ -12,6 +11,8 @@
 # $testing_corpora
 # $bslcp_username
 # $bslcp_password
+# $seed
+# $multilingual
 
 module load volta cuda/11.2 anaconda3
 
@@ -19,6 +20,18 @@ scripts=$base/scripts
 logs=$base/logs
 
 source activate $base/venvs/sockeye3
+
+# construct src and trg from language_pairs
+
+src=""
+trg=""
+
+for pair in "${language_pairs[@]}"; do
+    pair=($pair)
+
+    src=${src:+$src+}${pair[0]}.${pair[1]}
+    trg=${trg:+$trg+}${pair[0]}.${pair[2]}
+done
 
 logs_sub=$logs/${src}-${trg}
 logs_sub_sub=$logs_sub/$model_name
@@ -50,6 +63,14 @@ if [ -z "$bslcp_password" ]; then
     bslcp_password=""
 fi
 
+if [ -z "$seed" ]; then
+    seed="1"
+fi
+
+if [ -z "$multilingual" ]; then
+    multilingual="false"
+fi
+
 # SLURM job args
 
 DRY_RUN_SLURM_ARGS="--cpus-per-task=2 --time=02:00:00 --mem=16G --partition=generic"
@@ -75,6 +96,8 @@ echo "LANGPAIR: ${src}-${trg}" | tee -a $logs_sub_sub/MAIN
 echo "MODEL NAME: $model_name" | tee -a $logs_sub_sub/MAIN
 echo "TRAINING CORPORA: $training_corpora" | tee -a $logs_sub_sub/MAIN
 echo "TESTING CORPORA: $testing_corpora" | tee -a $logs_sub_sub/MAIN
+echo "SEED: $seed" | tee -a $logs_sub_sub/MAIN
+echo "MULTILINGUAL: $multilingual" | tee -a $logs_sub_sub/MAIN
 echo "DRY RUN: $dry_run" | tee -a $logs_sub_sub/MAIN
 
 # download corpora
@@ -84,7 +107,8 @@ id_download=$(
     $SLURM_ARGS_GENERIC \
     $SLURM_LOG_ARGS \
     $scripts/download/download_generic.sh \
-    $base $src $trg $model_name $training_corpora $bslcp_username $bslcp_password
+    $base $src $trg $model_name $training_corpora $bslcp_username $bslcp_password \
+    $seed $multilingual $language_pairs
 )
 
 echo "  id_download: $id_download | $logs_sub_sub/slurm-$id_download.out" | tee -a $logs_sub_sub/MAIN
