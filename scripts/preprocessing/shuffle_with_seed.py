@@ -32,7 +32,7 @@ def main():
     random.shuffle(lines)
 
     for line in lines:
-        print(line)
+        print(line, end="")
 
 if __name__ == '__main__':
     main()
