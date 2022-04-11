@@ -83,7 +83,7 @@ id_download=$(
     $scripts/running/sbatch_bare.sh \
     $SLURM_ARGS_GENERIC \
     $SLURM_LOG_ARGS \
-    $scripts/download/download_corpus_generic.sh \
+    $scripts/download/download_generic.sh \
     $base $src $trg $model_name $training_corpora $bslcp_username $bslcp_password
 )
 
