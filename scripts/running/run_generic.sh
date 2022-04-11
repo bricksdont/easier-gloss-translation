@@ -80,7 +80,7 @@ echo "DRY RUN: $dry_run" | tee -a $logs_sub_sub/MAIN
 # download corpora
 
 id_download=$(
-    $scripts/sbatch_bare.sh \
+    $scripts/running/sbatch_bare.sh \
     $SLURM_ARGS_GENERIC \
     $SLURM_LOG_ARGS \
     $scripts/tatoeba/download_corpus_generic.sh \
@@ -94,8 +94,8 @@ exit 0
 # preprocess: Combine datasets, hold out data, normalize, SPM (depends on download)
 
 id_preprocess=$(
-    $scripts/sbatch_bare.sh \
-    $SLURM_ARGS_PREPROCESS \
+    $scripts/running/sbatch_bare.sh \
+    $SLURM_ARGS_GENERIC \
     --dependency=afterok:$id_download \
     $SLURM_LOG_ARGS \
     $scripts/tatoeba/preprocess_generic.sh \
@@ -107,7 +107,7 @@ echo "  id_preprocess: $id_preprocess | $logs_sub_sub/slurm-$id_preprocess.out" 
 # Sockeye prepare (depends on preprocess)
 
 id_prepare=$(
-    $scripts/sbatch_bare.sh \
+    $scripts/running/sbatch_bare.sh \
     $SLURM_ARGS_GENERIC \
     --dependency=afterok:$id_preprocess \
     $SLURM_LOG_ARGS \
@@ -120,7 +120,7 @@ echo "  id_prepare: $id_prepare | $logs_sub_sub/slurm-$id_prepare.out"  | tee -a
 # Sockeye train (depends on prepare)
 
 id_train=$(
-    $scripts/sbatch_bare.sh \
+    $scripts/running/sbatch_bare.sh \
     $SLURM_ARGS_VOLTA_TRAIN \
     --dependency=afterok:$id_prepare \
     $SLURM_LOG_ARGS \
@@ -133,7 +133,7 @@ echo "  id_train: $id_train | $logs_sub_sub/slurm-$id_train.out"  | tee -a $logs
 # translate test set(s) (depends on train)
 
 id_translate=$(
-    $scripts/sbatch_bare.sh \
+    $scripts/running/sbatch_bare.sh \
     $SLURM_ARGS_VOLTA_TRANSLATE \
     --dependency=afterany:$id_train \
     $SLURM_LOG_ARGS \
@@ -146,7 +146,7 @@ echo "  id_translate: $id_translate | $logs_sub_sub/slurm-$id_translate.out"  | 
 # evaluate BLEU and other metrics (depends on translate)
 
 id_evaluate=$(
-    $scripts/sbatch_bare.sh \
+    $scripts/running/sbatch_bare.sh \
     $SLURM_ARGS_GENERIC \
     --dependency=afterok:$id_translate \
     $SLURM_LOG_ARGS \
