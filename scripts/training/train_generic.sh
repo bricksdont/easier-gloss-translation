@@ -6,17 +6,15 @@
 # $src
 # $trg
 # $model_name
-# $additional_args
 # $dry_run
-# $train_dev_corpus
+# $seed
 
 base=$1
 src=$2
 trg=$3
 model_name=$4
-additional_args=$5
-dry_run=$6
-train_dev_corpus=$7
+dry_run=$5
+seed=$6
 
 data=$base/data
 data_sub=$data/${src}-${trg}
@@ -32,20 +30,13 @@ models_sub_sub=$models_sub/$model_name
 
 mkdir -p $models_sub_sub
 
-echo "additional args: "
-echo "$additional_args"
-
 echo $CUDA_VISIBLE_DEVICES
 echo "Done reading visible devices."
 
 export MXNET_ENABLE_GPU_P2P=0
 echo "MXNET_ENABLE_GPU_P2P: $MXNET_ENABLE_GPU_P2P"
 
-if [[ $dry_run == "true" ]]; then
-    source $base/venvs/sockeye3-cpu/bin/activate
-else
-    source $base/venvs/sockeye3/bin/activate
-fi
+source activate $venvs/sockeye3
 
 # parameters are the same for all Transformer models
 
@@ -129,10 +120,10 @@ fi
 
 python -m sockeye.train \
 -d $prepared_sub_sub \
--vs $data_sub_sub/$train_dev_corpus.pieces.src \
--vt $data_sub_sub/$train_dev_corpus.pieces.trg \
+-vs $data_sub_sub/dev.pieces.src \
+-vt $data_sub_sub/dev.pieces.trg \
 --output $models_sub_sub \
---seed 1 \
+--seed $seed \
 --batch-type word \
 --batch-size $batch_size \
 --device-ids 0 \
@@ -164,4 +155,4 @@ python -m sockeye.train \
 --min-num-epochs 0 \
 --gradient-clipping-type abs \
 --gradient-clipping-threshold 1 \
---disable-device-locking $additional_args $dry_run_additional_args
+--disable-device-locking $dry_run_additional_args

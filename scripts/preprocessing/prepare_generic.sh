@@ -6,11 +6,13 @@
 # $src
 # $trg
 # $model_name
+# $seed
 
 base=$1
 src=$2
 trg=$3
 model_name=$4
+seed=$5
 
 # measure time
 
@@ -34,7 +36,7 @@ fi
 
 mkdir -p $prepared_sub_sub
 
-cmd="python -m sockeye.prepare_data -s $data_sub_sub/train.clean.src -t $data_sub_sub/train.clean.trg --shared-vocab -o $prepared_sub_sub --max-seq-len 250:250"
+cmd="python -m sockeye.prepare_data -s $data_sub_sub/train.clean.src -t $data_sub_sub/train.clean.trg --shared-vocab -o $prepared_sub_sub --max-seq-len 250:250 --seed $seed"
 
 echo "Executing:"
 echo "$cmd"
@@ -44,7 +46,8 @@ python -m sockeye.prepare_data \
                         -t $data_sub_sub/train.clean.trg \
 			                  --shared-vocab \
                         -o $prepared_sub_sub \
-                        --max-seq-len 250:250
+                        --max-seq-len 250:250 \
+                        --seed $seed
 
 echo "time taken:"
 echo "$SECONDS seconds"
