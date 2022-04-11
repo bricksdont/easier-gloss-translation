@@ -138,8 +138,6 @@ id_prepare=$(
 
 echo "  id_prepare: $id_prepare | $logs_sub_sub/slurm-$id_prepare.out"  | tee -a $logs_sub_sub/MAIN
 
-exit 0
-
 # Sockeye train (depends on prepare)
 
 id_train=$(
@@ -150,6 +148,8 @@ id_train=$(
     $scripts/training/train_generic.sh \
     $base $src $trg $model_name $dry_run $seed
 )
+
+exit 0
 
 echo "  id_train: $id_train | $logs_sub_sub/slurm-$id_train.out"  | tee -a $logs_sub_sub/MAIN
 

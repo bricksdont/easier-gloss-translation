@@ -16,6 +16,8 @@ model_name=$4
 dry_run=$5
 seed=$6
 
+venvs=$base/venvs
+
 data=$base/data
 data_sub=$data/${src}-${trg}
 data_sub_sub=$data_sub/$model_name
@@ -32,9 +34,6 @@ mkdir -p $models_sub_sub
 
 echo $CUDA_VISIBLE_DEVICES
 echo "Done reading visible devices."
-
-export MXNET_ENABLE_GPU_P2P=0
-echo "MXNET_ENABLE_GPU_P2P: $MXNET_ENABLE_GPU_P2P"
 
 source activate $venvs/sockeye3
 
