@@ -96,7 +96,7 @@ done
 exit 0
 
 # set aside held-out slices of the training data (size of slice depending on total size)
-# for testing (always) and development (optional)
+# for testing and development
 
 # determine $train_slice_size
 
@@ -119,13 +119,15 @@ fi
 
 echo "train_slice_size=$train_slice_size"
 
-for slice_corpus in $slice_corpora; do
+for slice_corpus in $CORPORA_EXCEPT_TRAIN; do
 
     if [[ ! -f $data_sub/train.shuffled.both ]]; then
 
         paste $data_sub/train.src $data_sub/train.trg > $data_sub/train.both
 
-        shuf --random-source=<(seeding $seed) $data_sub/train.both > $data_sub/train.shuffled.both
+        python $scripts/preprocessing/shuffle_with_seed.py \
+            --seed $seed --input $data_sub/train.both \
+            > $data_sub/train.shuffled.both
     fi
 
     head -n $train_slice_size $data_sub/train.shuffled.both | cut -f1 > $data_sub/$slice_corpus.src
