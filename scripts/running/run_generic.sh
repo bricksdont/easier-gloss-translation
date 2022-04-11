@@ -7,7 +7,6 @@
 #
 # optional:
 # $dry_run
-# $training_corpora
 # $testing_corpora
 # $bslcp_username
 # $bslcp_password
@@ -45,10 +44,6 @@ mkdir -p $logs_sub_sub
 
 if [ -z "$dry_run" ]; then
     dry_run="false"
-fi
-
-if [ -z "$training_corpora" ]; then
-    training_corpora="uhh"
 fi
 
 if [ -z "$testing_corpora" ]; then
@@ -94,7 +89,6 @@ date | tee -a $logs_sub_sub/MAIN
 echo "##############################################" | tee -a $logs_sub_sub/MAIN
 echo "LANGPAIR: ${src}-${trg}" | tee -a $logs_sub_sub/MAIN
 echo "MODEL NAME: $model_name" | tee -a $logs_sub_sub/MAIN
-echo "TRAINING CORPORA: $training_corpora" | tee -a $logs_sub_sub/MAIN
 echo "TESTING CORPORA: $testing_corpora" | tee -a $logs_sub_sub/MAIN
 echo "SEED: $seed" | tee -a $logs_sub_sub/MAIN
 echo "MULTILINGUAL: $multilingual" | tee -a $logs_sub_sub/MAIN

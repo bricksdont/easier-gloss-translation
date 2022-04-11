@@ -19,7 +19,6 @@ dry_run="true"
 
 model_name="dry_run"
 
-training_corpora="uhh"
 testing_corpora="test"
 
 # construct src and trg from language_pairs

@@ -352,55 +352,39 @@ def main():
 
                 for _, _, files in os.walk(path_model):
                     for file in files:
-                        if file.endswith("subnum"):
-                            # exclude this file
-                            continue
-                        else:
-                            corpus, decoding_method, sample_origin, num_samples, seed, \
-                            length_penalty_alpha, utility_function, metric = parse_filename(file)
 
-                            filepath = os.path.join(path_model, file)
+                        corpus, decoding_method, sample_origin, num_samples, seed, \
+                        length_penalty_alpha, utility_function, metric = parse_filename(file)
 
-                            metric_names, metric_values = read_metric_values(metric, filepath)
+                        filepath = os.path.join(path_model, file)
 
-                            result = Result(langpair,
-                                            model_name,
-                                            corpus,
-                                            decoding_method,
-                                            sample_origin,
-                                            utility_function,
-                                            length_penalty_alpha,
-                                            num_samples,
-                                            seed,
-                                            metric_names,
-                                            metric_values)
+                        metric_names, metric_values = read_metric_values(metric, filepath)
 
-                            results.append(result)
+                        result = Result(langpair,
+                                        model_name,
+                                        corpus,
+                                        decoding_method,
+                                        sample_origin,
+                                        utility_function,
+                                        length_penalty_alpha,
+                                        num_samples,
+                                        seed,
+                                        metric_names,
+                                        metric_values)
+
+                        results.append(result)
 
     results = reduce_results(results)
 
     header_names = ["LANGPAIR",
                     "MODEL_NAME",
                     "CORPUS",
-                    "DECODING_METHOD",
-                    "SAMPLE_ORIGIN",
-                    "UTILITY_FUNCTION",
-                    "LENGTH_PENALTY_ALPHA",
-                    "NUM_SAMPLES",
                     "SEED",
                     "BLEU",
-                    "CHRF_1",
-                    "CHRF_2",
-                    "CHRF_3",
-                    "METEOR",
-                    "METEOR_BALANCED"]
+                    "CHRF"]
 
     metric_names = ["BLEU",
-                    "CHRF_1",
-                    "CHRF_2",
-                    "CHRF_3",
-                    "METEOR",
-                    "METEOR_BALANCED"]
+                    "CHRF"]
 
     print("\t".join(header_names))
 

@@ -16,7 +16,7 @@ source activate $venvs/sockeye3
 
 # install Sockeye
 
-pip install sockeye==3.1.7
+pip install sockeye==3.1.9
 
 # install Moses scripts for preprocessing
 
