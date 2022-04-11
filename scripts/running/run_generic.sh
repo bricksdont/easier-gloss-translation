@@ -48,7 +48,7 @@ if [ -z "$dry_run" ]; then
 fi
 
 if [ -z "$training_corpora" ]; then
-    training_corpora="test"
+    training_corpora="uhh"
 fi
 
 if [ -z "$testing_corpora" ]; then
