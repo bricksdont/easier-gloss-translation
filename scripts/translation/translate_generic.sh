@@ -6,32 +6,38 @@
 # $trg
 # $model_name
 # $dry_run
-# $corpora
+# $testing_corpora
 
 base=$1
 src=$2
 trg=$3
 model_name=$4
 dry_run=$5
-corpora=$6
+testing_corpora=$6
 
+venvs=$base/venvs
 scripts=$base/scripts
 
-if [[ $dry_run == "true" ]]; then
-    source $base/venvs/sockeye3-cpu/bin/activate
-else
-    source $base/venvs/sockeye3/bin/activate
-fi
+source activate $base/venvs/sockeye3
 
-seeds="1 2"
-beam_sizes="5 10"
-top_batch_size=64
-nbest_batch_size=8
+beam_size="5"
+batch_size="64"
+length_penalty_alpha="1.0"
+
+data=$base/data
+data_sub=$data/${src}-${trg}
+data_sub_sub=$data_sub/$model_name
+
+models=$base/models
+models_sub=$models/${src}-${trg}
+models_sub_sub=$models_sub/$model_name
+
+translations=$base/translations
+translations_sub=$translations/${src}-${trg}
+translations_sub_sub=$translations_sub/$model_name
 
 # fail with non-zero status if there is no model checkpoint,
 # to signal to downstream dependencies that they cannot be satisfied
-
-models_sub_sub=$base/models/${src}-${trg}/$model_name
 
 if [[ ! -e $models_sub_sub/params.best ]]; then
     echo "There is no single model checkpoint, file does not exist:"
@@ -39,8 +45,14 @@ if [[ ! -e $models_sub_sub/params.best ]]; then
     exit 1
 fi
 
-. $scripts/tatoeba/beam_top_generic.sh
+mkdir -p $translations_sub_sub
 
-. $scripts/tatoeba/beam_nbest_generic.sh
+# beam translation
 
-. $scripts/tatoeba/sample_generic.sh
+for corpus in $testing_corpora; do
+    input=$data_sub_sub/$corpus.pieces.src
+    output_pieces=$translations_sub_sub/$corpus.pieces.trg
+    output=$translations_sub_sub/$corpus.trg
+
+    . $scripts/translation/translate_more_generic.sh
+done
