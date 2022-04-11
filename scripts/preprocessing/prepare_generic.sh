@@ -18,6 +18,8 @@ seed=$5
 
 SECONDS=0
 
+venvs=$base/venvs
+
 source activate $venvs/sockeye3
 
 data=$base/data
