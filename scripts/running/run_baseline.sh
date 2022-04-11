@@ -5,8 +5,11 @@ scripts=$base/scripts
 
 # DGS -> German
 
-src=dgs
-trg=de
+# Structure: [source corpus] [src] [trg]
+
+language_pairs=(
+    "uhh dgs de"
+)
 
 # baseline
 
