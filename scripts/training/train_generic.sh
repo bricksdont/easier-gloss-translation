@@ -125,7 +125,7 @@ python -m sockeye.train \
 --seed $seed \
 --batch-type word \
 --batch-size $batch_size \
---device-ids 0 \
+--device-id 0 \
 --encoder transformer \
 --decoder transformer \
 --num-layers $num_layers \
@@ -153,5 +153,4 @@ python -m sockeye.train \
 --max-num-checkpoint-not-improved 10 \
 --min-num-epochs 0 \
 --gradient-clipping-type abs \
---gradient-clipping-threshold 1 \
---disable-device-locking $dry_run_additional_args
+--gradient-clipping-threshold 1 $dry_run_additional_args
