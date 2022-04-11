@@ -1,6 +1,6 @@
 #! /bin/bash
 
-module load anaconda3 volta nvidia/cuda11.2-cudnn8.1.0
+module load anaconda3 volta nvidia/cuda10.2-cudnn7.6.5
 
 scripts=`dirname "$0"`
 base=$scripts/../..
@@ -15,9 +15,6 @@ mkdir -p $tools
 source activate $venvs/sockeye3
 
 # install Sockeye
-
-# CUDA version on instance
-CUDA_VERSION=112
 
 pip install sockeye==3.1.7
 

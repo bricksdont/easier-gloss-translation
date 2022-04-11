@@ -18,7 +18,7 @@ testing_corpora=$6
 venvs=$base/venvs
 scripts=$base/scripts
 
-source activate $base/venvs/sockeye3
+source activate $venvs/sockeye3
 
 beam_size="5"
 batch_size="64"

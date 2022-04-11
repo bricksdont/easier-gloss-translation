@@ -14,7 +14,7 @@
 # $seed
 # $multilingual
 
-module load volta cuda/11.2 anaconda3
+module load volta nvidia/cuda10.2-cudnn7.6.5 anaconda3
 
 scripts=$base/scripts
 logs=$base/logs

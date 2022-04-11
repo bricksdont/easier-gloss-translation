@@ -5,22 +5,58 @@
 # $src
 # $trg
 # $model_name
-# $utility_functions
-# $corpora
+# $testing_corpora
 
 base=$1
 src=$2
 trg=$3
 model_name=$4
-utility_functions=$5
-corpora=$6
+testing_corpora=$5
 
+venvs=$base/venvs
 scripts=$base/scripts
 
-sample_positions="1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100"
-seeds="1 2"
-beam_sizes="5 10"
+source activate $venvs/sockeye3
 
-. $scripts/tatoeba/evaluate_bleu_chrf_generic.sh
+data=$base/data
+data_sub=$data/${src}-${trg}
+data_sub_sub=$data_sub/$model_name
 
-. $scripts/tatoeba/evaluate_meteor_generic.sh
+translations=$base/translations
+translations_sub=$translations/${src}-${trg}
+translations_sub_sub=$translations_sub/$model_name
+
+samples=$base/samples
+samples_sub=$samples/${src}-${trg}
+samples_sub_sub=$samples_sub/$model_name
+
+mbr=$base/mbr
+mbr_sub=$mbr/${src}-${trg}
+mbr_sub_sub=$mbr_sub/$model_name
+
+evaluations=$base/evaluations
+evaluations_sub=$evaluations/${src}-${trg}
+evaluations_sub_sub=$evaluations_sub/$model_name
+
+mkdir -p $evaluations_sub_sub
+
+# compute case-sensitive BLEU and CHRF on detokenized data
+
+chrf_beta=2
+
+for corpus in $testing_corpora; do
+
+    ref=$data_sub_sub/$corpus.trg
+
+    hyp=$translations_sub_sub/$corpus.trg
+    output_prefix=$evaluations_sub_sub/$corpus
+
+    output=$output_prefix.bleu
+
+    . $scripts/evaluation/evaluate_bleu_more_generic.sh
+
+    output=$output_prefix.chrf
+
+    . $scripts/evaluation/evaluate_chrf_more_generic.sh
+
+done

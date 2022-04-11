@@ -32,9 +32,6 @@ models_sub_sub=$models_sub/$model_name
 
 mkdir -p $models_sub_sub
 
-echo $CUDA_VISIBLE_DEVICES
-echo "Done reading visible devices."
-
 source activate $venvs/sockeye3
 
 # parameters are the same for all Transformer models
@@ -112,7 +109,7 @@ if [[ $dry_run == "true" ]]; then
     transformer_attention_heads="1"
     transformer_feed_forward_num_hidden="64"
 else
-    dry_run_additional_args="--decode-and-evaluate-device-id 0"
+    dry_run_additional_args=""
 fi
 
 ##################################################
