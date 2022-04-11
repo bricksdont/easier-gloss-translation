@@ -120,8 +120,7 @@ id_preprocess=$(
     --dependency=afterok:$id_download \
     $SLURM_LOG_ARGS \
     $scripts/preprocessing/preprocess_generic.sh \
-    $base $src $trg $model_name $training_corpora $bslcp_username $bslcp_password \
-    $seed $multilingual $language_pairs
+    $base $src $trg $model_name $dry_run $seed $multilingual $language_pairs
 )
 
 echo "  id_preprocess: $id_preprocess | $logs_sub_sub/slurm-$id_preprocess.out" | tee -a $logs_sub_sub/MAIN

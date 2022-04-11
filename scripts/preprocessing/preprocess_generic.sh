@@ -6,7 +6,6 @@
 # $trg
 # $model_name
 # $dry_run
-# $training_corpora
 # $seed
 # $multilingual
 # $language_pairs
@@ -16,10 +15,9 @@ src=$2
 trg=$3
 model_name=$4
 dry_run=$5
-training_corpora=$6
-seed=$7
-multilingual=$8
-language_pairs=$9
+seed=$6
+multilingual=$7
+language_pairs=$8
 
 data=$base/data
 venvs=$base/venvs
