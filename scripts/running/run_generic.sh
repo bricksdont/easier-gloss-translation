@@ -163,8 +163,6 @@ id_translate=$(
 
 echo "  id_translate: $id_translate | $logs_sub_sub/slurm-$id_translate.out"  | tee -a $logs_sub_sub/MAIN
 
-exit 0
-
 # evaluate BLEU and other metrics (depends on translate)
 
 id_evaluate=$(
