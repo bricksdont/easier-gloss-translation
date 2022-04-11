@@ -137,8 +137,6 @@ for slice_corpus in $CORPORA_EXCEPT_TRAIN; do
 
 done
 
-exit 0
-
 # restore per-language files
 
 cut -f1 $data_sub/train.shuffled.both > $data_sub/train.src
