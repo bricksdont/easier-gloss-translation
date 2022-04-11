@@ -61,7 +61,7 @@ TRAIN_SLICE_LARGE=5000
 SENTENCEPIECE_MAX_LINES=10000000
 
 CORPORA_EXCEPT_TRAIN="dev test"
-ALL_CORPORA="$corpora_except_train train"
+ALL_CORPORA="$CORPORA_EXCEPT_TRAIN train"
 
 echo "data_sub: $data_sub"
 
@@ -92,8 +92,6 @@ for pair in "${language_pairs[@]}"; do
     cat $data_sub/$corpus.$src >> $data_sub/train.src
     cat $data_sub/$corpus.$trg >> $data_sub/train.trg
 done
-
-exit 0
 
 # set aside held-out slices of the training data (size of slice depending on total size)
 # for testing and development
@@ -139,6 +137,8 @@ for slice_corpus in $CORPORA_EXCEPT_TRAIN; do
 
 done
 
+exit 0
+
 # restore per-language files
 
 cut -f1 $data_sub/train.shuffled.both > $data_sub/train.src
@@ -148,7 +148,7 @@ rm $data_sub/train.both $data_sub/train.shuffled.both
 
 # truncate dev and/or test data to $DEVTEST_MAXSIZE if too large
 
-for corpus in $corpora_except_train; do
+for corpus in $CORPORA_EXCEPT_TRAIN; do
     num_lines_src=$(cat $data_sub/$corpus.src | wc -l)
 
     if [[ $num_lines_src -gt $DEVTEST_MAXSIZE ]]; then
@@ -163,7 +163,7 @@ done
 
 if [[ $dry_run == "true" ]]; then
     for lang in src trg; do
-        for corpus in $corpora_except_train; do
+        for corpus in $CORPORA_EXCEPT_TRAIN; do
             mv $data_sub/$corpus.$lang $data_sub/$corpus.$lang.big
             head -n $DRY_RUN_DEVTEST_SIZE $data_sub/$corpus.$lang.big > $data_sub/$corpus.$lang
         done
@@ -175,7 +175,7 @@ fi
 
 # prenormalization for train data
 
-for corpus in $all_corpora; do
+for corpus in $ALL_CORPORA; do
     for lang in src trg; do
         cat $data_sub/$corpus.$lang | \
         perl -CS -pe 'tr[\x{9}\x{A}\x{D}\x{20}-\x{D7FF}\x{E000}-\x{FFFD}\x{10000}-\x{10FFFF}][]cd;' | \
@@ -184,25 +184,10 @@ for corpus in $all_corpora; do
     done
 done
 
-# langid filter for train data
-
-if [[ $preprocess_langid == "true" ]]; then
-
-    paste $data_sub/train.prenorm.src $data_sub/train.prenorm.trg | \
-        python $scripts/bitext-match-lang.py -s ${src} -t ${trg} > $data_sub/train.langchecked.both
-
-    cut -f1 $data_sub/train.langchecked.both > $data_sub/train.langchecked.src
-    cut -f2 $data_sub/train.langchecked.both > $data_sub/train.langchecked.trg
-
-else
-    cp $data_sub/train.prenorm.src $data_sub/train.langchecked.src
-    cp $data_sub/train.prenorm.trg $data_sub/train.langchecked.trg
-fi
-
 # normalize train data
 
 for lang in src trg; do
-    cat $data_sub/train.langchecked.$lang | \
+    cat $data_sub/train.prenorm.$lang | \
     ${TOKENIZER}/replace-unicode-punctuation.perl | \
     ${TOKENIZER}/remove-non-printing-char.perl | \
     ${TOKENIZER}/deescape-special-chars.perl | \
@@ -212,7 +197,7 @@ done
 
 # normalize dev / test data + other test corpora
 
-for corpus in $corpora_except_train; do
+for corpus in $CORPORA_EXCEPT_TRAIN; do
     for lang in src trg; do
         cat $data_sub/$corpus.prenorm.$lang | \
         ${TOKENIZER}/replace-unicode-punctuation.perl | \
@@ -230,7 +215,7 @@ for lang in src trg; do
     mv $data_sub/dev.normalized.$lang $data_sub/dev.before_remove_empty.$lang
 done
 
-python $scripts/remove_if_source_or_target_empty.py \
+python $scripts/preprocessing/remove_if_source_or_target_empty.py \
     --input-src $data_sub/dev.before_remove_empty.src \
     --input-trg $data_sub/dev.before_remove_empty.trg \
     --output-src $data_sub/dev.normalized.src \
@@ -264,7 +249,7 @@ for lang in src trg; do
 
       # determine character coverage
 
-      num_characters=$(head -n 1000000 $data_sub/train.normalized.$lang | python $scripts/num_chars.py | wc -l)
+      num_characters=$(head -n 1000000 $data_sub/train.normalized.$lang | python $scripts/preprocessing/num_chars.py | wc -l)
 
       if [[ $num_characters -gt 1000 ]]; then
           character_coverage=0.9995
@@ -272,7 +257,7 @@ for lang in src trg; do
           character_coverage=1.0
       fi
 
-      python $scripts/tatoeba/train_sentencepiece.py \
+      python $scripts/preprocessing/train_sentencepiece.py \
         --model-prefix $shared_models_sub/$lang.sentencepiece \
         --input $data_sub/train.normalized.$lang \
         --vocab-size $sentencepiece_vocab_size \
@@ -287,10 +272,10 @@ done
 
 # apply SP model to train, test and dev
 
-for corpus in $all_corpora; do
+for corpus in $ALL_CORPORA; do
     for lang in src trg; do
         cat $data_sub/$corpus.normalized.$lang | \
-            python $scripts/tatoeba/apply_sentencepiece.py \
+            python $scripts/preprocessing/apply_sentencepiece.py \
                 --model $shared_models_sub/$lang.sentencepiece.model \
                     > $data_sub/$corpus.pieces.$lang
     done
