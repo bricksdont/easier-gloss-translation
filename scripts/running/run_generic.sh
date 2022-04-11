@@ -83,7 +83,7 @@ id_download=$(
     $scripts/running/sbatch_bare.sh \
     $SLURM_ARGS_GENERIC \
     $SLURM_LOG_ARGS \
-    $scripts/tatoeba/download_corpus_generic.sh \
+    $scripts/download/download_corpus_generic.sh \
     $base $src $trg $model_name $training_corpora $bslcp_username $bslcp_password
 )
 
@@ -98,7 +98,7 @@ id_preprocess=$(
     $SLURM_ARGS_GENERIC \
     --dependency=afterok:$id_download \
     $SLURM_LOG_ARGS \
-    $scripts/tatoeba/preprocess_generic.sh \
+    $scripts/preprocessing/preprocess_generic.sh \
     $base $src $trg $model_name $dry_run "$preprocess_additional_test_corpora"
 )
 
@@ -124,7 +124,7 @@ id_train=$(
     $SLURM_ARGS_VOLTA_TRAIN \
     --dependency=afterok:$id_prepare \
     $SLURM_LOG_ARGS \
-    $scripts/tatoeba/train_generic.sh \
+    $scripts/training/train_generic.sh \
     $base $src $trg $model_name "$train_additional_args" $dry_run
 )
 
@@ -137,7 +137,7 @@ id_translate=$(
     $SLURM_ARGS_VOLTA_TRANSLATE \
     --dependency=afterany:$id_train \
     $SLURM_LOG_ARGS \
-    $scripts/tatoeba/translate_generic.sh \
+    $scripts/translation/translate_generic.sh \
     $base $src $trg $model_name $dry_run "$corpora"
 )
 
@@ -150,7 +150,7 @@ id_evaluate=$(
     $SLURM_ARGS_GENERIC \
     --dependency=afterok:$id_translate \
     $SLURM_LOG_ARGS \
-    $scripts/tatoeba/evaluate_generic.sh \
+    $scripts/evaluation/evaluate_generic.sh \
     $base $src $trg $model_name "$corpora"
 )
 
