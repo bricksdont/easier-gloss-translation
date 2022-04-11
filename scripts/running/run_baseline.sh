@@ -1,6 +1,6 @@
 #! /bin/bash
 
-base=/net/cephfs/shares/volk.cl.uzh/mathmu/sockeye-sign-translation-scripts
+base=/net/cephfs/shares/volk.cl.uzh/mathmu/easier-gloss-translation
 scripts=$base/scripts
 
 # DGS -> German
@@ -12,6 +12,7 @@ trg=de
 
 model_name="baseline"
 
-corpora="test"
+training_corpora="uhh"
+testing_corpora="test"
 
 . $scripts/running/run_generic.sh

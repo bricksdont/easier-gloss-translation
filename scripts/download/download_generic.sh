@@ -5,7 +5,7 @@
 # $src
 # $trg
 # $model_name
-# $sources
+# $training_corpora
 # $bslcp_username
 # $bslcp_password
 
@@ -13,7 +13,9 @@ base=$1
 src=$2
 trg=$3
 model_name=$4
-sources=$5
+training_corpora=$5
+bslcp_username=$6
+bslcp_password=$7
 
 scripts=$base/scripts
 data=$base/data
@@ -34,7 +36,7 @@ fi
 
 mkdir -p $data_sub_sub
 
-for source in $sources; do
+for source in $training_corpora; do
     if [[ $source == "uhh" ]]; then
 
         # download and extract data from UHH

@@ -1,6 +1,6 @@
 #! /bin/bash
 
-base=/net/cephfs/shares/volk.cl.uzh/mathmu/sockeye-sign-translation-scripts
+base=/net/cephfs/shares/volk.cl.uzh/mathmu/easier-gloss-translation
 scripts=$base/scripts
 
 # DGS -> German
@@ -15,6 +15,9 @@ dry_run="true"
 # baseline
 
 model_name="dry_run"
+
+training_corpora="uhh"
+testing_corpora="test"
 
 # delete files for this model to rerun everything
 
