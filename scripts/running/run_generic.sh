@@ -107,8 +107,7 @@ id_download=$(
     $SLURM_ARGS_GENERIC \
     $SLURM_LOG_ARGS \
     $scripts/download/download_generic.sh \
-    $base $src $trg $model_name $training_corpora $bslcp_username $bslcp_password \
-    $seed $multilingual $language_pairs
+    $base $src $trg $model_name $training_corpora $bslcp_username $bslcp_password
 )
 
 echo "  id_download: $id_download | $logs_sub_sub/slurm-$id_download.out" | tee -a $logs_sub_sub/MAIN
@@ -121,7 +120,8 @@ id_preprocess=$(
     --dependency=afterok:$id_download \
     $SLURM_LOG_ARGS \
     $scripts/preprocessing/preprocess_generic.sh \
-    $base $src $trg $model_name $dry_run "$preprocess_additional_test_corpora"
+    $base $src $trg $model_name $training_corpora $bslcp_username $bslcp_password \
+    $seed $multilingual $language_pairs
 )
 
 echo "  id_preprocess: $id_preprocess | $logs_sub_sub/slurm-$id_preprocess.out" | tee -a $logs_sub_sub/MAIN
