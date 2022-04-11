@@ -281,7 +281,7 @@ done
 
 # ratio etc filter
 
-$MOSES/training/clean-corpus-n.perl $data_sub/train.pieces src trg $data_sub/train.clean 1 250
+$MOSES/training/clean-corpus-n.perl -ignore-ratio $data_sub/train.pieces src trg $data_sub/train.clean 1 250
 
 # sizes
 echo "Sizes of all files:"

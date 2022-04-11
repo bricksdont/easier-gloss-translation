@@ -149,9 +149,9 @@ id_train=$(
     $base $src $trg $model_name $dry_run $seed
 )
 
-exit 0
-
 echo "  id_train: $id_train | $logs_sub_sub/slurm-$id_train.out"  | tee -a $logs_sub_sub/MAIN
+
+exit 0
 
 # translate test set(s) (depends on train)
 
