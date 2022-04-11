@@ -22,6 +22,18 @@ model_name="dry_run"
 training_corpora="uhh"
 testing_corpora="test"
 
+# construct src and trg from language_pairs
+
+src=""
+trg=""
+
+for pair in "${language_pairs[@]}"; do
+    pair=($pair)
+
+    src=${src:+$src+}${pair[0]}.${pair[1]}
+    trg=${trg:+$trg+}${pair[0]}.${pair[2]}
+done
+
 # delete files for this model to rerun everything
 
 sub_folders="data shared_models prepared models translations evaluations"
