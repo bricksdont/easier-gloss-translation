@@ -114,6 +114,8 @@ def extract_and_write(json_path: str,
 
     pan_data = extract_pan_data(json_path=json_path)
 
+    pan_stats = {"found": 0, "missing (expected)": 0, "missing (unexpected)": 0}
+
     for datum in dgs_corpus["train"]:
         _id = datum["id"].numpy().decode('utf-8')
 
@@ -146,10 +148,18 @@ def extract_and_write(json_path: str,
 
             if start_frame in pan_data_for_id.keys():
                 gloss_line_pan = pan_data[_id][start_frame]
-            else:
-                logging.warning("No PAN entry for start frame '%d', available keys: %s",
-                                start_frame, pan_data_for_id.keys())
+
+                pan_stats["found"] += 1
+            elif line_german.endswith("/"):
+                # unfinished sentences that Thomas excluded from PAN
+                # Example: "Ich hatte mein Flugticket/" in
+                # https://www.sign-lang.uni-hamburg.de/meinedgs/html/1429910-16075041-16115817_de.html
                 gloss_line_pan = ""
+                pan_stats["missing (expected)"] += 1
+            else:
+                logging.warning("No PAN entry for start frame '%d', id: '%s'", start_frame, _id)
+                gloss_line_pan = ""
+                pan_stats["missing (unexpected)"] += 1
 
             output_data = {"glosses_german": gloss_line_german,
                            "glosses_english": gloss_line_english,
@@ -162,6 +172,8 @@ def extract_and_write(json_path: str,
                            "id": _id}
 
             outfile_handle.write(json.dumps(output_data) + "\n")
+
+    logging.debug("Pan stats: %s", pan_stats)
 
 
 def main():
