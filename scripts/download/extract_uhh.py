@@ -136,8 +136,6 @@ def extract_and_write(json_path: str,
             line_german = sentence["german"]
             line_english = sentence["english"] if sentence["english"] is not None else ""
 
-            print(sentence["english"])
-
             # get timing information for sentence
             start_frame = miliseconds_to_frame_index(sentence["start"], fps)
             end_frame = miliseconds_to_frame_index(sentence["end"], fps)
@@ -157,7 +155,8 @@ def extract_and_write(json_path: str,
                 gloss_line_pan = ""
                 pan_stats["missing (expected)"] += 1
             else:
-                logging.warning("No PAN entry for start frame '%d', id: '%s'", start_frame, _id)
+                logging.warning("PAN entry missing unexpectedly for start frame '%d', id: '%s', line_german: '%s'",
+                                start_frame, _id, line_german)
                 gloss_line_pan = ""
                 pan_stats["missing (unexpected)"] += 1
 
