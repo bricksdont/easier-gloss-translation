@@ -111,6 +111,8 @@ id_download=$(
 
 echo "  id_download: $id_download | $logs_sub_sub/slurm-$id_download.out" | tee -a $logs_sub_sub/MAIN
 
+exit 0
+
 # preprocess: Combine datasets, hold out data, normalize, SPM (depends on download)
 
 id_preprocess=$(

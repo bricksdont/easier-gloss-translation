@@ -25,18 +25,22 @@ mkdir -p $data
 
 source activate $venvs/sockeye3
 
-data_sub=$data/${src}-${trg}
-data_sub_sub=$data_sub/$model_name
+data_sub=$data/download
 
-if [[ -d $data_sub_sub ]]; then
-    echo "data_sub_sub already exists: $data_sub_sub"
-    echo "Skipping. Delete files to repeat step."
-    exit 0
-fi
-
-mkdir -p $data_sub_sub
+# source either "uhh" or "bslcp"
 
 for source in $training_corpora; do
+
+    data_sub_sub=$data_sub/$source
+
+    if [[ -d $data_sub_sub ]]; then
+        echo "data_sub_sub already exists: $data_sub_sub"
+        echo "Skipping. Delete files to repeat step."
+        exit 0
+    fi
+
+    mkdir -p $data_sub_sub
+
     if [[ $source == "uhh" ]]; then
 
         # download and extract data from UHH
@@ -44,14 +48,15 @@ for source in $training_corpora; do
         wget -N https://attachment.rrz.uni-hamburg.de/b026b8c8/pan.json -P $data_sub_sub
 
         python $scripts/download/extract_uhh.py \
-            --input-file $data_sub_sub/pan.json \
-            --output-folder $data_sub_sub
+            --pan-json $data_sub_sub/pan.json \
+            --output-folder $data_sub_sub \
+            --tfds-data-dir $data/tfds
     else
         # download and extract data from BSL corpus
 
         python $scripts/download/extract_bslcp.py \
             --output-folder $data_sub_sub \
-            --tfds-data-dir $data_sub_sub/tfds \
+            --tfds-data-dir $data/tfds \
             --bslcp-username $bslcp_username \
             --bslcp-password $bslcp_password
     fi

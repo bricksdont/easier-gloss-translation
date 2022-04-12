@@ -5,26 +5,53 @@ import json
 import logging
 import argparse
 
-from typing import Iterator
+from typing import Dict, Tuple
+
+import tensorflow_datasets as tfds
+
+# noinspection PyUnresolvedReferences
+from sign_language_datasets import datasets
+from sign_language_datasets.datasets.config import SignDatasetConfig
+
+from sign_language_datasets.datasets.dgs_corpus.dgs_utils import get_elan_sentences
 
 
 def parse_args():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--input-file", type=str, help="Path to local JSON file.")
+    parser.add_argument("--pan-json", type=str, help="Path to local JSON file.")
     parser.add_argument("--output-folder", type=str, help="Path of folder to write extracted sentences.")
+    parser.add_argument("--tfds-data-dir", type=str, help="Path to where a tfds data set should be saved.")
 
     args = parser.parse_args()
 
     return args
 
 
-def extract(json_path: str) -> Iterator:
+def get_id_miliseconds_from_url(url: str) -> Tuple[str, int]:
+    """
+    Example: “https://www.sign-lang.uni-hamburg.de/meinedgs/html/1176340_de.html#t00000000”
+
+    :param url:
+    :return:
+    """
+    parts = url.split("/")[-1].split("#")
+
+    _id = parts[0].replace("_de.html", "")
+    start_time_miliseconds = int(parts[1])
+
+    return _id, start_time_miliseconds
+
+
+def extract_pan_data(json_path: str) -> Dict:
     """
 
     :param json_path:
     :return:
     """
+
+    extracted_data = {}
+
     with open(json_path) as infile:
         data = json.load(infile)
 
@@ -37,31 +64,86 @@ def extract(json_path: str) -> Iterator:
     #   }, ...
     # ]
     for entry in data:
-        yield entry["spoken"], entry["pan"]
+        _id, start_time_miliseconds = get_id_miliseconds_from_url(entry["url"])
+
+        if _id not in extracted_data.keys():
+            extracted_data[_id] = {}
+
+        start_frame = miliseconds_to_frame_index(start_time_miliseconds)
+
+        extracted_data[_id][start_frame] = entry
+
+    return extracted_data
 
 
-def extract_and_write(json_path: str, output_folder: str) -> None:
+def miliseconds_to_frame_index(ms: int, fps: int = 50) -> int:
+    """
+    :param ms:
+    :param fps:
+    :return:
+    """
+    return int(fps * (ms / 1000))
+
+
+def extract_and_write(json_path: str,
+                      output_folder: str,
+                      tfds_data_dir: str) -> None:
     """
 
     :param json_path:
     :param output_folder:
+    :param tfds_data_dir:
     :return:
     """
-    outfile_path_de = os.path.join(output_folder, "uhh.de")
-    outfile_path_dgs = os.path.join(output_folder, "uhh.dgs")
+    outfile_path = os.path.join(output_folder, "data.uhh.json")
+    outfile_handle = open(outfile_path, "w")
 
-    outfile_handle_de = open(outfile_path_de, "w")
-    outfile_handle_dgs = open(outfile_path_dgs, "w")
+    fps = 50
 
-    num_lines_seen = 0
+    config = SignDatasetConfig(name="only-annotations", version="1.0.0", include_video=False, include_pose=None)
+    dgs_corpus = tfds.load('dgs_corpus', builder_kwargs=dict(config=config), data_dir=tfds_data_dir)
 
-    for spoken_sentence, pan_sentence in extract(json_path=json_path):
-        outfile_handle_de.write(spoken_sentence + "\n")
-        outfile_handle_dgs.write(pan_sentence + "\n")
+    pan_data = extract_pan_data(json_path=json_path)
 
-        num_lines_seen += 1
+    for datum in dgs_corpus["train"]:
+        _id = datum["id"].numpy().decode('utf-8')
 
-    logging.debug("Saw %d lines." % num_lines_seen)
+        elan_path = datum["paths"]["eaf"].numpy().decode('utf-8')
+        sentences = get_elan_sentences(elan_path)
+
+        for sentence in sentences:
+            participant = sentence["participant"].lower()
+            glosses = sentence["glosses"]
+
+            # relevant keys: EN: 'Sign' and DE: 'gloss'
+            gloss_line_german = " ".join([g["gloss"] for g in glosses])
+            gloss_line_english = " ".join([g["Sign"] for g in glosses])
+
+            line_german = sentence["german"]
+            line_english = sentence["english"] if sentence["english"] is not None else ""
+
+            # get timing information: start frame of first gloss, end frame of last gloss
+            first_gloss = glosses[0]
+            last_gloss = glosses[-1]
+
+            start_frame = miliseconds_to_frame_index(first_gloss["start"], fps)
+            end_frame = miliseconds_to_frame_index(last_gloss["end"], fps)
+
+            # look for entry in pan data that corresponds
+
+            gloss_line_pan = pan_data[_id].get(start_frame, "")
+
+            output_data = {"glosses_german": gloss_line_german,
+                           "glosses_english": gloss_line_english,
+                           "german": line_german,
+                           "english": line_english,
+                           "start_frame": start_frame,
+                           "end_frame": end_frame,
+                           "participant": participant,
+                           "pan": gloss_line_pan,
+                           "id": _id}
+
+            outfile_handle.write(json.dumps(output_data) + "\n")
 
 
 def main():
@@ -71,7 +153,7 @@ def main():
     logging.basicConfig(level=logging.DEBUG)
     logging.debug(args)
 
-    extract_and_write(json_path=args.input_file, output_folder=args.output_folder)
+    extract_and_write(json_path=args.pan_json, output_folder=args.output_folder, tfds_data_dir=args.tfds_data_dir)
 
 
 if __name__ == '__main__':
