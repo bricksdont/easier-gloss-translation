@@ -37,7 +37,7 @@ def get_id_miliseconds_from_url(url: str) -> Tuple[str, int]:
     parts = url.split("/")[-1].split("#")
 
     _id = parts[0].replace("_de.html", "")
-    start_time_miliseconds = int(parts[1])
+    start_time_miliseconds = int(parts[1][1:])
 
     return _id, start_time_miliseconds
 
