@@ -41,11 +41,11 @@ def get_id_miliseconds_from_url(url: str) -> Tuple[str, int]:
     start_time_string = parts[1][1:]
 
     # time format is:
-    # t54361926 -> 54 hours, 36 minutes, 19 seconds, 26 miliseconds
+    # t54361926 -> 54 hours, 36 minutes, 19 seconds, 26 frames (50 fps, each frame is 20 miliseconds)
     string_chunks = re.findall('..', start_time_string)
-    hours, minutes, seconds, miliseconds = [int(s) for s in string_chunks]
+    hours, minutes, seconds, frames = [int(s) for s in string_chunks]
 
-    start_time_miliseconds = miliseconds
+    start_time_miliseconds = frames * 20
     start_time_miliseconds += seconds * 1000
     start_time_miliseconds += minutes * 1000 * 60
     start_time_miliseconds += hours * 1000 * 60 * 60
