@@ -134,12 +134,9 @@ def extract_and_write(json_path: str,
             line_german = sentence["german"]
             line_english = sentence["english"] if sentence["english"] is not None else ""
 
-            # get timing information: start frame of first gloss, end frame of last gloss
-            first_gloss = glosses[0]
-            last_gloss = glosses[-1]
-
-            start_frame = miliseconds_to_frame_index(first_gloss["start"], fps)
-            end_frame = miliseconds_to_frame_index(last_gloss["end"], fps)
+            # get timing information for sentence
+            start_frame = miliseconds_to_frame_index(sentence["start"], fps)
+            end_frame = miliseconds_to_frame_index(sentence["end"], fps)
 
             # look for entry in pan data that corresponds
 
