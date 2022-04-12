@@ -113,6 +113,9 @@ def extract_and_write(json_path: str,
             participant = sentence["participant"].lower()
             glosses = sentence["glosses"]
 
+            if len(glosses) == 0:
+                continue
+
             # relevant keys: EN: 'Sign' and DE: 'gloss'
             gloss_line_german = " ".join([g["gloss"] for g in glosses])
             gloss_line_english = " ".join([g["Sign"] for g in glosses])
@@ -129,7 +132,13 @@ def extract_and_write(json_path: str,
 
             # look for entry in pan data that corresponds
 
-            gloss_line_pan = pan_data[_id].get(start_frame, "")
+            pan_data_for_id = pan_data[_id]
+
+            if start_frame in pan_data_for_id.keys():
+                gloss_line_pan = pan_data[_id][start_frame]
+            else:
+                logging.warning("No PAN entry for start frame '%d', available keys: %s",
+                                start_frame, pan_data_for_id.keys())
 
             output_data = {"glosses_german": gloss_line_german,
                            "glosses_english": gloss_line_english,
