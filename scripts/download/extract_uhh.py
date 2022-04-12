@@ -1,5 +1,6 @@
 #! /usr/bin/python3
 
+import re
 import json
 import logging
 import argparse
@@ -37,7 +38,17 @@ def get_id_miliseconds_from_url(url: str) -> Tuple[str, int]:
     parts = url.split("/")[-1].split("#")
 
     _id = parts[0].replace("_de.html", "")
-    start_time_miliseconds = int(parts[1][1:])
+    start_time_string = parts[1][1:]
+
+    # time format is:
+    # t54361926 -> 54 hours, 36 minutes, 19 seconds, 26 miliseconds
+    string_chunks = re.findall('..', start_time_string)
+    hours, minutes, seconds, miliseconds = [int(s) for s in string_chunks]
+
+    start_time_miliseconds = miliseconds
+    start_time_miliseconds += seconds * 1000
+    start_time_miliseconds += minutes * 1000 * 60
+    start_time_miliseconds += hours * 1000 * 60 * 60
 
     return _id, start_time_miliseconds
 

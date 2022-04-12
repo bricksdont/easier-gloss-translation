@@ -15,6 +15,8 @@ language_pairs=(
 
 dry_run="true"
 
+repeat_download_step="true"
+
 # baseline
 
 model_name="dry_run"
@@ -43,12 +45,20 @@ for sub_folder in $sub_folders; do
   echo "$base/$sub_folder/$src-$trg/$model_name"
 done
 
+if [[ $repeat_download_step == "true" ]]; then
+  echo "$base/data/download"
+fi
+
 read -p "Delete? (y/n) " -n 1 -r
 echo    # (optional) move to a new line
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     for sub_folder in $sub_folders; do
       rm -rf $base/$sub_folder/$src-$trg/$model_name
     done
+
+    if [[ $repeat_download_step == "true" ]]; then
+      rm -rf "$base/data/download"
+    fi
 fi
 
 . $scripts/running/run_generic.sh
