@@ -1,6 +1,5 @@
 #! /usr/bin/python3
 
-import os
 import json
 import logging
 import argparse
@@ -20,7 +19,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--pan-json", type=str, help="Path to local JSON file.")
-    parser.add_argument("--output-folder", type=str, help="Path of folder to write extracted sentences.")
+    parser.add_argument("--output-file", type=str, help="Path to file to write extracted sentences.")
     parser.add_argument("--tfds-data-dir", type=str, help="Path to where a tfds data set should be saved.")
 
     args = parser.parse_args()
@@ -86,16 +85,15 @@ def miliseconds_to_frame_index(ms: int, fps: int = 50) -> int:
 
 
 def extract_and_write(json_path: str,
-                      output_folder: str,
+                      outfile_path: str,
                       tfds_data_dir: str) -> None:
     """
 
     :param json_path:
-    :param output_folder:
+    :param outfile_path:
     :param tfds_data_dir:
     :return:
     """
-    outfile_path = os.path.join(output_folder, "data.uhh.json")
     outfile_handle = open(outfile_path, "w")
 
     fps = 50
@@ -153,7 +151,7 @@ def main():
     logging.basicConfig(level=logging.DEBUG)
     logging.debug(args)
 
-    extract_and_write(json_path=args.pan_json, output_folder=args.output_folder, tfds_data_dir=args.tfds_data_dir)
+    extract_and_write(json_path=args.pan_json, outfile_path=args.output_file, tfds_data_dir=args.tfds_data_dir)
 
 
 if __name__ == '__main__':

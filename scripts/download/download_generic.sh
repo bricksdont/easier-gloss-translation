@@ -49,7 +49,7 @@ for source in $training_corpora; do
 
         python $scripts/download/extract_uhh.py \
             --pan-json $data_sub_sub/pan.json \
-            --output-folder $data_sub_sub \
+            --output-file $data_sub_sub/uhh.json \
             --tfds-data-dir $data/tfds
     else
         # download and extract data from BSL corpus
