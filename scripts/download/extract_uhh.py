@@ -134,6 +134,8 @@ def extract_and_write(json_path: str,
             line_german = sentence["german"]
             line_english = sentence["english"] if sentence["english"] is not None else ""
 
+            print(sentence["english"])
+
             # get timing information for sentence
             start_frame = miliseconds_to_frame_index(sentence["start"], fps)
             end_frame = miliseconds_to_frame_index(sentence["end"], fps)
