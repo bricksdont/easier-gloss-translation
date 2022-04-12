@@ -139,6 +139,7 @@ def extract_and_write(json_path: str,
             else:
                 logging.warning("No PAN entry for start frame '%d', available keys: %s",
                                 start_frame, pan_data_for_id.keys())
+                gloss_line_pan = ""
 
             output_data = {"glosses_german": gloss_line_german,
                            "glosses_english": gloss_line_english,
