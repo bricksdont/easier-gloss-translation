@@ -1,11 +1,11 @@
 #! /usr/bin/python3
 
+import re
 import json
 import logging
 import argparse
 
 import tensorflow as tf
-
 import tensorflow_datasets as tfds
 
 # noinspection PyUnresolvedReferences
@@ -13,6 +13,9 @@ from sign_language_datasets import datasets
 from sign_language_datasets.datasets.config import SignDatasetConfig
 
 from sign_language_datasets.datasets.bsl_corpus.bsl_corpus_utils import get_elan_sentences_bsl_corpus
+
+from typing import List
+from itertools import groupby
 
 
 def parse_args():
@@ -45,6 +48,38 @@ def load(data_dir: str, bslcp_username: str, bslcp_password: str) -> tf.data.Dat
                       data_dir=data_dir)
 
     return bslcp
+
+
+def remove_adjacent_duplicates(my_list: List[str]) -> List[str]:
+    """
+
+    :param my_list:
+    :return:
+    """
+    return list(i for i, x in groupby(my_list))
+
+
+def remove_signbank_comment(gloss: str) -> str:
+    """
+
+    :param gloss:
+    :return:
+    """
+    if "ADD-TO-SIGNBANK" in gloss:
+        return re.search(r"ADD-TO-SIGNBANK\((.+)\)", gloss).groups()[0]
+    else:
+        return gloss
+
+
+def fix_glosses(glosses: List[str]) -> List[str]:
+    """
+
+    :param glosses:
+    :return:
+    """
+    glosses = [remove_signbank_comment(g) for g in glosses]
+
+    return remove_adjacent_duplicates(glosses)
 
 
 def load_and_extract(data_dir: str, bslcp_username: str, bslcp_password: str, outfile_path: str):
@@ -88,6 +123,9 @@ def load_and_extract(data_dir: str, bslcp_username: str, bslcp_password: str, ou
                 for gloss_dict in sentence["glosses"]:
                     gloss = gloss_dict["gloss"].strip()
                     glosses.append(gloss)
+
+                # clean up known issues
+                glosses = fix_glosses(glosses)
 
                 sentence_bsl = " ".join(glosses)
 
