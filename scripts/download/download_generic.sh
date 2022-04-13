@@ -111,7 +111,7 @@ for source in $training_corpora; do
 
         # do not modify original download
 
-        if [[ ! -f $data_sub_sub/train.shuffled.json ]]; then
+        if [[ ! -f $data_sub_sub/train.json ]]; then
 
             python $scripts/preprocessing/shuffle_with_seed.py \
                 --seed $seed --input $data_sub_sub/$source.json \
