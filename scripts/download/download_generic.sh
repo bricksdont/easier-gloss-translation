@@ -51,7 +51,7 @@ for source in $training_corpora; do
     if [[ -d $data_sub_sub ]]; then
         echo "data_sub_sub already exists: $data_sub_sub"
         echo "Skipping. Delete files to repeat step."
-        exit 0
+        continue
     fi
 
     mkdir -p $data_sub_sub
@@ -75,11 +75,8 @@ for source in $training_corpora; do
             --bslcp-username $bslcp_username \
             --bslcp-password $bslcp_password
     fi
-done
 
-# make fixed splits
-
-for source in $training_corpora; do
+    # make fixed splits
 
     data_sub_sub=$data_sub/$source
 
