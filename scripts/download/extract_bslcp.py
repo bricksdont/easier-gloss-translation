@@ -63,7 +63,7 @@ def load_and_extract(data_dir: str, bslcp_username: str, bslcp_password: str, ou
 
     num_lines_seen = 0
 
-    for datum in dataset:
+    for datum in dataset["train"]:
         _id = datum["id"].numpy().decode('utf-8')
 
         elan_paths = datum["paths"]["eaf"]
