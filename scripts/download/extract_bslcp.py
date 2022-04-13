@@ -66,6 +66,7 @@ def remove_signbank_comment(gloss: str) -> str:
     :return:
     """
     if "ADD-TO-SIGNBANK" in gloss:
+        print(gloss)
         return re.search(r"ADD-TO-SIGNBANK\((.+)\)", gloss).groups()[0]
     else:
         return gloss
