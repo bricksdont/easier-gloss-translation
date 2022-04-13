@@ -107,7 +107,7 @@ id_download=$(
     $SLURM_ARGS_GENERIC \
     $SLURM_LOG_ARGS \
     $scripts/download/download_generic.sh \
-    $base $src $trg $model_name $training_corpora $bslcp_username $bslcp_password $seed
+    $base $src $trg $model_name $training_corpora $seed $bslcp_username $bslcp_password
 )
 
 echo "  id_download: $id_download | $logs_sub_sub/slurm-$id_download.out" | tee -a $logs_sub_sub/MAIN

@@ -6,18 +6,18 @@
 # $trg
 # $model_name
 # $training_corpora
+# $seed
 # $bslcp_username
 # $bslcp_password
-# $seed
 
 base=$1
 src=$2
 trg=$3
 model_name=$4
 training_corpora=$5
-bslcp_username=$6
+seed=$6
 bslcp_password=$7
-seed=$8
+bslcp_username=$8
 
 scripts=$base/scripts
 data=$base/data
@@ -133,3 +133,4 @@ done
 echo "Sizes of files:"
 
 wc -l $data_sub/*
+wc -l $data_sub/*/*

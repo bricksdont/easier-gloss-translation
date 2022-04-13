@@ -3,11 +3,13 @@
 base=/net/cephfs/shares/volk.cl.uzh/mathmu/easier-gloss-translation
 scripts=$base/scripts
 
+# DGS -> German
 # En -> BSL
 
 # Structure: [source corpus] [src] [trg]
 
 language_pairs=(
+    "uhh de dgs"
     "bslcp en bsl"
 )
 
@@ -21,7 +23,7 @@ repeat_download_step="true"
 
 model_name="dry_run"
 
-training_corpora="bslcp"
+training_corpora="uhh bslcp"
 testing_corpora="test"
 
 bslcp_username=$BSLCP_USERNAME
