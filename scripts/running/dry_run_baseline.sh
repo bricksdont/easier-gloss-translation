@@ -8,7 +8,7 @@ scripts=$base/scripts
 # Structure: [source corpus] [src] [trg]
 
 language_pairs=(
-    "uhh dgs de"
+    "uhh dgs_de de"
 )
 
 # dry runs of all steps

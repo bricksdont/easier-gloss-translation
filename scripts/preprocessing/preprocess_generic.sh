@@ -73,6 +73,30 @@ if [[ -f $data_sub/test.pieces.src ]]; then
     exit 0
 fi
 
+# extract data from download jsons
+
+for pair in "${language_pairs[@]}"; do
+    pair=($pair)
+
+    source=${pair[0]}
+    src=${pair[1]}
+    trg=${pair[2]}
+
+    download_sub=$data/download/$source
+
+    for lang in $src $trg; do
+
+        for corpus in $ALL_CORPORA; do
+            python $scripts/preprocessing/extract_key_from_json.py \
+                --input-file $download_sub/$corpus.json \
+                --output-file $data_sub/$corpus.$lang \
+                --key $lang
+        done
+    done
+done
+
+exit 0
+
 # put together training data and correctly assign ".src" and ".trg" suffixes
 
 echo -n "" > $data_sub/train.src

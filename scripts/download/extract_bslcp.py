@@ -168,8 +168,8 @@ def load_and_extract(data_dir: str, bslcp_username: str, bslcp_password: str, ou
                     num_lines_skipped_because_bsl_empty += 1
                     continue
 
-                output_data = {"sentence_bsl": sentence_bsl,
-                               "sentence_en": sentence_en,
+                output_data = {"bsl": sentence_bsl,
+                               "en": sentence_en,
                                "id": _id}
 
                 outfile_handle.write(json.dumps(output_data) + "\n")

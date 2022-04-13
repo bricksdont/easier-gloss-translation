@@ -160,10 +160,10 @@ def extract_and_write(json_path: str,
                 gloss_line_pan = ""
                 pan_stats["missing (unexpected)"] += 1
 
-            output_data = {"glosses_german": gloss_line_german,
-                           "glosses_english": gloss_line_english,
-                           "german": line_german,
-                           "english": line_english,
+            output_data = {"dgs_de": gloss_line_german,
+                           "dgs_en": gloss_line_english,
+                           "de": line_german,
+                           "en": line_english,
                            "start_frame": start_frame,
                            "end_frame": end_frame,
                            "participant": participant,

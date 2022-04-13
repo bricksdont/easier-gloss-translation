@@ -9,7 +9,7 @@ scripts=$base/scripts
 # Structure: [source corpus] [src] [trg]
 
 language_pairs=(
-    "uhh de dgs"
+    "uhh de dgs_de"
     "bslcp en bsl"
 )
 
