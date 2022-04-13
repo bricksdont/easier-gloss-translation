@@ -56,11 +56,11 @@ if [ -z "$testing_corpora" ]; then
 fi
 
 if [ -z "$bslcp_username" ]; then
-    bslcp_username=""
+    bslcp_username="UNKNOWN"
 fi
 
 if [ -z "$bslcp_password" ]; then
-    bslcp_password=""
+    bslcp_password="UNKNOWN"
 fi
 
 if [ -z "$seed" ]; then

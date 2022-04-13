@@ -29,7 +29,12 @@ def main():
 
         for line in handle_input:
             data = json.loads(line)
-            extracted_string = data[args.key].strip()
+
+            if args.key == "pan":
+                # then value is a dict
+                extracted_string = data[args.key]["pan"].strip()
+            else:
+                extracted_string = data[args.key].strip()
             handle_output.write(extracted_string + "\n")
 
 
