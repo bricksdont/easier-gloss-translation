@@ -13,6 +13,7 @@
 # $bslcp_password
 # $seed
 # $multilingual
+# $spm_strategy
 
 module load volta nvidia/cuda10.2-cudnn7.6.5 anaconda3
 
@@ -71,6 +72,10 @@ if [ -z "$multilingual" ]; then
     multilingual="false"
 fi
 
+if [ -z "$spm_strategy" ]; then
+    spm_strategy="joint"
+fi
+
 # SLURM job args
 
 DRY_RUN_SLURM_ARGS="--cpus-per-task=2 --time=02:00:00 --mem=16G --partition=generic"
@@ -120,7 +125,7 @@ id_preprocess=$(
     --dependency=afterok:$id_download \
     $SLURM_LOG_ARGS \
     $scripts/preprocessing/preprocess_generic.sh \
-    $base $src $trg $model_name $dry_run $seed $multilingual "$language_pairs"
+    $base $src $trg $model_name $dry_run $seed $multilingual "$language_pairs" $spm_strategy
 )
 
 echo "  id_preprocess: $id_preprocess | $logs_sub_sub/slurm-$id_preprocess.out" | tee -a $logs_sub_sub/MAIN

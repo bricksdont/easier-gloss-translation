@@ -9,6 +9,7 @@
 # $seed
 # $multilingual
 # $language_pairs
+# $spm_strategy
 
 base=$1
 src=$2
@@ -18,6 +19,7 @@ dry_run=$5
 seed=$6
 multilingual=$7
 language_pairs=$8
+spm_strategy=$9
 
 data=$base/data
 venvs=$base/venvs
@@ -91,28 +93,29 @@ for pair in "${language_pairs[@]}"; do
         for corpus in $ALL_CORPORA; do
             python $scripts/preprocessing/extract_key_from_json.py \
                 --input-file $download_sub/$corpus.json \
-                --output-file $data_sub/$corpus.$lang \
+                --output-file $data_sub/$source.$corpus.$lang \
                 --key $lang
         done
     done
 done
 
-exit 0
-
 # put together training data and correctly assign ".src" and ".trg" suffixes
 
-echo -n "" > $data_sub/train.src
-echo -n "" > $data_sub/train.trg
+for corpus in $ALL_CORPORA; do
 
-for pair in "${language_pairs[@]}"; do
-    pair=($pair)
+    echo -n "" > $data_sub/$corpus.src
+    echo -n "" > $data_sub/$corpus.trg
 
-    corpus=${pair[0]}
-    src=${pair[1]}
-    trg=${pair[2]}
+    for pair in "${language_pairs[@]}"; do
+        pair=($pair)
 
-    cat $data_sub/$corpus.$src >> $data_sub/train.src
-    cat $data_sub/$corpus.$trg >> $data_sub/train.trg
+        source=${pair[0]}
+        src=${pair[1]}
+        trg=${pair[2]}
+
+        cat $data_sub/$source.$corpus.$src >> $data_sub/$corpus.src
+        cat $data_sub/$source.$corpus.$trg >> $data_sub/$corpus.trg
+    done
 done
 
 # truncate all data if dry run
@@ -129,7 +132,7 @@ if [[ $dry_run == "true" ]]; then
     done
 fi
 
-# prenormalization for train data
+# prenormalization for all corpora
 
 for corpus in $ALL_CORPORA; do
     for lang in src trg; do
@@ -151,7 +154,7 @@ for lang in src trg; do
         $data_sub/train.normalized.$lang
 done
 
-# normalize dev / test data + other test corpora
+# normalize dev / test data
 
 for corpus in $CORPORA_EXCEPT_TRAIN; do
     for lang in src trg; do
@@ -198,31 +201,49 @@ fi
 
 echo "sentencepiece_vocab_size=$sentencepiece_vocab_size"
 
-# learn sentencepiece model on train (concatenate both languages)
+# learn sentencepiece model(s) on train
 
-for lang in src trg; do
-    if [[ ! -f $shared_models_sub/$lang.sentencepiece.model ]]; then
+if [[ $spm_strategy == "joint" ]]; then
 
-      python $scripts/preprocessing/train_sentencepiece.py \
-        --model-prefix $shared_models_sub/$lang.sentencepiece \
-        --input $data_sub/train.normalized.$lang \
-        --vocab-size $sentencepiece_vocab_size \
-        --character-coverage 1.0 \
-        --input-sentence-size=$SENTENCEPIECE_MAX_LINES
+    # one spm model overall
 
-    else
-      echo "Sentencepiece model exists: $shared_models_sub/$lang.sentencepiece.model"
-      echo "Skipping model training"
-    fi
-done
+    cat $data_sub/train.normalized.src $data_sub/train.normalized.trg > $data_sub/train.normalized.both
+
+    python $scripts/preprocessing/train_sentencepiece.py \
+              --model-prefix $shared_models_sub/sentencepiece \
+              --input $data_sub/train.normalized.both \
+              --vocab-size $sentencepiece_vocab_size \
+              --character-coverage 1.0 \
+              --input-sentence-size=$SENTENCEPIECE_MAX_LINES
+
+else
+    # one spm model per side of parallel corpus
+
+    for lang in src trg; do
+
+        python $scripts/preprocessing/train_sentencepiece.py \
+          --model-prefix $shared_models_sub/$lang.sentencepiece \
+          --input $data_sub/train.normalized.$lang \
+          --vocab-size $sentencepiece_vocab_size \
+          --character-coverage 1.0 \
+          --input-sentence-size=$SENTENCEPIECE_MAX_LINES
+    done
+fi
 
 # apply SP model to train, test and dev
 
 for corpus in $ALL_CORPORA; do
     for lang in src trg; do
+
+        if [[ $spm_strategy == "joint" ]]; then
+            spm_model=$shared_models_sub/sentencepiece.model
+        else
+            spm_model=$shared_models_sub/$lang.sentencepiece.model
+        fi
+
         cat $data_sub/$corpus.normalized.$lang | \
             python $scripts/preprocessing/apply_sentencepiece.py \
-                --model $shared_models_sub/$lang.sentencepiece.model \
+                --model $spm_model \
                     > $data_sub/$corpus.pieces.$lang
     done
 done
