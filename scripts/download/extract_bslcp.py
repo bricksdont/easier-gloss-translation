@@ -66,12 +66,14 @@ def remove_signbank_comment(gloss: str) -> str:
     :return:
     """
     if "ADD-TO-SIGNBANK" in gloss:
-        # catch special case
+        # catch special cases
         if gloss == "BEEN/ADD-TO-SIGNBANK":
-            return "BEEN"
-        relevant_parts = re.search(r"(.*)ADD-TO-SIGNBANK\((.+?)\)(.*)", gloss).groups()
-        gloss_after = "".join(relevant_parts)
-        print("%s -> %s" % (gloss, gloss_after))
+            gloss_after = "BEEN"
+        else:
+            print(gloss)
+            relevant_parts = re.search(r"(.*)ADD-TO-SIGNBANK\((.+?)\)(.*)", gloss).groups()
+            gloss_after = "".join(relevant_parts)
+        logging.debug("Gloss cleanup: %s -> %s" % (gloss, gloss_after))
         return gloss_after
     else:
         return gloss
