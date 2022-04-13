@@ -27,7 +27,7 @@ mkdir -p $data
 
 source activate $venvs/sockeye3
 
-VERY_SMALL_TRAINSIZE=10000
+SMALLEST_TRAINSIZE=10000
 SMALL_TRAINSIZE=100000
 MEDIUM_TRAINSIZE=500000
 LARGE_TRAINSIZE=1000000
@@ -132,5 +132,4 @@ done
 
 echo "Sizes of files:"
 
-wc -l $data_sub/*
 wc -l $data_sub/*/*
