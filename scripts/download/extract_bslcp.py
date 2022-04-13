@@ -131,6 +131,8 @@ def load_and_extract(data_dir: str, bslcp_username: str, bslcp_password: str, ou
 
     num_lines_seen = 0
 
+    num_lines_skipped_because_bsl_empty = 0
+
     for datum in dataset["train"]:
         _id = datum["id"].numpy().decode('utf-8')
 
@@ -162,6 +164,10 @@ def load_and_extract(data_dir: str, bslcp_username: str, bslcp_password: str, ou
 
                 sentence_bsl = " ".join(glosses)
 
+                if sentence_bsl == "":
+                    num_lines_skipped_because_bsl_empty += 1
+                    continue
+
                 output_data = {"sentence_bsl": sentence_bsl,
                                "sentence_en": sentence_en,
                                "id": _id}
@@ -170,7 +176,8 @@ def load_and_extract(data_dir: str, bslcp_username: str, bslcp_password: str, ou
 
                 num_lines_seen += 1
 
-    logging.debug("Saw %d lines." % num_lines_seen)
+    logging.debug("Skipped %d lines that have no BSL glosses." % num_lines_skipped_because_bsl_empty)
+    logging.debug("Wrote %d valid lines." % num_lines_seen)
 
 
 def main():
