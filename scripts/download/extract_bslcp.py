@@ -75,6 +75,9 @@ def remove_signbank_comment(gloss: str) -> str:
         # forgot closing parenthesis
         elif gloss == "ADD-TO-SIGNBANK(GROUP02":
             gloss_after = "GROUP02"
+        # incorrect / inserted
+        elif gloss == "GIVE/ADD-TO-SIGNBANK/(DELIVER)":
+            gloss_after = "GIVE/DELIVER"
         # forgot opening parenthesis
         elif gloss == "SN:DOROTHY-MILES(ADD-TO-SIGNBANK^FS:M-MILES)":
             gloss_after = "SN:DOROTHY-MILES(FS:M-MILES)"
