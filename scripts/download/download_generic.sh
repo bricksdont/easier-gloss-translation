@@ -119,7 +119,6 @@ for source in $training_corpora; do
         fi
 
         head -n $train_slice_size $data_sub_sub/train.json > $data_sub_sub/$slice_corpus.json
-        head -n $train_slice_size $data_sub_sub/train.json > $data_sub_sub/$slice_corpus.json
 
         # remove first $train_slice_size pairs from the training data
 
