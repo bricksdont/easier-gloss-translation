@@ -73,6 +73,8 @@ if [[ -f $data_sub/test.pieces.src ]]; then
     exit 0
 fi
 
+mkdir -p $data_sub
+
 # extract data from download jsons
 
 for pair in "${language_pairs[@]}"; do
