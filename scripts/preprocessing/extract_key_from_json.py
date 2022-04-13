@@ -25,7 +25,7 @@ def main():
     logging.basicConfig(level=logging.DEBUG)
     logging.debug(args)
 
-    with open(args.input_file, "r") as handle_input, open(args.output_file, "r") as handle_output:
+    with open(args.input_file, "r") as handle_input, open(args.output_file, "w") as handle_output:
 
         for line in handle_input:
             data = json.loads(line)
