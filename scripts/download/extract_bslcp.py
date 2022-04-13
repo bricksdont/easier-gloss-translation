@@ -76,8 +76,8 @@ def remove_signbank_comment(gloss: str) -> str:
         elif gloss == "ADD-TO-SIGNBANKMENINGITISb(FALSE-START)":
             gloss_after = "MENINGITISb(FALSE-START)"
         # forgot closing parenthesis
-        elif gloss == "ADD-TO-SIGNBANK(GROUP02":
-            gloss_after = "GROUP02"
+        elif gloss in ["ADD-TO-SIGNBANK(GROUP02", "ADD-TO-SIGNBANK(AGE02-TWO"]:
+            gloss_after = gloss.replace("ADD-TO-SIGNBANK(", "")
         # incorrect / inserted
         elif gloss == "GIVE/ADD-TO-SIGNBANK/(DELIVER)":
             gloss_after = "GIVE/DELIVER"
@@ -85,9 +85,12 @@ def remove_signbank_comment(gloss: str) -> str:
         elif gloss == "SN:DOROTHY-MILES(ADD-TO-SIGNBANK^FS:M-MILES)":
             gloss_after = "SN:DOROTHY-MILES(FS:M-MILES)"
         else:
-            print(gloss)
-            relevant_parts = re.search(r"(.*)ADD-TO-SIGNBANK\((.+?)\)(.*)", gloss).groups()
-            gloss_after = "".join(relevant_parts)
+            try:
+                relevant_parts = re.search(r"(.*)ADD-TO-SIGNBANK\((.+?)\)(.*)", gloss).groups()
+                gloss_after = "".join(relevant_parts)
+            except AttributeError:
+                logging.warning("! Regex failed for: %s" % gloss)
+                gloss_after = gloss
         logging.debug("Gloss cleanup: '%s' -> '%s'" % (gloss, gloss_after))
         return gloss_after
     else:
