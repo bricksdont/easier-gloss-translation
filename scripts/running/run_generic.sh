@@ -94,6 +94,7 @@ date | tee -a $logs_sub_sub/MAIN
 echo "##############################################" | tee -a $logs_sub_sub/MAIN
 echo "LANGPAIR: ${src}-${trg}" | tee -a $logs_sub_sub/MAIN
 echo "MODEL NAME: $model_name" | tee -a $logs_sub_sub/MAIN
+echo "TRAINING CORPORA: $training_corpora" | tee -a $logs_sub_sub/MAIN
 echo "TESTING CORPORA: $testing_corpora" | tee -a $logs_sub_sub/MAIN
 echo "SEED: $seed" | tee -a $logs_sub_sub/MAIN
 echo "MULTILINGUAL: $multilingual" | tee -a $logs_sub_sub/MAIN
@@ -106,7 +107,7 @@ id_download=$(
     $SLURM_ARGS_GENERIC \
     $SLURM_LOG_ARGS \
     $scripts/download/download_generic.sh \
-    $base $src $trg $model_name $training_corpora $bslcp_username $bslcp_password
+    $base $src $trg $model_name $training_corpora $bslcp_username $bslcp_password $seed
 )
 
 echo "  id_download: $id_download | $logs_sub_sub/slurm-$id_download.out" | tee -a $logs_sub_sub/MAIN

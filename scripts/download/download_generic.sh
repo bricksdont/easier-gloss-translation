@@ -8,6 +8,7 @@
 # $training_corpora
 # $bslcp_username
 # $bslcp_password
+# $seed
 
 base=$1
 src=$2
@@ -16,6 +17,7 @@ model_name=$4
 training_corpora=$5
 bslcp_username=$6
 bslcp_password=$7
+seed=$8
 
 scripts=$base/scripts
 data=$base/data
