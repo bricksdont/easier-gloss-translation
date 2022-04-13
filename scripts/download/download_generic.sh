@@ -25,9 +25,22 @@ mkdir -p $data
 
 source activate $venvs/sockeye3
 
-data_sub=$data/download
+VERY_SMALL_TRAINSIZE=10000
+SMALL_TRAINSIZE=100000
+MEDIUM_TRAINSIZE=500000
+LARGE_TRAINSIZE=1000000
+LARGEST_TRAINSIZE=10000000
 
-# source either "uhh" or "bslcp"
+TRAIN_SLICE_VERY_SMALL=100
+TRAIN_SLICE_SMALL=1000
+TRAIN_SLICE_MEDIUM=2500
+TRAIN_SLICE_LARGE=5000
+
+CORPORA_EXCEPT_TRAIN="dev test"
+
+# download source, either "uhh" or "bslcp"
+
+data_sub=$data/download
 
 for source in $training_corpora; do
 
@@ -62,6 +75,59 @@ for source in $training_corpora; do
     fi
 done
 
+# make fixed splits
+
+for source in $training_corpora; do
+
+    data_sub_sub=$data_sub/$source
+
+    # set aside held-out slices of the training data (size of slice depending on total size)
+    # for testing and development
+
+    # determine $train_slice_size
+
+    num_lines=$(cat $data_sub_sub/$source.json | wc -l)
+
+    if [[ $num_lines -gt ${LARGEST_TRAINSIZE} ]]; then
+        train_slice_size=$TRAIN_SLICE_LARGE
+    elif [[ $num_lines -gt ${LARGE_TRAINSIZE} ]]; then
+        train_slice_size=$TRAIN_SLICE_LARGE
+    elif [[ $num_lines -gt ${MEDIUM_TRAINSIZE} ]]; then
+        train_slice_size=$TRAIN_SLICE_LARGE
+    elif [[ $num_lines -gt ${SMALL_TRAINSIZE} ]]; then
+        train_slice_size=$TRAIN_SLICE_MEDIUM
+    elif [[ $num_lines -gt ${SMALLEST_TRAINSIZE} ]]; then
+        train_slice_size=$TRAIN_SLICE_SMALL
+    else
+        echo "Warning: training data size appears too small"
+        train_slice_size=$TRAIN_SLICE_VERY_SMALL
+    fi
+
+    echo "train_slice_size=$train_slice_size"
+
+    for slice_corpus in $CORPORA_EXCEPT_TRAIN; do
+
+        # do not modify original download
+
+        cp $data_sub_sub/$source.json $data_sub_sub/train.json
+
+        if [[ ! -f $data_sub_sub/train.shuffled.json ]]; then
+
+            python $scripts/preprocessing/shuffle_with_seed.py \
+                --seed $seed --input $data_sub_sub/train.json \
+                > $data_sub_sub/train.shuffled.json
+        fi
+
+        head -n $train_slice_size $data_sub_sub/train.shuffled.json > $data_sub_sub/$slice_corpus.json
+        head -n $train_slice_size $data_sub_sub/train.shuffled.json > $data_sub_sub/$slice_corpus.json
+
+        # remove first $train_slice_size pairs from the training data
+
+        sed -i -e 1,${train_slice_size}d $data_sub_sub/train.shuffled.json
+
+    done
+done
+
 echo "Sizes of files:"
 
-wc -l $data_sub_sub/*
+wc -l $data_sub/*

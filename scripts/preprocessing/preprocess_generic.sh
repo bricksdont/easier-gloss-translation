@@ -54,10 +54,6 @@ MEDIUM_TRAINSIZE=500000
 LARGE_TRAINSIZE=1000000
 LARGEST_TRAINSIZE=10000000
 
-TRAIN_SLICE_SMALL=1000
-TRAIN_SLICE_MEDIUM=2500
-TRAIN_SLICE_LARGE=5000
-
 SENTENCEPIECE_MAX_LINES=10000000
 
 CORPORA_EXCEPT_TRAIN="dev test"
@@ -91,70 +87,6 @@ for pair in "${language_pairs[@]}"; do
 
     cat $data_sub/$corpus.$src >> $data_sub/train.src
     cat $data_sub/$corpus.$trg >> $data_sub/train.trg
-done
-
-# set aside held-out slices of the training data (size of slice depending on total size)
-# for testing and development
-
-# determine $train_slice_size
-
-num_lines=$(cat $data_sub/train.src | wc -l)
-
-if [[ $num_lines -gt ${LARGEST_TRAINSIZE} ]]; then
-    train_slice_size=$TRAIN_SLICE_LARGE
-elif [[ $num_lines -gt ${LARGE_TRAINSIZE} ]]; then
-    train_slice_size=$TRAIN_SLICE_LARGE
-elif [[ $num_lines -gt ${MEDIUM_TRAINSIZE} ]]; then
-    train_slice_size=$TRAIN_SLICE_LARGE
-elif [[ $num_lines -gt ${SMALL_TRAINSIZE} ]]; then
-    train_slice_size=$TRAIN_SLICE_MEDIUM
-elif [[ $num_lines -gt ${SMALLEST_TRAINSIZE} ]]; then
-    train_slice_size=$TRAIN_SLICE_SMALL
-else
-    echo "Warning: training data size too small"
-    exit 1
-fi
-
-echo "train_slice_size=$train_slice_size"
-
-for slice_corpus in $CORPORA_EXCEPT_TRAIN; do
-
-    if [[ ! -f $data_sub/train.shuffled.both ]]; then
-
-        paste $data_sub/train.src $data_sub/train.trg > $data_sub/train.both
-
-        python $scripts/preprocessing/shuffle_with_seed.py \
-            --seed $seed --input $data_sub/train.both \
-            > $data_sub/train.shuffled.both
-    fi
-
-    head -n $train_slice_size $data_sub/train.shuffled.both | cut -f1 > $data_sub/$slice_corpus.src
-    head -n $train_slice_size $data_sub/train.shuffled.both | cut -f2 > $data_sub/$slice_corpus.trg
-
-    # remove first $train_slice_size pairs from the training data
-
-    sed -i -e 1,${train_slice_size}d $data_sub/train.shuffled.both
-
-done
-
-# restore per-language files
-
-cut -f1 $data_sub/train.shuffled.both > $data_sub/train.src
-cut -f2 $data_sub/train.shuffled.both > $data_sub/train.trg
-
-rm $data_sub/train.both $data_sub/train.shuffled.both
-
-# truncate dev and/or test data to $DEVTEST_MAXSIZE if too large
-
-for corpus in $CORPORA_EXCEPT_TRAIN; do
-    num_lines_src=$(cat $data_sub/$corpus.src | wc -l)
-
-    if [[ $num_lines_src -gt $DEVTEST_MAXSIZE ]]; then
-        for lang in src trg; do
-            mv $data_sub/$corpus.$lang $data_sub/$corpus.$lang.big
-            head -n $DEVTEST_MAXSIZE $data_sub/$corpus.$lang.big > $data_sub/$corpus.$lang
-        done
-    fi
 done
 
 # truncate all data if dry run
@@ -234,8 +166,8 @@ elif [[ $num_lines -gt ${SMALL_TRAINSIZE} ]]; then
 elif [[ $num_lines -gt ${SMALLEST_TRAINSIZE} ]]; then
     sentencepiece_vocab_size=1000
 else
-    echo "Warning: training data size too small"
-    exit 1
+    echo "Warning: training data size appears too small"
+    sentencepiece_vocab_size=1000
 fi
 
 echo "sentencepiece_vocab_size=$sentencepiece_vocab_size"
@@ -245,21 +177,11 @@ echo "sentencepiece_vocab_size=$sentencepiece_vocab_size"
 for lang in src trg; do
     if [[ ! -f $shared_models_sub/$lang.sentencepiece.model ]]; then
 
-      # determine character coverage
-
-      num_characters=$(head -n 1000000 $data_sub/train.normalized.$lang | python $scripts/preprocessing/num_chars.py | wc -l)
-
-      if [[ $num_characters -gt 1000 ]]; then
-          character_coverage=0.9995
-      else
-          character_coverage=1.0
-      fi
-
       python $scripts/preprocessing/train_sentencepiece.py \
         --model-prefix $shared_models_sub/$lang.sentencepiece \
         --input $data_sub/train.normalized.$lang \
         --vocab-size $sentencepiece_vocab_size \
-        --character-coverage $character_coverage \
+        --character-coverage 1.0 \
         --input-sentence-size=$SENTENCEPIECE_MAX_LINES
 
     else
