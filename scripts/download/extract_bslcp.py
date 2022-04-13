@@ -72,6 +72,9 @@ def remove_signbank_comment(gloss: str) -> str:
         # no sign to add
         elif gloss == "ADD-TO-SIGNBANK":
             gloss_after = ""
+        # forgot space
+        elif gloss == "ADD-TO-SIGNBANKMENINGITISb(FALSE-START)":
+            gloss_after = "MENINGITISb(FALSE-START)"
         # forgot closing parenthesis
         elif gloss == "ADD-TO-SIGNBANK(GROUP02":
             gloss_after = "GROUP02"
