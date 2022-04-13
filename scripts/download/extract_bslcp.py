@@ -71,6 +71,8 @@ def remove_signbank_comment(gloss: str) -> str:
             gloss_after = "BEEN"
         elif gloss == "ADD-TO-SIGNBANK":
             gloss_after = ""
+        elif gloss == "SN:DOROTHY-MILES(ADD-TO-SIGNBANK^FS:M-MILES)":
+            gloss_after = "SN:DOROTHY-MILES(FS:M-MILES)"
         else:
             print(gloss)
             relevant_parts = re.search(r"(.*)ADD-TO-SIGNBANK\((.+?)\)(.*)", gloss).groups()
