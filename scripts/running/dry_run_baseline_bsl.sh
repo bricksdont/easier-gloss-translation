@@ -50,7 +50,7 @@ for sub_folder in $sub_folders; do
 done
 
 if [[ $repeat_download_step == "true" ]]; then
-  echo "$base/data/download"
+  echo "$base/data/download/bslcp"
 fi
 
 read -p "Delete? (y/n) " -n 1 -r
@@ -61,7 +61,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     done
 
     if [[ $repeat_download_step == "true" ]]; then
-      rm -rf "$base/data/download"
+      rm -rf "$base/data/download/bslcp"
     fi
 fi
 
