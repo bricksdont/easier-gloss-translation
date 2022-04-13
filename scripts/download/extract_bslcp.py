@@ -1,6 +1,6 @@
 #! /usr/bin/python3
 
-import os
+import json
 import logging
 import argparse
 
@@ -21,7 +21,7 @@ def parse_args():
     parser.add_argument("--tfds-data-dir", type=str, help="Path to where a tfds data set should be saved.")
     parser.add_argument("--bslcp-username", type=str, help="Username for BSl corpus.")
     parser.add_argument("--bslcp-password", type=str, help="Password for BSl corpus.")
-    parser.add_argument("--output-folder", type=str, help="Path of folder to write extracted sentences.")
+    parser.add_argument("--output-file", type=str, help="Path to file to write extracted sentences.")
 
     args = parser.parse_args()
 
@@ -47,27 +47,24 @@ def load(data_dir: str, bslcp_username: str, bslcp_password: str) -> tf.data.Dat
     return bslcp
 
 
-def load_and_extract(data_dir: str, bslcp_username: str, bslcp_password: str, output_folder: str):
+def load_and_extract(data_dir: str, bslcp_username: str, bslcp_password: str, outfile_path: str):
     """
 
     :param data_dir:
     :param bslcp_username:
     :param bslcp_password:
-    :param output_folder:
+    :param outfile_path:
     :return:
     """
 
     dataset = load(data_dir=data_dir, bslcp_username=bslcp_username, bslcp_password=bslcp_password)
 
-    outfile_path_en = os.path.join(output_folder, "bslcp.en")
-    outfile_path_bsl = os.path.join(output_folder, "bslcp.bsl")
-
-    outfile_handle_en = open(outfile_path_en, "w")
-    outfile_handle_bsl = open(outfile_path_bsl, "w")
+    outfile_handle = open(outfile_path, "w")
 
     num_lines_seen = 0
 
     for datum in dataset:
+        _id = datum["id"].numpy().decode('utf-8')
 
         elan_paths = datum["paths"]["eaf"]
         elan_paths = [e.numpy().decode('utf-8') for e in elan_paths]
@@ -94,8 +91,11 @@ def load_and_extract(data_dir: str, bslcp_username: str, bslcp_password: str, ou
 
                 sentence_bsl = " ".join(glosses)
 
-                outfile_handle_en.write(sentence_en + "\n")
-                outfile_handle_bsl.write(sentence_bsl + "\n")
+                output_data = {"sentence_bsl": sentence_bsl,
+                               "sentence_en": sentence_en,
+                               "id": _id}
+
+                outfile_handle.write(json.dumps(output_data) + "\n")
 
                 num_lines_seen += 1
 
@@ -112,7 +112,7 @@ def main():
     load_and_extract(data_dir=args.tfds_data_dir,
                      bslcp_username=args.bslcp_username,
                      bslcp_password=args.bslcp_password,
-                     output_folder=args.output_folder)
+                     outfile_path=args.output_file)
 
 
 if __name__ == '__main__':

@@ -55,7 +55,7 @@ for source in $training_corpora; do
         # download and extract data from BSL corpus
 
         python $scripts/download/extract_bslcp.py \
-            --output-folder $data_sub_sub \
+            --output-file $data_sub_sub/bslcp.json \
             --tfds-data-dir $data/tfds \
             --bslcp-username $bslcp_username \
             --bslcp-password $bslcp_password

@@ -79,7 +79,7 @@ def parse_mbr_beam(parts: List[str]):
     :return:
     """
     corpus, decoding_method, utility_function, sample_origin, length_penalty_alpha_a, length_penalty_alpha_b, \
-    num_samples, metric = parts
+        num_samples, metric = parts
 
     length_penalty_alpha = ".".join([length_penalty_alpha_a, length_penalty_alpha_b])
 
@@ -128,7 +128,6 @@ def parse_filename(filename: str):
 
 
 def read_bleu(filename: str) -> str:
-
     with open(filename, "r") as infile:
         line = infile.readline().strip()
 
@@ -159,7 +158,6 @@ def read_chrf(filename: str) -> str:
 
 
 def read_meteor(filename: str) -> str:
-
     with open(filename, "r") as infile:
         line = infile.readline().strip()
 
@@ -170,10 +168,9 @@ def read_meteor(filename: str) -> str:
 
 
 def read_subnum_average(filename: str):
-
     with open(filename, "r") as infile:
         lines = infile.readlines()
-        lines = [l.strip() for l in lines]
+        lines = [line.strip() for line in lines]
 
     parts = lines[-1].split("\t")
 
@@ -185,7 +182,6 @@ def read_subnum_average(filename: str):
 
 
 def read_metric_values(metric, filepath):
-
     if metric == "bleu":
         metric_names = ["BLEU"]
         metric_values = [read_bleu(filepath)]
@@ -222,7 +218,6 @@ class Result(object):
                  seed,
                  metric_names,
                  metric_values):
-
         self.langpair = langpair
         self.model_name = model_name
         self.corpus = corpus
@@ -239,7 +234,6 @@ class Result(object):
     def update_metrics(self,
                        metric_names,
                        metric_values):
-
         for name, value in zip(metric_names, metric_values):
             self.update_metric(name, value)
 
@@ -262,7 +256,6 @@ class Result(object):
                                         metric_dict])
 
     def signature(self) -> str:
-
         return "+".join([self.langpair,
                          self.model_name,
                          self.corpus,
@@ -324,7 +317,6 @@ def get_model_names() -> List[str]:
 
 
 def main():
-
     args = parse_args()
 
     logging.basicConfig(level=logging.DEBUG)
@@ -352,9 +344,8 @@ def main():
 
                 for _, _, files in os.walk(path_model):
                     for file in files:
-
                         corpus, decoding_method, sample_origin, num_samples, seed, \
-                        length_penalty_alpha, utility_function, metric = parse_filename(file)
+                            length_penalty_alpha, utility_function, metric = parse_filename(file)
 
                         filepath = os.path.join(path_model, file)
 
