@@ -10,6 +10,7 @@
 # $multilingual
 # $language_pairs
 # $spm_strategy
+# $lowercase_glosses
 
 base=$1
 src=$2
@@ -20,6 +21,7 @@ seed=$6
 multilingual=$7
 language_pairs=$8
 spm_strategy=$9
+lowercase_glosses=${10}
 
 data=$base/data
 venvs=$base/venvs
@@ -47,8 +49,6 @@ TOKENIZER=$MOSES/tokenizer
 
 DRY_RUN_TRAIN_SIZE=14000
 DRY_RUN_DEVTEST_SIZE=2
-
-DEVTEST_MAXSIZE=5000
 
 SMALLEST_TRAINSIZE=10000
 SMALL_TRAINSIZE=100000
@@ -95,6 +95,18 @@ for pair in "${language_pairs[@]}"; do
                 --input-file $download_sub/$corpus.json \
                 --output-file $data_sub/$source.$corpus.$lang \
                 --key $lang
+
+            # maybe lowercase, but only glosses
+
+            if [[ $lowercase_glosses == "true" ]]; then
+                # list all possible lang suffixes for glosses
+
+                if [[ $lang == "dgs_de" || $lang == "dgs_en"  || $lang == "pan" || $lang == "bsl" ]]; then
+                    mv $data_sub/$source.$corpus.$lang $data_sub/$source.$corpus.uppercase.$lang
+                    cat $data_sub/$source.$corpus.uppercase.$lang | \
+                        python $scripts/preprocessing/lowercase.py > $data_sub/$source.$corpus.$lang
+                fi
+            fi
         done
     done
 done
