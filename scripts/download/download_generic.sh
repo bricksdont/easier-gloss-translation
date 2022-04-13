@@ -111,21 +111,19 @@ for source in $training_corpora; do
 
         # do not modify original download
 
-        cp $data_sub_sub/$source.json $data_sub_sub/train.json
-
         if [[ ! -f $data_sub_sub/train.shuffled.json ]]; then
 
             python $scripts/preprocessing/shuffle_with_seed.py \
-                --seed $seed --input $data_sub_sub/train.json \
-                > $data_sub_sub/train.shuffled.json
+                --seed $seed --input $data_sub_sub/$source.json \
+                > $data_sub_sub/train.json
         fi
 
-        head -n $train_slice_size $data_sub_sub/train.shuffled.json > $data_sub_sub/$slice_corpus.json
-        head -n $train_slice_size $data_sub_sub/train.shuffled.json > $data_sub_sub/$slice_corpus.json
+        head -n $train_slice_size $data_sub_sub/train.json > $data_sub_sub/$slice_corpus.json
+        head -n $train_slice_size $data_sub_sub/train.json > $data_sub_sub/$slice_corpus.json
 
         # remove first $train_slice_size pairs from the training data
 
-        sed -i -e 1,${train_slice_size}d $data_sub_sub/train.shuffled.json
+        sed -i -e 1,${train_slice_size}d $data_sub_sub/train.json
 
     done
 done
