@@ -69,8 +69,13 @@ def remove_signbank_comment(gloss: str) -> str:
         # catch special cases
         if gloss == "BEEN/ADD-TO-SIGNBANK":
             gloss_after = "BEEN"
+        # no sign to add
         elif gloss == "ADD-TO-SIGNBANK":
             gloss_after = ""
+        # forgot closing parenthesis
+        elif gloss == "ADD-TO-SIGNBANK(GROUP02":
+            gloss_after = "GROUP02"
+        # forgot opening parenthesis
         elif gloss == "SN:DOROTHY-MILES(ADD-TO-SIGNBANK^FS:M-MILES)":
             gloss_after = "SN:DOROTHY-MILES(FS:M-MILES)"
         else:
