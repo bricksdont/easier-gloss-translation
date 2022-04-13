@@ -130,8 +130,6 @@ id_preprocess=$(
 
 echo "  id_preprocess: $id_preprocess | $logs_sub_sub/slurm-$id_preprocess.out" | tee -a $logs_sub_sub/MAIN
 
-exit 0
-
 # Sockeye prepare (depends on preprocess)
 
 id_prepare=$(
