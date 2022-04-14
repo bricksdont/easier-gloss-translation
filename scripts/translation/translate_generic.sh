@@ -7,6 +7,7 @@
 # $model_name
 # $dry_run
 # $testing_corpora
+# $multilingual
 
 base=$1
 src=$2
@@ -14,6 +15,7 @@ trg=$3
 model_name=$4
 dry_run=$5
 testing_corpora=$6
+multilingual=$7
 
 venvs=$base/venvs
 scripts=$base/scripts

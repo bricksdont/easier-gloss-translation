@@ -10,6 +10,7 @@
 # $dry_run
 # $beam_size
 # $batch_size
+# $multilingual
 
 if [[ $dry_run == "true" ]]; then
     # redefine params
@@ -52,8 +53,14 @@ for unused in pseudo_loop; do
             --device-id 0 \
             --batch-size $batch_size $dry_run_additional_args
 
-    # undo pieces
+    # undo tag and pieces
 
-    cat $output_pieces | sed 's/ //g;s/▁/ /g' > $output
+    if [[ $multilingual == "true" ]]; then
+        cat $output_pieces | \
+            python $scripts/translation/remove_tag_from_translations.py | \
+            sed 's/ //g;s/▁/ /g' > $output
+    else
+        cat $output_pieces | sed 's/ //g;s/▁/ /g' > $output
+    fi
 
 done

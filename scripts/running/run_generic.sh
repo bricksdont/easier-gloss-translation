@@ -174,7 +174,7 @@ id_translate=$(
     --dependency=afterany:$id_train \
     $SLURM_LOG_ARGS \
     $scripts/translation/translate_generic.sh \
-    $base $src $trg $model_name $dry_run "$testing_corpora"
+    $base $src $trg $model_name $dry_run "$testing_corpora" $multilingual
 )
 
 echo "  id_translate: $id_translate | $logs_sub_sub/slurm-$id_translate.out"  | tee -a $logs_sub_sub/MAIN
