@@ -6,15 +6,16 @@
 # $model_name
 #
 # optional:
-# $dry_run
+# $dry_run (values: "true" or "false")
 # $training_corpora
 # $testing_corpora
 # $bslcp_username
 # $bslcp_password
 # $seed
-# $multilingual
-# $spm_strategy
-# $lowercase_glosses
+# $multilingual (values: "true" or "false")
+# $spm_strategy (values: "joint", "separate", "spoken-only")
+# $lowercase_glosses (values: "true" or "false")
+# $generalize_dgs_glosses (values: "true" or "false")
 
 module load volta nvidia/cuda10.2-cudnn7.6.5 anaconda3
 
@@ -80,6 +81,9 @@ fi
 if [ -z "$lowercase_glosses" ]; then
     lowercase_glosses="false"
 fi
+if [ -z "$generalize_dgs_glosses" ]; then
+    generalize_dgs_glosses="false"
+fi
 
 # SLURM job args
 
@@ -130,7 +134,8 @@ id_preprocess=$(
     --dependency=afterok:$id_download \
     $SLURM_LOG_ARGS \
     $scripts/preprocessing/preprocess_generic.sh \
-    $base $src $trg $model_name $dry_run $seed $multilingual "$language_pairs" $spm_strategy $lowercase_glosses
+    $base $src $trg $model_name $dry_run $seed $multilingual "$language_pairs" \
+    $spm_strategy $lowercase_glosses "$training_corpora" $generalize_dgs_glosses
 )
 
 echo "  id_preprocess: $id_preprocess | $logs_sub_sub/slurm-$id_preprocess.out" | tee -a $logs_sub_sub/MAIN
