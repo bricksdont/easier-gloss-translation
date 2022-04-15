@@ -25,7 +25,7 @@ for lowercase_gloss in $lowercase_glosses_options; do
     for generalize_dgs_glosses in $generalize_dgs_glosses_options; do
         for spm_strategy in $spm_strategy_options; do
 
-            model_name="lowercase_gloss.$lowercase_gloss+generalize_dgs_glosses.$generalize_dgs_glosses+spm_strategy.$spm_strategy"
+            model_name="lg.$lowercase_gloss+gdg.$generalize_dgs_glosses+ss.$spm_strategy"
 
             . $scripts/running/run_generic.sh
 
@@ -43,7 +43,7 @@ for lowercase_gloss in $lowercase_glosses_options; do
     for generalize_dgs_glosses in $generalize_dgs_glosses_options; do
         for spm_strategy in $spm_strategy_options; do
 
-            model_name="lowercase_gloss.$lowercase_gloss+generalize_dgs_glosses.$generalize_dgs_glosses+spm_strategy.$spm_strategy"
+            model_name="lg.$lowercase_gloss+gdg.$generalize_dgs_glosses+ss.$spm_strategy"
 
             . $scripts/running/run_generic.sh
 
@@ -64,7 +64,7 @@ language_pairs=(
 for lowercase_gloss in $lowercase_glosses_options; do
     for spm_strategy in $spm_strategy_options; do
 
-        model_name="lowercase_gloss.$lowercase_gloss+spm_strategy.$spm_strategy"
+        model_name="lg.$lowercase_gloss+ss.$spm_strategy"
 
         . $scripts/running/run_generic.sh
 
@@ -80,7 +80,7 @@ language_pairs=(
 for lowercase_gloss in $lowercase_glosses_options; do
     for spm_strategy in $spm_strategy_options; do
 
-        model_name="lowercase_gloss.$lowercase_gloss+spm_strategy.$spm_strategy"
+        model_name="lg.$lowercase_gloss+ss.$spm_strategy"
 
         . $scripts/running/run_generic.sh
 
