@@ -135,7 +135,7 @@ for pair in "${language_pairs[@]}"; do
         # prenormalization for all corpora
 
         for corpus in $ALL_CORPORA; do
-            cat $data_sub/$source.$corpus.$lang | \
+            cat $data_sub/$source.$corpus.preprocessed.$lang | \
             perl -CS -pe 'tr[\x{9}\x{A}\x{D}\x{20}-\x{D7FF}\x{E000}-\x{FFFD}\x{10000}-\x{10FFFF}][]cd;' | \
             perl -CS -pe 's/\&\s*\#\s*160\s*\;/ /g' \
             > $data_sub/$source.$corpus.prenorm.$lang
