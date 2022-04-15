@@ -44,9 +44,14 @@ shared_models_sub=$shared_models_sub/$model_name
 
 mkdir -p $shared_models_sub
 
+echo "Python before activating:"
+which python
+
+echo "Executing: source activate $venvs/sockeye3"
+
 source activate $venvs/sockeye3
 
-echo "Python:"
+echo "Python after activating:"
 which python
 
 MOSES=$base/tools/moses-scripts/scripts
