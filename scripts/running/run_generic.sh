@@ -112,6 +112,9 @@ echo "TRAINING CORPORA: $training_corpora" | tee -a $logs_sub_sub/MAIN
 echo "TESTING CORPORA: $testing_corpora" | tee -a $logs_sub_sub/MAIN
 echo "SEED: $seed" | tee -a $logs_sub_sub/MAIN
 echo "MULTILINGUAL: $multilingual" | tee -a $logs_sub_sub/MAIN
+echo "SPM_STRATEGY: $spm_strategy" | tee -a $logs_sub_sub/MAIN
+echo "LOWERCASE_GLOSSES: $lowercase_glosses" | tee -a $logs_sub_sub/MAIN
+echo "GENERALIZE_DGS_GLOSSES: $generalize_dgs_glosses" | tee -a $logs_sub_sub/MAIN
 echo "DRY RUN: $dry_run" | tee -a $logs_sub_sub/MAIN
 
 # download corpora
@@ -139,6 +142,8 @@ id_preprocess=$(
 )
 
 echo "  id_preprocess: $id_preprocess | $logs_sub_sub/slurm-$id_preprocess.out" | tee -a $logs_sub_sub/MAIN
+
+exit 0
 
 # Sockeye prepare (depends on preprocess)
 
