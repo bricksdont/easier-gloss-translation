@@ -56,8 +56,13 @@ def generalize_pan_glosses(line: str) -> str:
         if gloss in [".", "?", "!"]:
             collapsed_gloss = gloss
         else:
-            collapsed_gloss_groups = re.search(r"([/$A-Z-ÖÄÜ]+[0-9]*)[A-Z]*", gloss).groups()
-            collapsed_gloss = "".join([g for g in collapsed_gloss_groups if g is not None])
+            try:
+                collapsed_gloss_groups = re.search(r"([/$A-Z-ÖÄÜ]+[0-9]*)[A-Z]*", gloss).groups()
+                collapsed_gloss = "".join([g for g in collapsed_gloss_groups if g is not None])
+            except AttributeError:
+                logging.error("Gloss could not be generalized: '%s'", gloss)
+                collapsed_gloss = gloss
+
         collapsed_glosses.append(collapsed_gloss)
 
     line = " ".join(collapsed_glosses)
@@ -94,8 +99,12 @@ def generalize_dgs_glosses(line: str) -> str:
     collapsed_glosses = []
 
     for gloss in glosses:
-        collapsed_gloss_groups = re.search(r"([$A-Z-ÖÄÜ]+[0-9]*)[A-Z]*", gloss).groups()
-        collapsed_gloss = "".join([g for g in collapsed_gloss_groups if g is not None])
+        try:
+            collapsed_gloss_groups = re.search(r"([$A-Z-ÖÄÜ]+[0-9]*)[A-Z]*", gloss).groups()
+            collapsed_gloss = "".join([g for g in collapsed_gloss_groups if g is not None])
+        except AttributeError:
+            logging.error("Gloss could not be generalized: '%s'", gloss)
+            collapsed_gloss = gloss
         collapsed_glosses.append(collapsed_gloss)
 
     line = " ".join(collapsed_glosses)
