@@ -65,8 +65,8 @@ for pair in "${language_pairs[@]}"; do
 
     for corpus in $testing_corpora; do
         input=$data_sub_sub/$source.$corpus.pieces.$src
-        output_pieces=$translations_sub_sub/$source.$corpus.pieces.$trg
-        output=$translations_sub_sub/$source.$corpus.$trg
+        output_pieces=$translations_sub_sub/$source.$corpus.pieces.$src-$trg.$trg
+        output=$translations_sub_sub/$source.$corpus.$src-$trg.$trg
 
         . $scripts/translation/translate_more_generic.sh
     done

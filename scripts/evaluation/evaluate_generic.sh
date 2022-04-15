@@ -60,7 +60,7 @@ for pair in "${language_pairs[@]}"; do
 
         ref=$data_sub_sub/$source.$corpus.$trg
 
-        hyp=$translations_sub_sub/$source.$corpus.$trg
+        hyp=$translations_sub_sub/$source.$corpus.$src-$trg.$trg
         output_prefix=$evaluations_sub_sub/$source.$corpus
 
         output=$output_prefix.bleu
