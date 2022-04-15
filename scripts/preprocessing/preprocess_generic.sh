@@ -47,6 +47,9 @@ mkdir -p $shared_models_sub
 echo "Python before activating:"
 which python
 
+echo "activate path:"
+which activate
+
 echo "Executing: source activate $venvs/sockeye3"
 
 source activate $venvs/sockeye3
