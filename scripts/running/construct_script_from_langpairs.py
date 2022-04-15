@@ -22,7 +22,7 @@ parts = input_string.split(" ")
 
 for source, src, trg in chunks(parts, n=3):
     print("    ", end="")
-    print("%s %s %s" % (source, src, trg))
+    print('"%s %s %s"' % (source, src, trg))
     pass
 
 print(")")
