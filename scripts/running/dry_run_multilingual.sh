@@ -26,6 +26,8 @@ model_name="dry_run"
 training_corpora="uhh bslcp"
 testing_corpora="test"
 
+multilingual="true"
+
 bslcp_username=$BSLCP_USERNAME
 bslcp_password=$BSLCP_PASSWORD
 
