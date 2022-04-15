@@ -55,7 +55,6 @@ DRY_RUN_TRAIN_SIZE=14000
 DRY_RUN_DEVTEST_SIZE=2
 
 SENTENCEPIECE_VOCAB_SIZE=1000
-SENTENCEPIECE_MAX_LINES=10000000
 
 CORPORA_EXCEPT_TRAIN="dev test"
 ALL_CORPORA="$CORPORA_EXCEPT_TRAIN train"
@@ -168,8 +167,6 @@ done
 
 # learn sentencepiece model(s) on train
 
-echo "SENTENCEPIECE_VOCAB_SIZE=$SENTENCEPIECE_VOCAB_SIZE"
-
 if [[ $spm_strategy == "joint" || $spm_strategy == "spoken-only" ]]; then
 
     # then train one spm model overall
@@ -193,12 +190,10 @@ if [[ $spm_strategy == "joint" || $spm_strategy == "spoken-only" ]]; then
         done
     fi
 
-    python $scripts/preprocessing/train_sentencepiece.py \
-              --model-prefix $shared_models_sub/sentencepiece \
-              --input $data_sub/train.normalized.all \
-              --vocab-size $SENTENCEPIECE_VOCAB_SIZE \
-              --character-coverage 1.0 \
-              --input-sentence-size=$SENTENCEPIECE_MAX_LINES
+    input=$data_sub/train.normalized.all
+    model_prefix=$shared_models_sub/sentencepiece
+
+    . $scripts/preprocessing_train_sentencepiece_generic.sh
 
 else
     # one spm model for spoken, one for gloss suffixes
@@ -222,12 +217,11 @@ else
 
     for suffix in spoken gloss; do
 
-        python $scripts/preprocessing/train_sentencepiece.py \
-          --model-prefix $shared_models_sub/$suffix.sentencepiece \
-          --input $data_sub/train.normalized.$suffix \
-          --vocab-size $SENTENCEPIECE_VOCAB_SIZE \
-          --character-coverage 1.0 \
-          --input-sentence-size=$SENTENCEPIECE_MAX_LINES
+        input=$data_sub/train.normalized.$suffix
+        model_prefix=$shared_models_sub/$suffix.sentencepiece
+
+        . $scripts/preprocessing_train_sentencepiece_generic.sh
+
     done
 fi
 
