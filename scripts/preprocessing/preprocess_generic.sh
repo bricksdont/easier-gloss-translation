@@ -46,6 +46,9 @@ mkdir -p $shared_models_sub
 
 source activate $venvs/sockeye3
 
+echo "Python:"
+which python
+
 MOSES=$base/tools/moses-scripts/scripts
 TOKENIZER=$MOSES/tokenizer
 
