@@ -17,7 +17,7 @@ language_pairs=(
 
 dry_run="true"
 
-repeat_download_step="true"
+repeat_download_step="false"
 
 # baseline
 

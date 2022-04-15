@@ -143,8 +143,6 @@ id_preprocess=$(
 
 echo "  id_preprocess: $id_preprocess | $logs_sub_sub/slurm-$id_preprocess.out" | tee -a $logs_sub_sub/MAIN
 
-exit 0
-
 # Sockeye prepare (depends on preprocess)
 
 id_prepare=$(
@@ -179,7 +177,7 @@ id_translate=$(
     --dependency=afterany:$id_train \
     $SLURM_LOG_ARGS \
     $scripts/translation/translate_generic.sh \
-    $base $src $trg $model_name $dry_run "$testing_corpora" $multilingual
+    $base $src $trg $model_name $dry_run "$testing_corpora" $multilingual "$language_pairs"
 )
 
 echo "  id_translate: $id_translate | $logs_sub_sub/slurm-$id_translate.out"  | tee -a $logs_sub_sub/MAIN
@@ -192,7 +190,7 @@ id_evaluate=$(
     --dependency=afterok:$id_translate \
     $SLURM_LOG_ARGS \
     $scripts/evaluation/evaluate_generic.sh \
-    $base $src $trg $model_name "$testing_corpora"
+    $base $src $trg $model_name "$testing_corpora" "$language_pairs"
 )
 
 echo "  id_evaluate: $id_evaluate | $logs_sub_sub/slurm-$id_evaluate.out"  | tee -a $logs_sub_sub/MAIN

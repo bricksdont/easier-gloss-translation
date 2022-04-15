@@ -6,12 +6,14 @@
 # $trg
 # $model_name
 # $testing_corpora
+# $language_pairs
 
 base=$1
 src=$2
 trg=$3
 model_name=$4
 testing_corpora=$5
+language_pairs=$6
 
 venvs=$base/venvs
 scripts=$base/scripts
@@ -44,19 +46,28 @@ mkdir -p $evaluations_sub_sub
 
 chrf_beta=2
 
-for corpus in $testing_corpora; do
+for pair in "${language_pairs[@]}"; do
 
-    ref=$data_sub_sub/$corpus.trg
+    pair=($pair)
 
-    hyp=$translations_sub_sub/$corpus.trg
-    output_prefix=$evaluations_sub_sub/$corpus
+    source=${pair[0]}
+    src=${pair[1]}
+    trg=${pair[2]}
 
-    output=$output_prefix.bleu
+    for corpus in $testing_corpora; do
 
-    . $scripts/evaluation/evaluate_bleu_more_generic.sh
+        ref=$data_sub_sub/$source.$corpus.$trg
 
-    output=$output_prefix.chrf
+        hyp=$translations_sub_sub/$source.$corpus.$trg
+        output_prefix=$evaluations_sub_sub/$source.$corpus
 
-    . $scripts/evaluation/evaluate_chrf_more_generic.sh
+        output=$output_prefix.bleu
 
+        . $scripts/evaluation/evaluate_bleu_more_generic.sh
+
+        output=$output_prefix.chrf
+
+        . $scripts/evaluation/evaluate_chrf_more_generic.sh
+
+    done
 done

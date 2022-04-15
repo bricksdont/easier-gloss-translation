@@ -53,14 +53,8 @@ for unused in pseudo_loop; do
             --device-id 0 \
             --batch-size $batch_size $dry_run_additional_args
 
-    # undo tag and pieces
+    # undo pieces
 
-    if [[ $multilingual == "true" ]]; then
-        cat $output_pieces | \
-            python $scripts/translation/remove_tag_from_translations.py | \
-            sed 's/ //g;s/▁/ /g' > $output
-    else
-        cat $output_pieces | sed 's/ //g;s/▁/ /g' > $output
-    fi
+    cat $output_pieces | sed 's/ //g;s/▁/ /g' > $output
 
 done

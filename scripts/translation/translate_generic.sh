@@ -8,6 +8,7 @@
 # $dry_run
 # $testing_corpora
 # $multilingual
+# $language_pairs
 
 base=$1
 src=$2
@@ -16,6 +17,7 @@ model_name=$4
 dry_run=$5
 testing_corpora=$6
 multilingual=$7
+language_pairs=$8
 
 venvs=$base/venvs
 scripts=$base/scripts
@@ -49,12 +51,21 @@ fi
 
 mkdir -p $translations_sub_sub
 
-# beam translation
+# beam translation for all language pairs
 
-for corpus in $testing_corpora; do
-    input=$data_sub_sub/$corpus.pieces.src
-    output_pieces=$translations_sub_sub/$corpus.pieces.trg
-    output=$translations_sub_sub/$corpus.trg
+for pair in "${language_pairs[@]}"; do
 
-    . $scripts/translation/translate_more_generic.sh
+    pair=($pair)
+
+    source=${pair[0]}
+    src=${pair[1]}
+    trg=${pair[2]}
+
+    for corpus in $testing_corpora; do
+        input=$data_sub_sub/$source.$corpus.pieces.$src
+        output_pieces=$translations_sub_sub/$source.$corpus.pieces.$trg
+        output=$translations_sub_sub/$source.$corpus.$trg
+
+        . $scripts/translation/translate_more_generic.sh
+    done
 done
