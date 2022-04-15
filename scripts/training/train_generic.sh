@@ -86,7 +86,6 @@ elif [[ $num_lines -gt ${SMALLEST_TRAINSIZE} ]]; then
     checkpoint_interval=1000
 else
     echo "Warning: training data size too small"
-    exit 0
 fi
 
 # check if training is finished
