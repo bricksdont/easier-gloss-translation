@@ -103,6 +103,18 @@ def generalize_dgs_glosses(line: str) -> str:
     return line
 
 
+def bool_from_string(bool_as_string: str) -> bool:
+    """
+
+    :param bool_as_string:
+    :return:
+    """
+    if bool_as_string == "true":
+        return True
+    else:
+        return False
+
+
 def main():
 
     args = parse_args()
@@ -110,8 +122,8 @@ def main():
     logging.basicConfig(level=logging.DEBUG)
     logging.debug(args)
 
-    args.lowercase_glosses = bool(args.lowercase_glosses)
-    args.generalize_dgs_glosses = bool(args.generalize_dgs_glosses)
+    args.lowercase_glosses = bool_from_string(args.lowercase_glosses)
+    args.generalize_dgs_glosses = bool_from_string(args.generalize_dgs_glosses)
 
     with open(args.input_file, "r") as handle_input, open(args.output_file, "w") as handle_output:
 
