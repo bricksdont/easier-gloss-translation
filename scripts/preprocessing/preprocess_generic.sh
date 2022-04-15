@@ -193,7 +193,7 @@ if [[ $spm_strategy == "joint" || $spm_strategy == "spoken-only" ]]; then
     input=$data_sub/train.normalized.all
     model_prefix=$shared_models_sub/sentencepiece
 
-    . $scripts/preprocessing_train_sentencepiece_generic.sh
+    . $scripts/preprocessing/train_sentencepiece_generic.sh
 
 else
     # one spm model for spoken, one for gloss suffixes
@@ -220,7 +220,7 @@ else
         input=$data_sub/train.normalized.$suffix
         model_prefix=$shared_models_sub/$suffix.sentencepiece
 
-        . $scripts/preprocessing_train_sentencepiece_generic.sh
+        . $scripts/preprocessing/train_sentencepiece_generic.sh
 
     done
 fi
