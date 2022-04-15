@@ -65,7 +65,12 @@ for pair in "${language_pairs[@]}"; do
     trg=${pair[2]}
 
     for corpus in $testing_corpora; do
-        input=$data_sub_sub/$source.$corpus.pieces.$src
+
+        if [[ $multilingual == "true" ]]; then
+            input=$data_sub_sub/$source.$corpus.tag.$src
+        else
+            input=$data_sub_sub/$source.$corpus.pieces.$src
+        fi
         output_pieces=$translations_sub_sub/$source.$corpus.pieces.$src-$trg.$trg
         output=$translations_sub_sub/$source.$corpus.$src-$trg.$trg
 
