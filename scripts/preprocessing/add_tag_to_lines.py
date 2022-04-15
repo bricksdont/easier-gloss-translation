@@ -26,7 +26,13 @@ def main():
 
     for line in sys.stdin:
 
-        tokens = line.strip().split(" ")
+        line = line.strip()
+
+        if line == "":
+            print("")
+            continue
+
+        tokens = line.split(" ")
 
         if tokens[0][0] == "<" and tokens[0][-1] == ">":
             logging.warning("First token of sentence already seems to be a special language tag: '%s'." % tokens[0])
