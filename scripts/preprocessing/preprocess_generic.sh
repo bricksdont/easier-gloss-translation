@@ -289,7 +289,7 @@ else
                 if [[ -f $data_sub/$source.$corpus.normalized.$suffix ]]; then
                     cat $data_sub/$source.$corpus.normalized.$suffix | \
                         python $scripts/preprocessing/apply_sentencepiece.py \
-                            --model $shared_models_sub/sentencepiece.model.spoken \
+                            --model $shared_models_sub/spoken.sentencepiece.model \
                                 > $data_sub/$source.$corpus.pieces.$suffix
                 fi
             done
@@ -299,7 +299,7 @@ else
                 if [[ -f $data_sub/$source.$corpus.normalized.$suffix ]]; then
                     cat $data_sub/$source.$corpus.normalized.$suffix | \
                         python $scripts/preprocessing/apply_sentencepiece.py \
-                            --model $shared_models_sub/sentencepiece.model.gloss \
+                            --model $shared_models_sub/gloss.sentencepiece.model \
                                 > $data_sub/$source.$corpus.pieces.$suffix
                 fi
             done
