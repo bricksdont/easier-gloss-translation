@@ -8,7 +8,7 @@
 # $dry_run
 # $seed
 # $multilingual
-# $language_pairs
+# $language_pairs (set by sourcing language_pairs_script)
 # $spm_strategy
 # $lowercase_glosses
 # $generalize_dgs_glosses
@@ -20,7 +20,7 @@ model_name=$4
 dry_run=$5
 seed=$6
 multilingual=$7
-language_pairs=$8
+language_pairs_script=$8
 spm_strategy=$9
 lowercase_glosses=${10}
 generalize_dgs_glosses=${11}
@@ -78,6 +78,8 @@ if [[ -f $data_sub/test.pieces.src ]]; then
 fi
 
 mkdir -p $data_sub
+
+source $language_pairs_script
 
 echo "language_pairs: "
 echo "${language_pairs[@]}"

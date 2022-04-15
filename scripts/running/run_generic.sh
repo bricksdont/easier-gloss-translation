@@ -101,6 +101,11 @@ if [[ $dry_run == "true" ]]; then
   SLURM_ARGS_VOLTA_TRANSLATE=$DRY_RUN_SLURM_ARGS
 fi
 
+# write langpairs array to executable file (workaround)
+
+echo "${language_pairs[@]}" | python $scripts/running/construct_script_from_langpairs.py \
+    > $logs_sub_sub/LANGPAIRS.sh
+
 # log key info
 
 echo "##############################################" | tee -a $logs_sub_sub/MAIN
@@ -137,7 +142,7 @@ id_preprocess=$(
     --dependency=afterok:$id_download \
     $SLURM_LOG_ARGS \
     $scripts/preprocessing/preprocess_generic.sh \
-    $base $src $trg $model_name $dry_run $seed $multilingual "$language_pairs" \
+    $base $src $trg $model_name $dry_run $seed $multilingual $logs_sub_sub/LANGPAIRS.sh \
     $spm_strategy $lowercase_glosses $generalize_dgs_glosses
 )
 
@@ -179,7 +184,7 @@ id_translate=$(
     --dependency=afterany:$id_train \
     $SLURM_LOG_ARGS \
     $scripts/translation/translate_generic.sh \
-    $base $src $trg $model_name $dry_run "$testing_corpora" $multilingual "$language_pairs"
+    $base $src $trg $model_name $dry_run "$testing_corpora" $multilingual $logs_sub_sub/LANGPAIRS.sh
 )
 
 echo "  id_translate: $id_translate | $logs_sub_sub/slurm-$id_translate.out"  | tee -a $logs_sub_sub/MAIN
@@ -192,7 +197,7 @@ id_evaluate=$(
     --dependency=afterok:$id_translate \
     $SLURM_LOG_ARGS \
     $scripts/evaluation/evaluate_generic.sh \
-    $base $src $trg $model_name "$testing_corpora" "$language_pairs"
+    $base $src $trg $model_name "$testing_corpora" $logs_sub_sub/LANGPAIRS.sh
 )
 
 echo "  id_evaluate: $id_evaluate | $logs_sub_sub/slurm-$id_evaluate.out"  | tee -a $logs_sub_sub/MAIN
