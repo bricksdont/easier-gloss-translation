@@ -7,7 +7,7 @@ lowercase_glosses_options="true false"
 generalize_dgs_glosses_options="true false"
 spm_strategy_options="joint separate spoken-only"
 
-dry_run="true"
+dry_run="false"
 
 ## UHH
 
