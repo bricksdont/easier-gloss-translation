@@ -22,6 +22,7 @@ SECONDS=0
 
 venvs=$base/venvs
 
+eval "$(conda shell.bash hook)"
 source activate $venvs/sockeye3
 
 data=$base/data

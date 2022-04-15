@@ -22,6 +22,7 @@ language_pairs_script=$8
 venvs=$base/venvs
 scripts=$base/scripts
 
+eval "$(conda shell.bash hook)"
 source activate $venvs/sockeye3
 
 beam_size="5"

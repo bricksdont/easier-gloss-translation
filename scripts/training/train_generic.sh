@@ -34,6 +34,7 @@ models_sub_sub=$models_sub/$model_name
 
 mkdir -p $models_sub_sub
 
+eval "$(conda shell.bash hook)"
 source activate $venvs/sockeye3
 
 # parameters are the same for all Transformer models

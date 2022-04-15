@@ -18,6 +18,7 @@ language_pairs_script=$6
 venvs=$base/venvs
 scripts=$base/scripts
 
+eval "$(conda shell.bash hook)"
 source activate $venvs/sockeye3
 
 data=$base/data

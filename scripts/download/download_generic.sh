@@ -25,6 +25,7 @@ venvs=$base/venvs
 
 mkdir -p $data
 
+eval "$(conda shell.bash hook)"
 source activate $venvs/sockeye3
 
 SMALLEST_TRAINSIZE=10000
