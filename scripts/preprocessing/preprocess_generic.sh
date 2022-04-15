@@ -50,11 +50,11 @@ which python
 echo "activate path:"
 which activate
 
+eval "$(conda shell.bash hook)"
+
 echo "Executing: source activate $venvs/sockeye3"
 
 source activate $venvs/sockeye3
-
-alias python="/net/cephfs/shares/volk.cl.uzh/mathmu/easier-gloss-translation/venvs/sockeye3/bin/python"
 
 echo "Python after activating:"
 which python
