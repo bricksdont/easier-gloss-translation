@@ -143,14 +143,15 @@ def main():
                 handle_output.write(line + "\n")
             else:
                 # preprocess glosses
-                if args.lowercase_glosses:
-                    line = line.lower()
 
                 if args.generalize_dgs_glosses and args.lang in DGS_GLOSS_SUFFIXES:
                     line = generalize_dgs_glosses(line)
 
                 if args.generalize_dgs_glosses and args.lang == "pan":
                     line = generalize_pan_glosses(line)
+
+                if args.lowercase_glosses:
+                    line = line.lower()
 
                 handle_output.write(line + "\n")
 
