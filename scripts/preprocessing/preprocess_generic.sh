@@ -91,6 +91,8 @@ for pair in "${language_pairs[@]}"; do
     src=${pair[1]}
     trg=${pair[2]}
 
+      echo "Found (source, src, trg): ($source, $src, $trg)"
+
     download_sub=$data/download/$source
 
     for lang in $src $trg; do
