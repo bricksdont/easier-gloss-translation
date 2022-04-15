@@ -31,8 +31,12 @@ def main():
             data = json.loads(line)
 
             if args.key == "pan":
-                # then value is a dict
-                extracted_string = data[args.key]["pan"].strip()
+                # then value is a dict, if it exists at all
+                try:
+                    extracted_string = data[args.key]["pan"].strip()
+                except TypeError:
+                    # PAN glosses do not exist
+                    extracted_string = ""
             else:
                 extracted_string = data[args.key].strip()
             handle_output.write(extracted_string + "\n")
