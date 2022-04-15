@@ -11,7 +11,6 @@
 # $language_pairs
 # $spm_strategy
 # $lowercase_glosses
-# $training_corpora
 # $generalize_dgs_glosses
 
 base=$1
@@ -24,8 +23,7 @@ multilingual=$7
 language_pairs=$8
 spm_strategy=$9
 lowercase_glosses=${10}
-training_corpora=${11}
-generalize_dgs_glosses=${12}
+generalize_dgs_glosses=${11}
 
 data=$base/data
 venvs=$base/venvs
@@ -80,6 +78,9 @@ if [[ -f $data_sub/test.pieces.src ]]; then
 fi
 
 mkdir -p $data_sub
+
+echo "language_pairs: "
+echo "${language_pairs[@]}"
 
 for pair in "${language_pairs[@]}"; do
 

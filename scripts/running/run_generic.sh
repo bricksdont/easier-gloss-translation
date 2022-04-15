@@ -138,10 +138,12 @@ id_preprocess=$(
     $SLURM_LOG_ARGS \
     $scripts/preprocessing/preprocess_generic.sh \
     $base $src $trg $model_name $dry_run $seed $multilingual "$language_pairs" \
-    $spm_strategy $lowercase_glosses "$training_corpora" $generalize_dgs_glosses
+    $spm_strategy $lowercase_glosses $generalize_dgs_glosses
 )
 
 echo "  id_preprocess: $id_preprocess | $logs_sub_sub/slurm-$id_preprocess.out" | tee -a $logs_sub_sub/MAIN
+
+exit 0
 
 # Sockeye prepare (depends on preprocess)
 
