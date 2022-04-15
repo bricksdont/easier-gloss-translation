@@ -166,8 +166,6 @@ for pair in "${language_pairs[@]}"; do
 
 done
 
-exit 0
-
 # learn sentencepiece model(s) on train
 
 echo "SENTENCEPIECE_VOCAB_SIZE=$SENTENCEPIECE_VOCAB_SIZE"
