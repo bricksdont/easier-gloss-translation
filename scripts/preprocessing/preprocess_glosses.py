@@ -20,7 +20,7 @@ def parse_args():
 
     parser.add_argument("--lowercase-glosses", type=str, choices=["true", "false"],
                         help="Lowercase if inputs are glosses", required=True)
-    parser.add_argument("-generalize-dgs-glosses", type=str, choices=["true", "false"],
+    parser.add_argument("--generalize-dgs-glosses", type=str, choices=["true", "false"],
                         help="Generalize only if inputs are DGS glosses", required=True)
 
     args = parser.parse_args()
