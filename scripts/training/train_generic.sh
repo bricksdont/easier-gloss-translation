@@ -86,7 +86,12 @@ elif [[ $num_lines -gt ${SMALLEST_TRAINSIZE} ]]; then
     decode_and_evaluate=500
     checkpoint_interval=1000
 else
-    echo "Warning: training data size too small"
+    echo "Warning: training data size appeaars too small to train a model"
+    embed_dropout=0.5
+    transformer_dropout=0.5
+    batch_size=1024
+    decode_and_evaluate=500
+    checkpoint_interval=1000
 fi
 
 # check if training is finished
