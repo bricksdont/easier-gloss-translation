@@ -7,6 +7,8 @@
 # $model_name
 # $testing_corpora
 # $language_pairs (set by sourcing language_pairs_script)
+# $lowercase_glosses
+# $generalize_dgs_glosses
 
 base=$1
 src=$2
@@ -14,6 +16,8 @@ trg=$3
 model_name=$4
 testing_corpora=$5
 language_pairs_script=$6
+lowercase_glosses=$7
+generalize_dgs_glosses=$8
 
 venvs=$base/venvs
 scripts=$base/scripts
@@ -60,6 +64,15 @@ for pair in "${language_pairs[@]}"; do
     for corpus in $testing_corpora; do
 
         ref=$data_sub_sub/$source.$corpus.$trg
+
+        # use a preprocessed variant of the reference if the glosses were preprocessed
+        # in a way that cannot be reversed (generalize_dgs_glosses) or is trivial (lowercasing)
+
+        if [[ $trg == "dgs_de" || $trg == "dgs_en" || $trg == "pan" ]]; then
+            if [[ $lowercase_glosses == "true" || $generalize_dgs_glosses == "true" ]]; then
+                ref=$data_sub_sub/$source.$corpus.preprocessed.$trg
+            fi
+        fi
 
         hyp=$translations_sub_sub/$source.$corpus.$src-$trg.$trg
         output_prefix=$evaluations_sub_sub/$source.$corpus.$src-$trg

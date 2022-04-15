@@ -195,7 +195,7 @@ id_evaluate=$(
     --dependency=afterok:$id_translate \
     $SLURM_LOG_ARGS \
     $scripts/evaluation/evaluate_generic.sh \
-    $base $src $trg $model_name "$testing_corpora" $logs_sub_sub/LANGPAIRS.sh
+    $base $src $trg $model_name "$testing_corpora" $logs_sub_sub/LANGPAIRS.sh $lowercase_glosses $generalize_dgs_glosses
 )
 
 echo "  id_evaluate: $id_evaluate | $logs_sub_sub/slurm-$id_evaluate.out"  | tee -a $logs_sub_sub/MAIN
