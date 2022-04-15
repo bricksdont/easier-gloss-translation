@@ -8,6 +8,7 @@
 # $model_name
 # $dry_run
 # $seed
+# $spm_strategy
 
 base=$1
 src=$2
@@ -15,6 +16,7 @@ trg=$3
 model_name=$4
 dry_run=$5
 seed=$6
+spm_strategy=$7
 
 venvs=$base/venvs
 
@@ -112,6 +114,12 @@ else
     dry_run_additional_args=""
 fi
 
+if [[ $spm_strategy == "joint" ]]; then
+    weight_tying_arg="src_trg_softmax"
+else
+    weight_tying_arg="trg_softmax"
+fi
+
 ##################################################
 
 python -m sockeye.train \
@@ -136,7 +144,7 @@ python -m sockeye.train \
 --transformer-dropout-prepost $transformer_dropout \
 --transformer-positional-embedding-type fixed \
 --embed-dropout $embed_dropout:$embed_dropout \
---weight-tying-type src_trg_softmax \
+--weight-tying-type $weight_tying_arg \
 --num-embed $num_embed \
 --num-words 64000:64000 \
 --optimizer adam \
