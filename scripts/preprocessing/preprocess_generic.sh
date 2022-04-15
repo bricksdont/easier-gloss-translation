@@ -112,13 +112,16 @@ for pair in "${language_pairs[@]}"; do
 
         # truncate all files if this is a dry run
 
-        for corpus in $CORPORA_EXCEPT_TRAIN; do
-            mv $data_sub/$source.$corpus.$lang $data_sub/$source.$corpus.$lang.big
-            head -n $DRY_RUN_DEVTEST_SIZE $data_sub/$source.$corpus.$lang.big > $data_sub/$source.$corpus.$lang
-        done
+        if [[ $dry_run == "true" ]]; then
 
-        mv $data_sub/$source.train.$lang $data_sub/$source.train.$lang.big
-        head -n $DRY_RUN_TRAIN_SIZE $data_sub/$source.train.$lang.big > $data_sub/$source.train.$lang
+            for corpus in $CORPORA_EXCEPT_TRAIN; do
+                mv $data_sub/$source.$corpus.$lang $data_sub/$source.$corpus.$lang.big
+                head -n $DRY_RUN_DEVTEST_SIZE $data_sub/$source.$corpus.$lang.big > $data_sub/$source.$corpus.$lang
+            done
+
+            mv $data_sub/$source.train.$lang $data_sub/$source.train.$lang.big
+            head -n $DRY_RUN_TRAIN_SIZE $data_sub/$source.train.$lang.big > $data_sub/$source.train.$lang
+        fi
 
         # if lang is a gloss suffix, possibly lowercase or other preprocessing
         # if lang is spoken suffix, this step does nothing
@@ -200,7 +203,7 @@ if [[ $spm_strategy == "joint" || $spm_strategy == "spoken-only" ]]; then
 
     . $scripts/preprocessing/train_sentencepiece_generic.sh
 
-else
+elif [[ $spm_strategy == "separate" ]]; then
     # one spm model for spoken, one for gloss suffixes
 
     echo -n "" > $data_sub/train.normalized.spoken
@@ -228,6 +231,10 @@ else
         . $scripts/preprocessing/train_sentencepiece_generic.sh
 
     done
+else
+    echo "ERROR: Unknown sentencepiece strategy: $spm_strategy"
+    echo "Specify one of: 'joint', 'separate', 'spoken-only'"
+    exit 1
 fi
 
 # apply SP models to train, test and dev
