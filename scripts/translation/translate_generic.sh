@@ -8,7 +8,7 @@
 # $dry_run
 # $testing_corpora
 # $multilingual
-# $language_pairs
+# $language_pairs (set by sourcing language_pairs_script)
 
 base=$1
 src=$2
@@ -17,7 +17,7 @@ model_name=$4
 dry_run=$5
 testing_corpora=$6
 multilingual=$7
-language_pairs=$8
+language_pairs_script=$8
 
 venvs=$base/venvs
 scripts=$base/scripts
@@ -50,6 +50,8 @@ if [[ ! -e $models_sub_sub/params.best ]]; then
 fi
 
 mkdir -p $translations_sub_sub
+
+source $language_pairs_script
 
 # beam translation for all language pairs
 

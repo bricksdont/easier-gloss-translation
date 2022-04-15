@@ -6,14 +6,14 @@
 # $trg
 # $model_name
 # $testing_corpora
-# $language_pairs
+# $language_pairs (set by sourcing language_pairs_script)
 
 base=$1
 src=$2
 trg=$3
 model_name=$4
 testing_corpora=$5
-language_pairs=$6
+language_pairs_script=$6
 
 venvs=$base/venvs
 scripts=$base/scripts
@@ -41,6 +41,8 @@ evaluations_sub=$evaluations/${src}-${trg}
 evaluations_sub_sub=$evaluations_sub/$model_name
 
 mkdir -p $evaluations_sub_sub
+
+source $language_pairs_script
 
 # compute case-sensitive BLEU and CHRF on detokenized data
 

@@ -19,8 +19,13 @@ Try to create all files and run all scripts, but on CPU only and exit immediatel
 
     ./scripts/running/dry_run_baseline.sh
 
-## Run baseline
+## Run a bilingual baseline
 
 Train a baseline system for DGS -> DE:
 
     ./scripts/running/run_baseline.sh
+
+## Define a custom run
+
+- Set `multilingual` if MT system needs an indication of desired target language (i.e. if there are several target languages)
+- If data from both UHH and BSLCP is used, set `training_corpora="uhh bslcp`

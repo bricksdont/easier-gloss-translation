@@ -2,6 +2,7 @@
 
 import sys
 
+
 def chunks(lst, n):
     """
     Yield successive n-sized chunks from lst.

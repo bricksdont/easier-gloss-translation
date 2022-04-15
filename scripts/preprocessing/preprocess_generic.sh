@@ -261,6 +261,15 @@ elif [[ $spm_strategy == "spoken-only" ]]; then
                                 > $data_sub/$source.$corpus.pieces.$suffix
                 fi
             done
+
+            for suffix in $GLOSS_SUFFIXES; do
+
+                if [[ -f $data_sub/$source.$corpus.normalized.$suffix ]]; then
+                    # applying spm model is a no-op for gloss data in this case
+
+                    cp $data_sub/$source.$corpus.normalized.$suffix $data_sub/$source.$corpus.pieces.$suffix
+                fi
+            done
         done
     done
 
