@@ -5,6 +5,8 @@
 # $scripts
 # $input
 # $model_prefix
+# $spm_strategy
+# $multilingual
 
 SENTENCEPIECE_MAX_LINES=10000000
 
@@ -13,6 +15,12 @@ SMALL_TRAINSIZE=100000
 MEDIUM_TRAINSIZE=500000
 LARGE_TRAINSIZE=1000000
 LARGEST_TRAINSIZE=10000000
+
+if [[ $spm_strategy == "joint" && $multilingual == "false" ]]; then
+    SMALL_VOCAB_SIZE=2000
+else
+    SMALL_VOCAB_SIZE=4000
+fi
 
 # determine $sentencepiece_vocab_size
 
@@ -25,7 +33,7 @@ elif [[ $num_lines -gt ${LARGE_TRAINSIZE} ]]; then
 elif [[ $num_lines -gt ${MEDIUM_TRAINSIZE} ]]; then
     sentencepiece_vocab_size=12000
 elif [[ $num_lines -gt ${SMALL_TRAINSIZE} ]]; then
-    sentencepiece_vocab_size=4000
+    sentencepiece_vocab_size=$SMALL_VOCAB_SIZE
 elif [[ $num_lines -gt ${SMALLEST_TRAINSIZE} ]]; then
     sentencepiece_vocab_size=1000
 else
