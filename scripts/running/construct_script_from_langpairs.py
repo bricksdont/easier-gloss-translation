@@ -3,7 +3,7 @@
 import sys
 
 SOURCES = ["uhh", "bslcp"]
-LANGUAGES = ["de", "en", "bsl", "dgs_de", "dgs_en"]
+LANGUAGES = ["de", "en", "bsl", "dgs_de", "dgs_en", "pan"]
 
 
 def chunks(lst, n):
