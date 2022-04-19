@@ -336,10 +336,10 @@ done
 
 $MOSES/training/clean-corpus-n.perl -ignore-ratio $data_sub/train.pieces src trg $data_sub/train.clean 1 250
 
-# remove sentences from dev and test if source or target is empty
+# remove sentences from dev if source or target is empty
 # (otherwise leads to potential Sockeye error)
 
-for corpus in $CORPORA_EXCEPT_TRAIN; do
+for corpus in dev; do
     for lang in src trg; do
         mv $data_sub/$corpus.pieces.$lang $data_sub/$corpus.pieces.before_remove_empty.$lang
     done
