@@ -13,7 +13,8 @@ from typing import List, Tuple
 def parse_args():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--eval-folder", type=str, help="Path that should be searched for results.")
+    parser.add_argument("--eval-folder", type=str, help="Path that should be searched for results.",
+                        required=True)
 
     args = parser.parse_args()
 
