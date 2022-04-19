@@ -65,13 +65,20 @@ for pair in "${language_pairs[@]}"; do
 
         ref=$data_sub_sub/$source.$corpus.$trg
 
-        # use a preprocessed variant of the reference if the glosses were preprocessed
-        # in a way that cannot be reversed (generalize_dgs_glosses) or is trivial (lowercasing)
-
         if [[ $trg == "dgs_de" || $trg == "dgs_en" || $trg == "pan" || $trg == "bsl" ]]; then
+
+            # do not tokenize for evaluation
+
+            tokenize="false"
+
+            # use a preprocessed variant of the reference if the glosses were preprocessed
+            # in a way that cannot be reversed (generalize_dgs_glosses) or is trivial (lowercasing)
+
             if [[ $lowercase_glosses == "true" || $generalize_dgs_glosses == "true" ]]; then
                 ref=$data_sub_sub/$source.$corpus.preprocessed.$trg
             fi
+        else
+            tokenize="true"
         fi
 
         hyp=$translations_sub_sub/$source.$corpus.$src-$trg.$trg

@@ -5,6 +5,13 @@
 # $hyp
 # $ref
 # $output
+# $tokenize
+
+if [[ $tokenize == "true" ]]; then
+    tokenize_arg=""
+else
+    tokenize_arg="--tokenize none"
+fi
 
 for unused in pseudo_loop; do
 
@@ -12,7 +19,7 @@ for unused in pseudo_loop; do
       continue
     fi
 
-    cat $hyp | sacrebleu $ref -w 3 > $output
+    cat $hyp | sacrebleu $ref -w 3 $tokenize_arg > $output
 
     echo "$output"
     cat $output
