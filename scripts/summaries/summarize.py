@@ -265,7 +265,7 @@ def get_subdirectories(eval_folder: str) -> List[str]:
     for filename in os.listdir(eval_folder):
         filepath = os.path.join(eval_folder, filename)
         if os.path.isdir(filepath):
-            langpairs.append(filepath)
+            langpairs.append(filename)
 
     return langpairs
 
