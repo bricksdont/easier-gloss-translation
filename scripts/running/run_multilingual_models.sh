@@ -7,7 +7,7 @@ lowercase_glosses="false"
 generalize_dgs_glosses="false"
 spm_strategy="joint"
 
-dry_run="true"
+dry_run="false"
 
 testing_corpora="test"
 
