@@ -253,6 +253,23 @@ def reduce_results(results: List[Result]) -> List[Result]:
     return reduced_results
 
 
+def get_subdirectories(eval_folder: str) -> List[str]:
+    """
+
+    :param eval_folder:
+    :return:
+    """
+
+    langpairs = []
+
+    for filename in os.listdir(eval_folder):
+        filepath = os.path.join(eval_folder, filename)
+        if os.path.isdir(filepath):
+            langpairs.append(filepath)
+
+    return langpairs
+
+
 def main():
     args = parse_args()
 
@@ -261,7 +278,7 @@ def main():
 
     results = []
 
-    langpairs = [d for d in os.listdir(args.eval_folder) if os.path.isdir(d)]
+    langpairs = get_subdirectories(args.eval_folder)
 
     logging.debug("Language pairs:")
     logging.debug(langpairs)
@@ -270,7 +287,7 @@ def main():
 
         path_langpair = os.path.join(args.eval_folder, langpair)
 
-        model_names = [d for d in os.listdir(path_langpair) if os.path.isdir(d)]
+        model_names = get_subdirectories(path_langpair)
 
         if langpair_index == 0:
             logging.debug("Model names:")
