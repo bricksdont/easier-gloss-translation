@@ -138,6 +138,7 @@ def parse_model_name(model_name: str) -> Tuple[str, str, str]:
     pairs = model_name.split("+")
 
     for pair in pairs:
+        print(pair)
         key, value = pair.split(".")
 
         if key == "lg":
