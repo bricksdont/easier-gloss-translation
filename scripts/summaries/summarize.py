@@ -1,5 +1,6 @@
 #! /usr/bin/python3
 
+import sys
 import os
 import argparse
 import logging
@@ -38,96 +39,32 @@ def walklevel(some_dir, level=1):
             del dirs[:]
 
 
-def parse_beam_top(parts: List[str]):
-    """
-    Structure:  $corpus.beam.$length_penalty_alpha.top.$beam_size.$metric
-    Example:    dev.beam.1.0.top.5.bleu
-    :param parts:
-    :return:
-    """
-    corpus, sample_origin, length_penalty_alpha_a, length_penalty_alpha_b, decoding_method, num_samples, metric = parts
-
-    length_penalty_alpha = ".".join([length_penalty_alpha_a, length_penalty_alpha_b])
-
-    seed = "-"
-    utility_function = "-"
-
-    return corpus, decoding_method, sample_origin, num_samples, seed, length_penalty_alpha, utility_function, metric
-
-
-def parse_sample_top(parts: List[str]):
-    """
-    Structure:  $corpus.sample.top.$seed.$metric
-    Example:    test.sample.top.2.meteor
-    :param parts:
-    :return:
-    """
-    corpus, sample_origin, decoding_method, seed, metric = parts
-
-    num_samples = "1"
-    length_penalty_alpha = "-"
-    utility_function = "-"
-
-    return corpus, decoding_method, sample_origin, num_samples, seed, length_penalty_alpha, utility_function, metric
-
-
-def parse_mbr_beam(parts: List[str]):
-    """
-    Structure:  $corpus.mbr.$utility_function.beam.$length_penalty_alpha.$num_samples.$metric
-    Example:    dev.mbr.sentence-meteor.beam.1.0.10.meteor
-    :param parts:
-    :return:
-    """
-    corpus, decoding_method, utility_function, sample_origin, length_penalty_alpha_a, length_penalty_alpha_b, \
-        num_samples, metric = parts
-
-    length_penalty_alpha = ".".join([length_penalty_alpha_a, length_penalty_alpha_b])
-
-    seed = "-"
-
-    return corpus, decoding_method, sample_origin, num_samples, seed, length_penalty_alpha, utility_function, metric
-
-
-def parse_mbr_sample(parts: List[str]):
-    """
-    Structure:  $corpus.mbr.$utility_function.sample.$num_samples.$seed.$metric
-    Example:    dev.mbr.sentence-meteor.sample.15.2.meteor
-    :param parts:
-    :return:
-    """
-    corpus, decoding_method, utility_function, sample_origin, num_samples, seed, metric = parts
-
-    length_penalty_alpha = "-"
-
-    return corpus, decoding_method, sample_origin, num_samples, seed, length_penalty_alpha, utility_function, metric
-
-
 def parse_filename(filename: str):
     """
+    Structure:  $source.$corpus.$test_src-$test_trg.$metric
+    Example:    bslcp.test.bsl-en.bleu
+
     :param filename:
     :return:
     """
-    if filename.endswith("average"):
-        filename = filename.replace("subnum.average", "subnum")
-
     parts = filename.split(".")
 
-    if "top" in parts:
-        if "beam" in parts:
-            return parse_beam_top(parts)
-        else:
-            return parse_sample_top(parts)
-    elif "mbr" in parts:
-        if "beam" in parts:
-            return parse_mbr_beam(parts)
-        else:
-            return parse_mbr_sample(parts)
-
-    else:
+    if len(parts) != 4:
         logging.error("Cannot parse filename: '%s'" % filename)
+
+    source, corpus, langpair, metric = parts
+
+    test_src, test_trg = langpair.split("-")
+
+    return source, corpus, test_src, test_trg, metric
 
 
 def read_bleu(filename: str) -> str:
+    """
+
+    :param filename:
+    :return:
+    """
     with open(filename, "r") as infile:
         line = infile.readline().strip()
 
@@ -157,49 +94,21 @@ def read_chrf(filename: str) -> str:
     return parts[2]
 
 
-def read_meteor(filename: str) -> str:
-    with open(filename, "r") as infile:
-        line = infile.readline().strip()
+def read_metric_values(metric: str, filepath: str):
+    """
 
-    if line == "":
-        return "-"
-
-    return format(float(line), '.3f')
-
-
-def read_subnum_average(filename: str):
-    with open(filename, "r") as infile:
-        lines = infile.readlines()
-        lines = [line.strip() for line in lines]
-
-    parts = lines[-1].split("\t")
-
-    parts = [format(float(p), '.3f') for p in parts]
-
-    bleu, ter, meteor, ratio = parts
-
-    return bleu, ter, meteor, ratio
-
-
-def read_metric_values(metric, filepath):
+    :param metric:
+    :param filepath:
+    :return:
+    """
     if metric == "bleu":
         metric_names = ["BLEU"]
         metric_values = [read_bleu(filepath)]
-    elif "chrf" in metric:
-        metric_names = [metric.upper()]
+    elif metric == "chrf":
+        metric_names = ["CHRF"]
         metric_values = [read_chrf(filepath)]
-    elif metric == "chrf_balanced":
-        metric_names = ["CHRF_BALANCED"]
-        metric_values = [read_chrf(filepath)]
-    elif metric == "meteor":
-        metric_names = ["METEOR"]
-        metric_values = [read_meteor(filepath)]
-    elif metric == "meteor_balanced":
-        metric_names = ["METEOR_BALANCED"]
-        metric_values = [read_meteor(filepath)]
     else:
-        metric_names = ["SUBNUM_RANGE_BLEU", "SUBNUM_RANGE_TER", "SUBNUM_RANGE_METEOR", "SUBNUM_RANGE_RATIO"]
-        metric_values = read_subnum_average(filepath)
+        raise NotImplementedError
 
     return metric_names, metric_values
 
@@ -210,23 +119,23 @@ class Result(object):
                  langpair,
                  model_name,
                  corpus,
-                 decoding_method,
-                 sample_origin,
-                 utility_function,
-                 length_penalty_alpha,
-                 num_samples,
-                 seed,
+                 source,
+                 test_src,
+                 test_trg,
+                 lowercase_glosses,
+                 generalize_dgs_glosses,
+                 spm_strategy,
                  metric_names,
                  metric_values):
         self.langpair = langpair
         self.model_name = model_name
         self.corpus = corpus
-        self.decoding_method = decoding_method
-        self.sample_origin = sample_origin
-        self.utility_function = utility_function
-        self.length_penalty_alpha = length_penalty_alpha
-        self.num_samples = num_samples
-        self.seed = seed
+        self.source = source
+        self.test_src = test_src
+        self.test_trg = test_trg
+        self.lowercase_glosses = lowercase_glosses
+        self.generalize_dgs_glosses = generalize_dgs_glosses
+        self.spm_strategy = spm_strategy
         self.metric_dict = {}
 
         self.update_metrics(metric_names, metric_values)
@@ -247,24 +156,24 @@ class Result(object):
         return "Result(%s)" % "+".join([self.langpair,
                                         self.model_name,
                                         self.corpus,
-                                        self.decoding_method,
-                                        self.sample_origin,
-                                        self.utility_function,
-                                        self.length_penalty_alpha,
-                                        self.num_samples,
-                                        self.seed,
+                                        self.source,
+                                        self.test_src,
+                                        self.test_trg,
+                                        self.lowercase_glosses,
+                                        self.generalize_dgs_glosses,
+                                        self.spm_strategy,
                                         metric_dict])
 
     def signature(self) -> str:
         return "+".join([self.langpair,
                          self.model_name,
                          self.corpus,
-                         self.decoding_method,
-                         self.sample_origin,
-                         self.utility_function,
-                         self.length_penalty_alpha,
-                         self.num_samples,
-                         self.seed])
+                         self.source,
+                         self.test_src,
+                         self.test_trg,
+                         self.lowercase_glosses,
+                         self.generalize_dgs_glosses,
+                         self.spm_strategy])
 
 
 def collapse_metrics(results: List[Result]) -> Result:
@@ -329,6 +238,8 @@ def main():
         logging.debug("Language pairs:")
         logging.debug(langpairs)
 
+        sys.exit()
+
         for langpair_index, langpair in enumerate(langpairs):
 
             path_langpair = os.path.join(args.eval_folder, langpair)
@@ -370,9 +281,12 @@ def main():
     header_names = ["LANGPAIR",
                     "MODEL_NAME",
                     "CORPUS",
-                    "SEED",
-                    "BLEU",
-                    "CHRF"]
+                    "SOURCE",
+                    "TEST_SRC",
+                    "TEST_TRG",
+                    "LOWERCASE_GLOSSES",
+                    "GENERALIZE_DGS_GLOSSES",
+                    "SPM_STRATEGY"]
 
     metric_names = ["BLEU",
                     "CHRF"]
@@ -380,8 +294,8 @@ def main():
     print("\t".join(header_names))
 
     for r in results:
-        values = [r.langpair, r.model_name, r.corpus, r.decoding_method, r.sample_origin, r.utility_function,
-                  r.length_penalty_alpha, r.num_samples, r.seed]
+        values = [r.langpair, r.model_name, r.corpus, r.source, r.test_src, r.test_trg,
+                  r.lowercase_glosses, r.generalize_dgs_glosses, r.spm_strategy]
         metrics = [r.metric_dict.get(m, "-") for m in metric_names]
 
         print("\t".join(values + metrics))

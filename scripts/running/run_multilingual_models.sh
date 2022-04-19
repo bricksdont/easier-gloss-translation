@@ -3,10 +3,10 @@
 base=/net/cephfs/shares/volk.cl.uzh/mathmu/easier-gloss-translation
 scripts=$base/scripts
 
-# TODO: decide lg and gdg
+# TODO: decide lg
 
 lowercase_glosses="true false"
-generalize_dgs_glosses="true false"
+generalize_dgs_glosses="false"
 spm_strategy="joint"
 
 dry_run="true"
