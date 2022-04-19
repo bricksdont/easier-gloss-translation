@@ -3,9 +3,7 @@
 base=/net/cephfs/shares/volk.cl.uzh/mathmu/easier-gloss-translation
 scripts=$base/scripts
 
-# TODO: decide lg
-
-lowercase_glosses="true false"
+lowercase_glosses="false"
 generalize_dgs_glosses="false"
 spm_strategy="joint"
 
