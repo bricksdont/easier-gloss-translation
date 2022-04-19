@@ -79,8 +79,6 @@ model_name="lg.$lowercase_glosses+gdg.$generalize_dgs_glosses+ss.$spm_strategy"
 
 . $scripts/running/run_generic.sh
 
-exit 0
-
 
 ## BSLCP
 
