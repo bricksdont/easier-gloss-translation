@@ -11,6 +11,8 @@
 # $beam_size
 # $batch_size
 # $multilingual
+# $spm_strategy
+# $trg
 
 if [[ $dry_run == "true" ]]; then
     # redefine params
@@ -56,5 +58,13 @@ for unused in pseudo_loop; do
     # undo pieces
 
     cat $output_pieces | sed 's/ //g;s/▁/ /g' > $output
+
+    # except if target is glosses and the gloss side was never segmented
+
+    if [[ $trg == "dgs_de" || $trg == "dgs_en" || $trg == "pan" || $trg == "bsl" ]]; then
+        if [[ $spm_strategy == "spoken-only" ]]; then
+            cat $output_pieces | sed 's/ //g;s/▁/ /g' > $output
+        fi
+    fi
 
 done

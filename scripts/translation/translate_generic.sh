@@ -9,6 +9,7 @@
 # $testing_corpora
 # $multilingual
 # $language_pairs (set by sourcing language_pairs_script)
+# $spm_strategy
 
 base=$1
 src=$2
@@ -18,6 +19,7 @@ dry_run=$5
 testing_corpora=$6
 multilingual=$7
 language_pairs_script=$8
+spm_strategy=$9
 
 venvs=$base/venvs
 scripts=$base/scripts
