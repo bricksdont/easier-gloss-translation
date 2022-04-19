@@ -10,10 +10,7 @@ summaries=$base/summaries
 
 mkdir -p $summaries
 
-eval "$(conda shell.bash hook)"
-source activate $venvs/sockeye3
-
-python $scripts/summaries/summarize.py --eval-folder $evaluations > $summaries/summary.tsv
+python3 $scripts/summaries/summarize.py --eval-folder $evaluations > $summaries/summary.tsv
 
 # upload to home.ifi.uzh.ch
 

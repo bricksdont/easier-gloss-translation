@@ -119,7 +119,7 @@ def is_multilingual(langpair: str) -> bool:
     :param langpair:
     :return:
     """
-    return True
+    return "+" in langpair
 
 
 def parse_model_name(model_name: str) -> Tuple[str, str, str]:
