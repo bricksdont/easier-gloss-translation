@@ -334,7 +334,9 @@ def main():
                     "TEST_TRG",
                     "LOWERCASE_GLOSSES",
                     "GENERALIZE_DGS_GLOSSES",
-                    "SPM_STRATEGY"]
+                    "SPM_STRATEGY",
+                    "BLEU",
+                    "CHRF"]
 
     metric_names = ["BLEU",
                     "CHRF"]
