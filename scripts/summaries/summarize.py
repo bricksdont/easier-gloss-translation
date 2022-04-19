@@ -323,6 +323,7 @@ def main():
                                     metric_values)
 
                     results.append(result)
+                    print(result)
 
     results = reduce_results(results)
 
