@@ -169,21 +169,6 @@ for pair in "${language_pairs[@]}"; do
         done
     done
 
-    # remove sentences from dev and test if source or target is empty
-    # (otherwise leads to potential Sockeye error)
-
-    for corpus in $CORPORA_EXCEPT_TRAIN; do
-        for lang in $src $trg; do
-            mv $data_sub/$source.$corpus.normalized.$lang $data_sub/$source.$corpus.before_remove_empty.$lang
-        done
-
-        python $scripts/preprocessing/remove_if_source_or_target_empty.py \
-            --input-src $data_sub/$source.$corpus.before_remove_empty.$src \
-            --input-trg $data_sub/$source.$corpus.before_remove_empty.$trg \
-            --output-src $data_sub/$source.$corpus.normalized.$src \
-            --output-trg $data_sub/$source.$corpus.normalized.$trg
-    done
-
 done
 
 # learn sentencepiece model(s) on train
@@ -347,9 +332,24 @@ for corpus in $ALL_CORPORA; do
     done
 done
 
-# ratio etc filter
+# ratio etc filter for train
 
 $MOSES/training/clean-corpus-n.perl -ignore-ratio $data_sub/train.pieces src trg $data_sub/train.clean 1 250
+
+# remove sentences from dev and test if source or target is empty
+# (otherwise leads to potential Sockeye error)
+
+for corpus in $CORPORA_EXCEPT_TRAIN; do
+    for lang in src trg; do
+        mv $data_sub/$corpus.pieces.$lang $data_sub/$corpus.pieces.before_remove_empty.$lang
+    done
+
+    python $scripts/preprocessing/remove_if_source_or_target_empty.py \
+        --input-src $data_sub/$corpus.pieces.before_remove_empty.src \
+        --input-trg $data_sub/$corpus.pieces.before_remove_empty.trg \
+        --output-src $data_sub/$corpus.pieces.src \
+        --output-trg $data_sub/$corpus.pieces.trg
+done
 
 # sizes
 echo "Sizes of all files:"
