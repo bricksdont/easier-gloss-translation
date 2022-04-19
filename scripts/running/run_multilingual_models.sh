@@ -3,117 +3,98 @@
 base=/net/cephfs/shares/volk.cl.uzh/mathmu/easier-gloss-translation
 scripts=$base/scripts
 
-lowercase_glosses_options="true false"
-generalize_dgs_glosses_options="true false"
-spm_strategy_options="joint separate spoken-only"
+# TODO: decide lg and gdg
 
-dry_run="false"
+lowercase_glosses="true false"
+generalize_dgs_glosses="true false"
+spm_strategy="joint"
 
-## UHH
+dry_run="true"
+
+testing_corpora="test"
+
+multilingual="true"
+
+# all German and DGS directions from UHH
 
 training_corpora="uhh"
 
-# DGS -> German
-
-# Structure: [source corpus] [src] [trg]
-
 language_pairs=(
     "uhh dgs_de de"
-)
-
-for lowercase_glosses in $lowercase_glosses_options; do
-    for generalize_dgs_glosses in $generalize_dgs_glosses_options; do
-        for spm_strategy in $spm_strategy_options; do
-
-            model_name="lg.$lowercase_glosses+gdg.$generalize_dgs_glosses+ss.$spm_strategy"
-
-            . $scripts/running/run_generic.sh
-
-        done
-    done
-done
-
-# German -> DGS
-
-language_pairs=(
     "uhh de dgs_de"
 )
 
-for lowercase_glosses in $lowercase_glosses_options; do
-    for generalize_dgs_glosses in $generalize_dgs_glosses_options; do
-        for spm_strategy in $spm_strategy_options; do
-
-            model_name="lg.$lowercase_glosses+gdg.$generalize_dgs_glosses+ss.$spm_strategy"
-
-            . $scripts/running/run_generic.sh
-
-        done
-    done
-done
-
-# German -> PAN
-
-language_pairs=(
-    "uhh de pan"
-)
-
-lowercase_glosses="true"
-generalize_dgs_glosses="true"
-spm_strategy="joint"
-
-model_name="lg.$lowercase_glosses+gdg.$generalize_dgs_glosses+ss.$spm_strategy"
+if [[ $dry_run == "true" ]]; then
+    model_name="dry_run"
+else
+    model_name="multilingual.true+lg.$lowercase_glosses+gdg.$generalize_dgs_glosses+ss.$spm_strategy"
+fi
 
 . $scripts/running/run_generic.sh
 
-# PAN -> German
+# all directions from UHH
+
+training_corpora="uhh"
 
 language_pairs=(
-    "uhh pan de"
+    "uhh dgs_de de"
+    "uhh dgs_de en"
+    "uhh dgs_de dgs_en"
+    "uhh de dgs_de"
+    "uhh de dgs_en"
+    "uhh de en"
+    "uhh dgs_en de"
+    "uhh dgs_en dgs_de"
+    "uhh dgs_en en"
 )
 
-lowercase_glosses="true"
-generalize_dgs_glosses="true"
-spm_strategy="joint"
-
-model_name="lg.$lowercase_glosses+gdg.$generalize_dgs_glosses+ss.$spm_strategy"
+if [[ $dry_run == "true" ]]; then
+    model_name="dry_run"
+else
+    model_name="multilingual.true+lg.$lowercase_glosses+gdg.$generalize_dgs_glosses+ss.$spm_strategy"
+fi
 
 . $scripts/running/run_generic.sh
 
-exit 0
-
-
-## BSLCP
+# all directions from BSLCP
 
 training_corpora="bslcp"
 
-# BSL -> English
-
 language_pairs=(
     "bslcp bsl en"
-)
-
-for lowercase_glosses in $lowercase_glosses_options; do
-    for spm_strategy in $spm_strategy_options; do
-
-        model_name="lg.$lowercase_glosses+ss.$spm_strategy"
-
-        . $scripts/running/run_generic.sh
-
-    done
-done
-
-# English -> BSL
-
-language_pairs=(
     "bslcp en bsl"
 )
 
-for lowercase_glosses in $lowercase_glosses_options; do
-    for spm_strategy in $spm_strategy_options; do
+if [[ $dry_run == "true" ]]; then
+    model_name="dry_run"
+else
+    model_name="multilingual.true+lg.$lowercase_glosses+gdg.$generalize_dgs_glosses+ss.$spm_strategy"
+fi
 
-        model_name="lg.$lowercase_glosses+ss.$spm_strategy"
+. $scripts/running/run_generic.sh
 
-        . $scripts/running/run_generic.sh
+# ALL directions
 
-    done
-done
+training_corpora="uhh bslcp"
+
+language_pairs=(
+    "uhh dgs_de de"
+    "uhh dgs_de en"
+    "uhh dgs_de dgs_en"
+    "uhh de dgs_de"
+    "uhh de dgs_en"
+    "uhh de en"
+    "uhh dgs_en de"
+    "uhh dgs_en dgs_de"
+    "uhh dgs_en en"
+    "bslcp bsl en"
+    "bslcp en bsl"
+)
+
+if [[ $dry_run == "true" ]]; then
+    model_name="dry_run"
+else
+    model_name="multilingual.true+lg.$lowercase_glosses+gdg.$generalize_dgs_glosses+ss.$spm_strategy"
+fi
+
+. $scripts/running/run_generic.sh
