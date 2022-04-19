@@ -31,7 +31,7 @@ if [[ $num_lines -gt ${LARGEST_TRAINSIZE} ]]; then
 elif [[ $num_lines -gt ${LARGE_TRAINSIZE} ]]; then
     sentencepiece_vocab_size=16000
 elif [[ $num_lines -gt ${MEDIUM_TRAINSIZE} ]]; then
-    sentencepiece_vocab_size=12000
+    sentencepiece_vocab_size=8000
 elif [[ $num_lines -gt ${SMALL_TRAINSIZE} ]]; then
     sentencepiece_vocab_size=$SMALL_VOCAB_SIZE
 elif [[ $num_lines -gt ${SMALLEST_TRAINSIZE} ]]; then
