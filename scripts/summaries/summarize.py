@@ -129,16 +129,19 @@ def parse_model_name(model_name: str) -> Tuple[str, str, str]:
     lg.false+gdg.true+ss.joint
     lg.false+ss.spoken-only
     multilingual.true+lg.false+ss.spoken-only
+    dry_run
 
     :param model_name:
     :return:
     """
     lowercase_glosses, generalize_dgs_glosses, spm_strategy = "-", "-", "-"
 
+    if model_name == "dry_run":
+        return lowercase_glosses, generalize_dgs_glosses, spm_strategy
+
     pairs = model_name.split("+")
 
     for pair in pairs:
-        print(pair)
         key, value = pair.split(".")
 
         if key == "lg":
