@@ -323,7 +323,7 @@ def main():
                                     metric_values)
 
                     results.append(result)
-                    print(result)
+                    logging.debug("Found result: %s", result)
 
     results = reduce_results(results)
 
