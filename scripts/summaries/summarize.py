@@ -1,6 +1,5 @@
 #! /usr/bin/python3
 
-import sys
 import os
 import argparse
 import logging
@@ -114,6 +113,48 @@ def read_metric_values(metric: str, filepath: str):
     return metric_names, metric_values
 
 
+def is_multilingual(langpair: str) -> bool:
+    """
+
+    :param langpair:
+    :return:
+    """
+    return True
+
+
+def parse_model_name(model_name: str) -> Tuple[str, str, str]:
+    """
+    Examples:
+
+    lg.false+gdg.true+ss.joint
+    lg.false+ss.spoken-only
+    multilingual.true+lg.false+ss.spoken-only
+
+    :param model_name:
+    :return:
+    """
+    lowercase_glosses, generalize_dgs_glosses, spm_strategy = "-", "-", "-"
+
+    pairs = model_name.split("+")
+
+    for pair in pairs:
+        key, value = pair.split(".")
+
+        if key == "lg":
+            lowercase_glosses = value
+        elif key == "gdg":
+            generalize_dgs_glosses = value
+        elif key == "ss":
+            spm_strategy = value
+        elif key == "multilingual":
+            continue
+        else:
+            logging.warning("Could not parse (key, value:): %s, %s", key, value)
+            raise NotImplementedError
+
+    return lowercase_glosses, generalize_dgs_glosses, spm_strategy
+
+
 class Result(object):
 
     def __init__(self,
@@ -212,20 +253,6 @@ def reduce_results(results: List[Result]) -> List[Result]:
     return reduced_results
 
 
-def get_model_names() -> List[str]:
-    """
-    :return:
-    """
-    model_names = ['baseline', 'no_label_smoothing', 'dry_run', 'slice_dev', 'slice_dev+optimize', 'domain_robustness']
-
-    noise_probabilities = "0.001 0.005 0.01 0.05 0.075 0.1 0.25 0.5".split(" ")
-
-    for noise_probability in noise_probabilities:
-        model_names.append("copy_noise." + noise_probability)
-
-    return model_names
-
-
 def main():
     args = parse_args()
 
@@ -234,48 +261,47 @@ def main():
 
     results = []
 
-    for root, langpairs, _ in walklevel(args.eval_folder, level=0):
+    langpairs = [d for d in os.listdir(args.eval_folder) if os.path.isdir(d)]
 
-        logging.debug("Language pairs:")
-        logging.debug(langpairs)
+    logging.debug("Language pairs:")
+    logging.debug(langpairs)
 
-        sys.exit()
+    for langpair_index, langpair in enumerate(langpairs):
 
-        for langpair_index, langpair in enumerate(langpairs):
+        path_langpair = os.path.join(args.eval_folder, langpair)
 
-            path_langpair = os.path.join(args.eval_folder, langpair)
+        model_names = [d for d in os.listdir(path_langpair) if os.path.isdir(d)]
 
-            model_names = get_model_names()
+        if langpair_index == 0:
+            logging.debug("Model names:")
+            logging.debug(model_names)
 
-            if langpair_index == 0:
-                logging.debug("Model names:")
-                logging.debug(model_names)
+        for model_name in model_names:
+            path_model = os.path.join(path_langpair, model_name)
 
-            for model_name in model_names:
-                path_model = os.path.join(path_langpair, model_name)
+            lowercase_glosses, generalize_dgs_glosses, spm_strategy = parse_model_name(model_name)
 
-                for _, _, files in os.walk(path_model):
-                    for file in files:
-                        corpus, decoding_method, sample_origin, num_samples, seed, \
-                            length_penalty_alpha, utility_function, metric = parse_filename(file)
+            for _, _, files in os.walk(path_model):
+                for file in files:
+                    source, corpus, test_src, test_trg, metric = parse_filename(file)
 
-                        filepath = os.path.join(path_model, file)
+                    filepath = os.path.join(path_model, file)
 
-                        metric_names, metric_values = read_metric_values(metric, filepath)
+                    metric_names, metric_values = read_metric_values(metric, filepath)
 
-                        result = Result(langpair,
-                                        model_name,
-                                        corpus,
-                                        decoding_method,
-                                        sample_origin,
-                                        utility_function,
-                                        length_penalty_alpha,
-                                        num_samples,
-                                        seed,
-                                        metric_names,
-                                        metric_values)
+                    result = Result(langpair,
+                                    model_name,
+                                    corpus,
+                                    source,
+                                    test_src,
+                                    test_trg,
+                                    lowercase_glosses,
+                                    generalize_dgs_glosses,
+                                    spm_strategy,
+                                    metric_names,
+                                    metric_values)
 
-                        results.append(result)
+                    results.append(result)
 
     results = reduce_results(results)
 

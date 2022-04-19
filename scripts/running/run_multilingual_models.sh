@@ -15,7 +15,7 @@ testing_corpora="test"
 
 multilingual="true"
 
-# all German and DGS directions from UHH
+# all German and DGS directions
 
 training_corpora="uhh"
 
@@ -63,6 +63,25 @@ training_corpora="bslcp"
 language_pairs=(
     "bslcp bsl en"
     "bslcp en bsl"
+)
+
+if [[ $dry_run == "true" ]]; then
+    model_name="dry_run"
+else
+    model_name="multilingual.true+lg.$lowercase_glosses+gdg.$generalize_dgs_glosses+ss.$spm_strategy"
+fi
+
+. $scripts/running/run_generic.sh
+
+# all English and BSL + translated DGS glosses directions
+
+training_corpora="uhh bslcp"
+
+language_pairs=(
+    "bslcp bsl en"
+    "bslcp en bsl"
+    "uhh dgs_en en"
+    "uhh en dgs_en"
 )
 
 if [[ $dry_run == "true" ]]; then
