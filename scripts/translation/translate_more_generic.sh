@@ -63,7 +63,7 @@ for unused in pseudo_loop; do
 
     if [[ $trg == "dgs_de" || $trg == "dgs_en" || $trg == "pan" || $trg == "bsl" ]]; then
         if [[ $spm_strategy == "spoken-only" ]]; then
-            cat $output_pieces | sed 's/ //g;s/▁/ /g' > $output
+            cat $output_pieces > $output
         fi
     fi
 

@@ -25,6 +25,10 @@ Train a baseline system for DGS -> DE:
 
     ./scripts/running/run_baseline.sh
 
+## Train all bilingual models
+
+    ./scripts/running/run_bilingual_models.sh
+
 ## Define a custom run
 
 - Set `multilingual` if MT system needs an indication of desired target language (i.e. if there are several target languages)
