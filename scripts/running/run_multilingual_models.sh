@@ -3,8 +3,8 @@
 base=/net/cephfs/shares/volk.cl.uzh/mathmu/easier-gloss-translation
 scripts=$base/scripts
 
-lowercase_glosses="false"
-generalize_dgs_glosses="false"
+lowercase_glosses="true"
+generalize_dgs_glosses="true"
 spm_strategy="joint"
 
 dry_run="false"

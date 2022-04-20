@@ -25,7 +25,11 @@ Train a baseline system for DGS -> DE:
 
     ./scripts/running/run_baseline.sh
 
-## Train all bilingual models
+## Train and evaluate all bilingual models
+
+    ./scripts/running/run_bilingual_models.sh
+
+## Train and evaluate all multilingual models
 
     ./scripts/running/run_bilingual_models.sh
 
@@ -33,3 +37,11 @@ Train a baseline system for DGS -> DE:
 
 - Set `multilingual` if MT system needs an indication of desired target language (i.e. if there are several target languages)
 - If data from both UHH and BSLCP is used, set `training_corpora="uhh bslcp`
+
+## Create and upload a summary of all experiment outcomes
+
+   ./scripts/summaries/summarize.sh
+   
+## Create result tables shown in the deliverable
+
+https://colab.research.google.com/drive/1xDOkBI3yOoKk1CI_BBZoLtVWAaY0uhWd?usp=sharing
