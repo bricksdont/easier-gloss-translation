@@ -1,5 +1,16 @@
 # EASIER gloss translation models
 
+## Attribution required
+
+If you use any of my code, please cite this repository as follows:
+
+    @misc{mueller2022easier-gloss-translation-models,
+        title={EASIER gloss translation models},
+        author={M\"{u}ller, Mathias},
+        howpublished={\url{https://github.com/bricksdont/easier-gloss-translation}},
+        year={2022}
+    }
+
 ## Basic setup
 
 Create a venv:
