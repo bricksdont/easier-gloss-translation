@@ -44,6 +44,9 @@ language_pairs=(
     "uhh dgs_en de"
     "uhh dgs_en dgs_de"
     "uhh dgs_en en"
+    "uhh en de"
+    "uhh en dgs_de"
+    "uhh en dgs_en"
 )
 
 if [[ $dry_run == "true" ]]; then
@@ -104,6 +107,9 @@ language_pairs=(
     "uhh dgs_en de"
     "uhh dgs_en dgs_de"
     "uhh dgs_en en"
+    "uhh en de"
+    "uhh en dgs_de"
+    "uhh en dgs_en"
     "bslcp bsl en"
     "bslcp en bsl"
 )
