@@ -39,14 +39,14 @@ Construct a new top-level file similar to the existing files in `scripts/running
 dev and test data should be composed by assigning the variable `language_pairs`:
 
     language_pairs=(
-    "uhh de dgs_de"
-    "bslcp en bsl"
+        "uhh de dgs_de"
+        "bslcp en bsl"
     )
 
 The structure of each row in this array is `[source corpus] [src] [trg]`, and there can be arbitrarily many rows.
 
-- Your custom running script must eventually call `$scripts/running/run_generic.sh`
-- Set `multilingual` if MT system needs an indication of desired target language (i.e. if there are several target languages)
+- Your custom running script must eventually call `scripts/running/run_generic.sh`
+- Set `multilingual="true"` if MT system needs an indication of desired target language (i.e. if there are several target languages)
 - If data from both UHH and BSLCP is used, set `training_corpora="uhh bslcp"`
 - Before training an actual model, set `dry_run="true"` to test your setup
 
