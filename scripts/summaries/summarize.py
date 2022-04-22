@@ -152,6 +152,8 @@ def parse_model_name(model_name: str) -> Tuple[str, str, str]:
             spm_strategy = value
         elif key == "multilingual":
             continue
+        elif key == "spm_vocab_size":
+            continue
         else:
             logging.warning("Could not parse (key, value:): %s, %s", key, value)
             raise NotImplementedError
