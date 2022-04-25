@@ -129,7 +129,7 @@ def extract_and_write(json_path: str,
             if len(glosses) == 0:
                 continue
 
-            # relevant keys: EN: 'Sign' and DE: 'gloss'
+            # relevant keys: EN: 'Lexeme_Sign' and DE: 'gloss'
             gloss_line_german = " ".join([g["gloss"] for g in glosses])
             gloss_line_english = " ".join([g["Sign"] for g in glosses])
 
