@@ -131,7 +131,7 @@ def extract_and_write(json_path: str,
 
             # relevant keys: EN: 'Lexeme_Sign' and DE: 'gloss'
             gloss_line_german = " ".join([g["gloss"] for g in glosses])
-            gloss_line_english = " ".join([g["Sign"] for g in glosses])
+            gloss_line_english = " ".join([g["Lexeme_Sign"] for g in glosses])
 
             line_german = sentence["german"]
             line_english = sentence["english"] if sentence["english"] is not None else ""
