@@ -12,6 +12,7 @@
 # $spm_strategy
 # $lowercase_glosses
 # $generalize_dgs_glosses
+# $pretrained
 
 base=$1
 src=$2
@@ -24,6 +25,7 @@ language_pairs_script=$8
 spm_strategy=$9
 lowercase_glosses=${10}
 generalize_dgs_glosses=${11}
+pretrained=${12}
 
 data=$base/data
 venvs=$base/venvs
@@ -350,6 +352,48 @@ for corpus in dev; do
         --output-src $data_sub/$corpus.pieces.src \
         --output-trg $data_sub/$corpus.pieces.trg
 done
+
+# if HF pretrained model, convert to jsonlines format
+# assume model is NOT multilingual
+
+if [[ $pretrained == "true" ]]; then
+
+    if [[ $multilingual == "true" ]]; then
+        echo "Multilingual HF model not implemented"
+        exit 1
+    fi
+
+    # train and dev: can use final prepared data, but script will undo pieces
+
+   for corpus in train dev; do
+
+      if [[ $corpus == "train" ]]; then
+          pieces_or_clean="clean"
+      else
+          pieces_or_clean="pieces"
+      fi
+
+      python $scripts/preprocessing/convert_to_json_lines.py \
+          --input-src $data_sub/$corpus.$pieces_or_clean.src \
+          --input-trg $data_sub/$corpus.$pieces_or_clean.trg \
+          --src-lang $src \
+          --trg-lang $trg \
+          --output $data_sub/$corpus.jsonlines
+
+  done
+
+    # test: keep sources as separate files, script will undo pieces
+
+  for source in $ALL_SOURCES; do
+
+      python $scripts/preprocessing/convert_to_json_lines.py \
+                    --input-src $data_sub/$source.test.pieces.src \
+                    --input-trg $data_sub/$source.test.pieces.trg \
+                    --src-lang $src \
+                    --trg-lang $trg \
+                    --output $data_sub/$source.test.jsonlines
+  done
+fi
 
 # sizes
 echo "Sizes of all files:"

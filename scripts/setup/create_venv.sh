@@ -14,3 +14,7 @@ mkdir -p $venvs
 # venv for Sockeye GPU
 
 conda create -y --prefix $venvs/sockeye3 python=3.7.9
+
+# venv for HF pretraining
+
+conda create -y --prefix $venvs/huggingface3 python=3.7.9

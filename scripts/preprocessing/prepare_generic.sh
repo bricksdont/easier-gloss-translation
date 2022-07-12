@@ -8,6 +8,7 @@
 # $model_name
 # $seed
 # $spm_strategy
+# $pretrained
 
 base=$1
 src=$2
@@ -15,6 +16,7 @@ trg=$3
 model_name=$4
 seed=$5
 spm_strategy=$6
+pretrained=$7
 
 # measure time
 
@@ -32,6 +34,12 @@ data_sub_sub=$data_sub/$model_name
 prepared=$base/prepared
 prepared_sub=$prepared/${src}-${trg}
 prepared_sub_sub=$prepared_sub/$model_name
+
+if [[ $pretrained == "true" ]]; then
+    echo "Finetuning from pre-trained HF model"
+    echo "Skipping Sockeye preparation step"
+    exit 0
+fi
 
 if [[ -d $prepared_sub_sub ]]; then
     echo "prepared_sub_sub already exists: $prepared_sub_sub"

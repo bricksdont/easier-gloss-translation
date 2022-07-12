@@ -9,13 +9,18 @@
 # $dry_run (values: "true" or "false")
 # $training_corpora
 # $testing_corpora
+#
 # $bslcp_username
 # $bslcp_password
+#
 # $seed
 # $multilingual (values: "true" or "false")
 # $spm_strategy (values: "joint", "separate", "spoken-only")
 # $lowercase_glosses (values: "true" or "false")
 # $generalize_dgs_glosses (values: "true" or "false")
+#
+# $pretrained
+# $pretrained_model_name
 
 module load volta nvidia/cuda10.2-cudnn7.6.5 anaconda3
 
@@ -81,8 +86,17 @@ fi
 if [ -z "$lowercase_glosses" ]; then
     lowercase_glosses="false"
 fi
+
 if [ -z "$generalize_dgs_glosses" ]; then
     generalize_dgs_glosses="false"
+fi
+
+if [ -z "$pretrained" ]; then
+    pretrained="false"
+fi
+
+if [ -z "$pretrained_model_name" ]; then
+    pretrained_model_name="mt5-small"
 fi
 
 # SLURM job args
@@ -143,7 +157,7 @@ id_preprocess=$(
     $SLURM_LOG_ARGS \
     $scripts/preprocessing/preprocess_generic.sh \
     $base $src $trg $model_name $dry_run $seed $multilingual $logs_sub_sub/LANGPAIRS.sh \
-    $spm_strategy $lowercase_glosses $generalize_dgs_glosses
+    $spm_strategy $lowercase_glosses $generalize_dgs_glosses $pretrained
 )
 
 echo "  id_preprocess: $id_preprocess | $logs_sub_sub/slurm-$id_preprocess.out" | tee -a $logs_sub_sub/MAIN
@@ -156,7 +170,7 @@ id_prepare=$(
     --dependency=afterok:$id_preprocess \
     $SLURM_LOG_ARGS \
     $scripts/preprocessing/prepare_generic.sh \
-    $base $src $trg $model_name $seed $spm_strategy
+    $base $src $trg $model_name $seed $spm_strategy $pretrained
 )
 
 echo "  id_prepare: $id_prepare | $logs_sub_sub/slurm-$id_prepare.out"  | tee -a $logs_sub_sub/MAIN
@@ -169,7 +183,7 @@ id_train=$(
     --dependency=afterok:$id_prepare \
     $SLURM_LOG_ARGS \
     $scripts/training/train_generic.sh \
-    $base $src $trg $model_name $dry_run $seed $spm_strategy
+    $base $src $trg $model_name $dry_run $seed $spm_strategy $pretrained $pretrained_model_name
 )
 
 echo "  id_train: $id_train | $logs_sub_sub/slurm-$id_train.out"  | tee -a $logs_sub_sub/MAIN
@@ -182,7 +196,8 @@ id_translate=$(
     --dependency=afterany:$id_train \
     $SLURM_LOG_ARGS \
     $scripts/translation/translate_generic.sh \
-    $base $src $trg $model_name $dry_run "$testing_corpora" $multilingual $logs_sub_sub/LANGPAIRS.sh $spm_strategy
+    $base $src $trg $model_name $dry_run "$testing_corpora" \
+    $multilingual $logs_sub_sub/LANGPAIRS.sh $spm_strategy $pretrained $pretrained_model_name
 )
 
 echo "  id_translate: $id_translate | $logs_sub_sub/slurm-$id_translate.out"  | tee -a $logs_sub_sub/MAIN

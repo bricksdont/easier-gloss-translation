@@ -29,3 +29,15 @@ pip install subword-nmt sentencepiece
 # install tfds SL datasets
 
 pip install sign-language-datasets==0.0.6
+
+conda deactivate
+
+source activate $venvs/huggingface3
+
+# install pretraining code (HF transformers)
+
+git clone https://github.com/huggingface/transformers $tools/transformers
+
+(cd $tools/transformers/transformers && pip install .)
+
+(cd $tools/transformers/transformers/examples/pytorch/translation && pip install .)
