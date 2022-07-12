@@ -26,10 +26,10 @@ scripts=$base/scripts
 
 if [[ $pretrained == "true" ]]; then
 
-  . $scripts/training/train_sockeye_generic.sh
+  . $scripts/training/train_huggingface_generic.sh
 
 else
 
-  . $scripts/training/train_huggingface_generic.sh
+  . $scripts/training/train_sockeye_generic.sh
 
 fi
