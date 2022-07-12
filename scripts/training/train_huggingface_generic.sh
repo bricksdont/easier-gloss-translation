@@ -27,7 +27,7 @@ eval "$(conda shell.bash hook)"
 source activate $venvs/huggingface3
 
 if [[ $dry_run == "true" ]]; then
-    dry_run_additional_args="--max_train_samples 10"
+    dry_run_additional_args="--max_train_samples 10 --device cpu"
 else
     dry_run_additional_args=""
 fi
