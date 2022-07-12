@@ -51,11 +51,8 @@ for unused in pseudo_loop; do
         --num_beams $beam_size \
         --source_lang $src \
         --target_lang $trg \
-        --dataset_name $model_name \
-        --dataset_config_name $model_name \
         --output_dir $models_sub_sub \
         --per_device_eval_batch_size=$batch_size \
-        --seed $seed \
         --predict_with_generate $dry_run_additional_args
 
     # HF handles segmentation internally, no need to undo pieces
