@@ -395,7 +395,7 @@ if [[ $pretrained == "true" ]]; then
                         --input-trg $data_sub/$source.test.pieces.$trg \
                         --src-lang $src \
                         --trg-lang $trg \
-                        --output $data_sub/$source.test.jsonlines
+                        --output $data_sub/$source.test.jsonl
 
       fi
   done

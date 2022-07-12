@@ -55,8 +55,8 @@ python $tools/transformers/examples/pytorch/translation/run_translation.py \
     --target_lang $trg \
     --dataset_name $model_name \
     --dataset_config_name $model_name \
-    --train_file $data_sub_sub/train.jsonlines \
-    --validation_file $data_sub_sub/dev.jsonlines \
+    --train_file $data_sub_sub/train.jsonl \
+    --validation_file $data_sub_sub/dev.jsonl \
     --output_dir $models_sub_sub \
     --per_device_train_batch_size=4 \
     --per_device_eval_batch_size=4 \

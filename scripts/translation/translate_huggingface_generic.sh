@@ -62,7 +62,7 @@ for pair in "${language_pairs[@]}"; do
 
     for corpus in $testing_corpora; do
 
-        input=$data_sub_sub/$source.$corpus.jsonlines
+        input=$data_sub_sub/$source.$corpus.jsonl
 
         output=$translations_sub_sub/$source.$corpus.$src-$trg.$trg
 
