@@ -130,6 +130,8 @@ echo "MODEL NAME: $model_name" | tee -a $logs_sub_sub/MAIN
 echo "TRAINING CORPORA: $training_corpora" | tee -a $logs_sub_sub/MAIN
 echo "TESTING CORPORA: $testing_corpora" | tee -a $logs_sub_sub/MAIN
 echo "SEED: $seed" | tee -a $logs_sub_sub/MAIN
+echo "PRETRAINED: $pretrained" | tee -a $logs_sub_sub/MAIN
+echo "PRETRAINED_MODEL_NAME: $pretrained_model_name" | tee -a $logs_sub_sub/MAIN
 echo "MULTILINGUAL: $multilingual" | tee -a $logs_sub_sub/MAIN
 echo "SPM_STRATEGY: $spm_strategy" | tee -a $logs_sub_sub/MAIN
 echo "LOWERCASE_GLOSSES: $lowercase_glosses" | tee -a $logs_sub_sub/MAIN
