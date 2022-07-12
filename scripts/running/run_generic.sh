@@ -96,7 +96,7 @@ if [ -z "$pretrained" ]; then
 fi
 
 if [ -z "$pretrained_model_name" ]; then
-    pretrained_model_name="mt5-small"
+    pretrained_model_name="google/mt5-small"
 fi
 
 # SLURM job args

@@ -35,12 +35,6 @@ prepared=$base/prepared
 prepared_sub=$prepared/${src}-${trg}
 prepared_sub_sub=$prepared_sub/$model_name
 
-if [[ $pretrained == "true" ]]; then
-    echo "Finetuning from pre-trained HF model"
-    echo "Skipping Sockeye preparation step"
-    exit 0
-fi
-
 if [[ -d $prepared_sub_sub ]]; then
     echo "prepared_sub_sub already exists: $prepared_sub_sub"
     echo "Skipping. Delete files to repeat step."
@@ -54,6 +48,12 @@ else
 fi
 
 mkdir -p $prepared_sub_sub
+
+if [[ $pretrained == "true" ]]; then
+    echo "Finetuning from pre-trained HF model"
+    echo "Skipping Sockeye preparation step"
+    exit 0
+fi
 
 cmd="python -m sockeye.prepare_data -s $data_sub_sub/train.clean.src -t $data_sub_sub/train.clean.trg --shared-vocab -o $prepared_sub_sub --max-seq-len 250:250 --seed $seed $shared_vocab_arg"
 

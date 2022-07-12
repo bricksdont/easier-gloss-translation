@@ -25,7 +25,7 @@ training_corpora="uhh"
 testing_corpora="test"
 
 pretrained="true"
-pretrained_model_name="mt5-small"
+pretrained_model_name="google/mt5-small"
 
 # construct src and trg from language_pairs
 

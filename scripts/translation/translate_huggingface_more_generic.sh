@@ -11,6 +11,10 @@
 # $trg
 # $pretrained_model_name
 
+prepared=$base/prepared
+prepared_sub=$prepared/${src}-${trg}
+prepared_sub_sub=$prepared_sub/$model_name
+
 tools=$base/tools
 
 if [[ $dry_run == "true" ]]; then
@@ -46,6 +50,7 @@ for unused in pseudo_loop; do
     python $tools/transformers/examples/pytorch/translation/run_translation.py \
         --model_name_or_path $pretrained_model_name \
         --output_dir $models_sub_sub \
+        --cache_dir $prepared_sub_sub \
         --do_predict \
         --test-file $input \
         --num_beams $beam_size \

@@ -17,6 +17,10 @@ data=$base/data
 data_sub=$data/${src}-${trg}
 data_sub_sub=$data_sub/$model_name
 
+prepared=$base/prepared
+prepared_sub=$prepared/${src}-${trg}
+prepared_sub_sub=$prepared_sub/$model_name
+
 models=$base/models
 models_sub=$models/${src}-${trg}
 models_sub_sub=$models_sub/$model_name
@@ -53,6 +57,7 @@ python $tools/transformers/examples/pytorch/translation/run_translation.py \
     --do_eval \
     --source_lang $src \
     --target_lang $trg \
+    --cache_dir $prepared_sub_sub \
     --train_file $data_sub_sub/train.json \
     --validation_file $data_sub_sub/dev.json \
     --output_dir $models_sub_sub \
