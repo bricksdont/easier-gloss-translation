@@ -17,7 +17,7 @@ venvs=$base/venvs
 scripts=$base/scripts
 
 eval "$(conda shell.bash hook)"
-source activate $venvs/sockeye3
+source activate $venvs/huggingface3
 
 beam_size="5"
 batch_size="64"
