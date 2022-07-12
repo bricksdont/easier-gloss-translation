@@ -378,7 +378,7 @@ if [[ $pretrained == "true" ]]; then
           --input-trg $data_sub/$corpus.$pieces_or_clean.trg \
           --src-lang $src \
           --trg-lang $trg \
-          --output $data_sub/$corpus.jsonlines
+          --output $data_sub/$corpus.jsonl
 
   done
 
