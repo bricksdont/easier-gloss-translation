@@ -17,7 +17,7 @@ if [[ $dry_run == "true" ]]; then
     # redefine params
     beam_size=1
     batch_size=2
-    dry_run_additional_args="--device cpu"
+    dry_run_additional_args="--no_cuda"
 else
     dry_run_additional_args=""
 fi
