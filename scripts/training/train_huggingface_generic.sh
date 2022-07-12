@@ -51,6 +51,11 @@ if [[ -f $models_sub_sub/log ]]; then
     fi
 fi
 
+# assume model is bilingual and src and trg have a source first
+
+src=$(echo $src | python -c "import sys; s = sys.stdin.read().strip(); print(s.split('.')[1])")
+trg=$(echo $src | python -c "import sys; s = sys.stdin.read().strip(); print(s.split('.')[1])")
+
 python $tools/transformers/examples/pytorch/translation/run_translation.py \
     --model_name_or_path $pretrained_model_name \
     --do_train \
