@@ -29,10 +29,10 @@ scripts=$base/scripts
 
 if [[ $pretrained == "true" ]]; then
 
-  . $scripts/translation/translate_sockeye_generic.sh
+  . $scripts/translation/translate_huggingface_generic.sh
 
 else
 
-  . $scripts/translation/translate_huggingface_generic.sh
+  . $scripts/translation/translate_sockeye_generic.sh
 
 fi
