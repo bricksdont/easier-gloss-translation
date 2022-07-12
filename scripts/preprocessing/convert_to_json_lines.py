@@ -28,6 +28,10 @@ def undo_pieces(input_string: str) -> str:
     input_string = input_string.replace(" ", "")
     input_string = input_string.replace("▁", " ")
 
+    # remove initial space if any
+
+    input_string = input_string.lstrip()
+
     return input_string
 
 

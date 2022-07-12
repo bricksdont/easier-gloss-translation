@@ -57,7 +57,7 @@ for unused in pseudo_loop; do
 
     # undo pieces
 
-    cat $output_pieces | sed 's/ //g;s/▁/ /g' > $output
+    cat $output_pieces | sed 's/ //g;s/▁/ /g' | awk '{$1=$1};1' > $output
 
     # except if target is glosses and the gloss side was never segmented
 
