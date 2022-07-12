@@ -38,6 +38,6 @@ source activate $venvs/huggingface3
 
 git clone https://github.com/huggingface/transformers $tools/transformers
 
-(cd $tools/transformers/transformers && pip install .)
+(cd $tools/transformers && pip install .)
 
-(cd $tools/transformers/transformers/examples/pytorch/translation && pip install .)
+(cd $tools/transformers/examples/pytorch/translation && pip install .)

@@ -2,6 +2,7 @@
 
 # calling script needs to set
 
+# $base
 # $input
 # $output
 # $models_sub_sub
@@ -9,6 +10,8 @@
 # $src
 # $trg
 # $pretrained_model_name
+
+tools=$base/tools
 
 if [[ $dry_run == "true" ]]; then
     # redefine params
@@ -40,7 +43,7 @@ for unused in pseudo_loop; do
       fi
     fi
 
-    python $tools/transformers/transformers/examples/pytorch/translation/run_translation.py \
+    python $tools/transformers/examples/pytorch/translation/run_translation.py \
         --model_name_or_path $pretrained_model_name \
         --output_dir $models_sub_sub \
         --do_predict \

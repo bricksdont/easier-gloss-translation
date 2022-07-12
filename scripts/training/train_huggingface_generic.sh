@@ -47,7 +47,7 @@ if [[ -f $models_sub_sub/log ]]; then
     fi
 fi
 
-python $tools/transformers/transformers/examples/pytorch/translation/run_translation.py \
+python $tools/transformers/examples/pytorch/translation/run_translation.py \
     --model_name_or_path $pretrained_model_name \
     --do_train \
     --do_eval \
