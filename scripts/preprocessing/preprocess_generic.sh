@@ -386,12 +386,18 @@ if [[ $pretrained == "true" ]]; then
 
   for source in $ALL_SOURCES; do
 
-      python $scripts/preprocessing/convert_to_json_lines.py \
-                    --input-src $data_sub/$source.test.pieces.src \
-                    --input-trg $data_sub/$source.test.pieces.trg \
-                    --src-lang $src \
-                    --trg-lang $trg \
-                    --output $data_sub/$source.test.jsonlines
+      # only if source exists
+
+      if [[ -f $data_sub/$source.test.pieces.src ]]; then
+
+          python $scripts/preprocessing/convert_to_json_lines.py \
+                        --input-src $data_sub/$source.test.pieces.src \
+                        --input-trg $data_sub/$source.test.pieces.trg \
+                        --src-lang $src \
+                        --trg-lang $trg \
+                        --output $data_sub/$source.test.jsonlines
+
+      fi
   done
 fi
 
