@@ -53,8 +53,8 @@ python $tools/transformers/examples/pytorch/translation/run_translation.py \
     --do_eval \
     --source_lang $src \
     --target_lang $trg \
-    --train_file $data_sub_sub/train.jsonl \
-    --validation_file $data_sub_sub/dev.jsonl \
+    --train_file $data_sub_sub/train.json \
+    --validation_file $data_sub_sub/dev.json \
     --output_dir $models_sub_sub \
     --per_device_train_batch_size=4 \
     --per_device_eval_batch_size=4 \
