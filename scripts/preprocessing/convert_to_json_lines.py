@@ -51,10 +51,10 @@ def main():
             src_line = undo_pieces(src_line)
             trg_line = undo_pieces(trg_line)
 
-            json_dict = {}
+            json_dict = {"translation": {}}
 
-            json_dict[args.src_lang] = src_line
-            json_dict[args.trg_lang] = trg_line
+            json_dict["translation"][args.src_lang] = src_line
+            json_dict["translation"][args.trg_lang] = trg_line
 
             handle_output.write(json.dumps(json_dict, ensure_ascii=False, indent=None) + "\n")
 

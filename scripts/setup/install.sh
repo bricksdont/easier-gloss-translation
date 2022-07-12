@@ -41,3 +41,7 @@ git clone https://github.com/huggingface/transformers $tools/transformers
 (cd $tools/transformers && pip install .)
 
 (cd $tools/transformers/examples/pytorch/translation && pip install -r requirements.txt)
+
+# avoid protobuf error
+
+pip install --upgrade protobuf~=3.19.0
