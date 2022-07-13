@@ -47,12 +47,15 @@ for unused in pseudo_loop; do
       fi
     fi
 
+    # train_file is not used, but required by the script
+
     python $tools/transformers/examples/pytorch/translation/run_translation.py \
         --model_name_or_path $pretrained_model_name \
         --output_dir $models_sub_sub \
         --cache_dir $prepared_sub_sub \
         --do_predict \
-        --test-file $input \
+        --train_file $data_sub_sub/train.json \
+        --test_file $input \
         --num_beams $beam_size \
         --source_lang $src \
         --target_lang $trg \
