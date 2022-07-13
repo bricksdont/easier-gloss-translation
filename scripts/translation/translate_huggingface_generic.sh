@@ -40,9 +40,9 @@ translations_sub_sub=$translations_sub/$model_name
 
 # TODO: adapt to HF!
 
-if [[ ! -e $models_sub_sub/params.best ]]; then
-    echo "There is no single model checkpoint, file does not exist:"
-    echo "$models_sub_sub/params.best"
+if [[ ! -e $models_sub_sub/pytorch_model.bin ]]; then
+    echo "There is no pytorch model, file does not exist:"
+    echo "$models_sub_sub/pytorch_model.bin"
     # exit 1
 fi
 
