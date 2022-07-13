@@ -45,3 +45,9 @@ git clone https://github.com/huggingface/transformers $tools/transformers
 # avoid protobuf error
 
 pip install --upgrade protobuf~=3.19.0
+
+# avoid problems caused by hard-coded behaviour to split language arguments at "_" characters:
+# https://github.com/huggingface/transformers/blob/main/examples/pytorch/translation/run_translation.py#L427
+# caution: this means MBART can no longer be used for this pretraining
+
+sed -i 's/.split("_")\[0\]//g' $tools/transformers/examples/pytorch/translation/run_translation.py

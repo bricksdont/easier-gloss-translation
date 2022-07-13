@@ -56,8 +56,8 @@ fi
 # run_translation.py has hard-coded behaviour to split language arguments at "_" characters,
 # therefore remove source ("uhh") and also replace "_" with "+"
 
-src=$(echo $src | python -c "import sys; s = sys.stdin.read().strip(); print(s.split('.')[1].replace('_', '+'))")
-trg=$(echo $trg | python -c "import sys; s = sys.stdin.read().strip(); print(s.split('.')[1].replace('_', '+'))")
+src=$(echo $src | python -c "import sys; s = sys.stdin.read().strip(); print(s.split('.')[1])")
+trg=$(echo $trg | python -c "import sys; s = sys.stdin.read().strip(); print(s.split('.')[1])")
 
 python $tools/transformers/examples/pytorch/translation/run_translation.py \
     --model_name_or_path $pretrained_model_name \
