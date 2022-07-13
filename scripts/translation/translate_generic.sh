@@ -23,7 +23,7 @@ multilingual=$7
 language_pairs_script=$8
 spm_strategy=$9
 pretrained=${10}
-$pretrained_model_name=${11}
+pretrained_model_name=${11}
 
 scripts=$base/scripts
 

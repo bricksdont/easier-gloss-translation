@@ -20,7 +20,7 @@ eval "$(conda shell.bash hook)"
 source activate $venvs/huggingface3
 
 beam_size="5"
-batch_size="64"
+batch_size="8"
 length_penalty_alpha="1.0"
 
 data=$base/data
