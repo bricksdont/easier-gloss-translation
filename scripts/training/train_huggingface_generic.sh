@@ -52,9 +52,12 @@ if [[ -f $models_sub_sub/log ]]; then
 fi
 
 # assume model is bilingual and src and trg have a source first
+# example: uhh.dgs_de
+# run_translation.py has hard-coded behaviour to split language arguments at "_" characters,
+# therefore remove source ("uhh") and also replace "_" with "+"
 
-src=$(echo $src | python -c "import sys; s = sys.stdin.read().strip(); print(s.split('.')[1])")
-trg=$(echo $src | python -c "import sys; s = sys.stdin.read().strip(); print(s.split('.')[1])")
+src=$(echo $src | python -c "import sys; s = sys.stdin.read().strip(); print(s.split('.')[1].replace('_', '+'))")
+trg=$(echo $trg | python -c "import sys; s = sys.stdin.read().strip(); print(s.split('.')[1].replace('_', '+'))")
 
 python $tools/transformers/examples/pytorch/translation/run_translation.py \
     --model_name_or_path $pretrained_model_name \
