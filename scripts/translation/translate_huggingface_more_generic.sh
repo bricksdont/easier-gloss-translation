@@ -50,7 +50,7 @@ for unused in pseudo_loop; do
     # train_file is not used, but required by the script
 
     python $tools/transformers/examples/pytorch/translation/run_translation.py \
-        --model_name_or_path $pretrained_model_name \
+        --model_name_or_path $models_sub_sub \
         --output_dir $models_sub_sub \
         --cache_dir $prepared_sub_sub \
         --do_predict \
@@ -59,7 +59,6 @@ for unused in pseudo_loop; do
         --num_beams $beam_size \
         --source_lang $src \
         --target_lang $trg \
-        --output_dir $models_sub_sub \
         --per_device_eval_batch_size=$batch_size \
         --predict_with_generate $dry_run_additional_args
 
