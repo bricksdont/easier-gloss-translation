@@ -76,14 +76,13 @@ def collapse_gloss(gloss: str) -> str:
     """
     Collapse phonological variations of the same type, and
     - for number signs remove handshape variants
-    - keep numerals intact
-    - keep list glosses intact
+    - keep numerals ($NUM), list glosses ($LIST) and finger alphabet ($ALPHA)
 
     :param gloss:
     :return:
     """
     try:
-        collapsed_gloss_groups = re.search(r"([$A-Z-ÖÄÜ]+[0-9]*)[A-Z]*(:?[0-9]*o?f?[0-9]*)", gloss).groups()
+        collapsed_gloss_groups = re.search(r"([$A-Z-ÖÄÜ]+[0-9]*)[A-Z]*(:?[0-9A-ZÖÄÜ]*o?f?[0-9]*)", gloss).groups()
         collapsed_gloss = "".join([g for g in collapsed_gloss_groups if g is not None])
     except AttributeError:
         logging.error("Gloss could not be generalized: '%s'", gloss)

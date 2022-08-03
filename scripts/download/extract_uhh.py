@@ -97,12 +97,14 @@ def miliseconds_to_frame_index(ms: int, fps: int = 50) -> int:
 
 def extract_and_write(json_path: str,
                       outfile_path: str,
-                      tfds_data_dir: str) -> None:
+                      tfds_data_dir: str,
+                      use_mouthing_tier: bool = False) -> None:
     """
 
     :param json_path:
     :param outfile_path:
     :param tfds_data_dir:
+    :param use_mouthing_tier:
     :return:
     """
     outfile_handle = open(outfile_path, "w")
