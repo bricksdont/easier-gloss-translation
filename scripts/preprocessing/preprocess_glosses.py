@@ -9,6 +9,8 @@ GLOSS_SUFFIXES = DGS_GLOSS_SUFFIXES + ['bsl', 'pan']
 SPOKEN_SUFFIXES = ['de', 'en']
 ALL_SUFFIXES = GLOSS_SUFFIXES + SPOKEN_SUFFIXES
 
+GLOSSES_TO_IGNORE = ["$GEST-OFF", "$$EXTRA-LING-MAN"]
+
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -70,6 +72,26 @@ def generalize_pan_glosses(line: str) -> str:
     return line
 
 
+def collapse_gloss(gloss: str) -> str:
+    """
+    Collapse phonological variations of the same type, and
+    - for number signs remove handshape variants
+    - keep numerals intact
+    - keep list glosses intact
+
+    :param gloss:
+    :return:
+    """
+    try:
+        collapsed_gloss_groups = re.search(r"([$A-Z-ÖÄÜ]+[0-9]*)[A-Z]*(:?[0-9]*o?f?[0-9]*)", gloss).groups()
+        collapsed_gloss = "".join([g for g in collapsed_gloss_groups if g is not None])
+    except AttributeError:
+        logging.error("Gloss could not be generalized: '%s'", gloss)
+        collapsed_gloss = gloss
+
+    return collapsed_gloss
+
+
 def generalize_dgs_glosses(line: str) -> str:
     """
     Removes certain kinds of variation in order to bolster generalization.
@@ -80,7 +102,7 @@ def generalize_dgs_glosses(line: str) -> str:
 
     becomes:
 
-    ICH1 ETWAS-PLANEN-UND-UMSETZEN1 SELBST1 KLAPPT1 $GEST-OFF BIS-JETZT1 GEWOHNHEIT1 $GEST-OFF
+    ICH1 ETWAS-PLANEN-UND-UMSETZEN1 SELBST1 KLAPPT1 BIS-JETZT1 GEWOHNHEIT1
 
     :param line:
     :return:
@@ -91,20 +113,17 @@ def generalize_dgs_glosses(line: str) -> str:
     # remove distinction between type glosses and subtype glosses
     line = line.replace("^", "")
 
-    # collapse phonological variations of the same type,
-    # for number signs remove handshape variants
-
     glosses = line.split(" ")
 
     collapsed_glosses = []
 
     for gloss in glosses:
-        try:
-            collapsed_gloss_groups = re.search(r"([$A-Z-ÖÄÜ]+[0-9]*)[A-Z]*", gloss).groups()
-            collapsed_gloss = "".join([g for g in collapsed_gloss_groups if g is not None])
-        except AttributeError:
-            logging.error("Gloss could not be generalized: '%s'", gloss)
-            collapsed_gloss = gloss
+        collapsed_gloss = collapse_gloss(gloss)
+
+        # remove special glosses that cannot possibly help translation
+        if collapsed_gloss in GLOSSES_TO_IGNORE:
+            continue
+
         collapsed_glosses.append(collapsed_gloss)
 
     line = " ".join(collapsed_glosses)
@@ -131,8 +150,8 @@ def main():
     logging.basicConfig(level=logging.DEBUG)
     logging.debug(args)
 
-    args.lowercase_glosses = bool_from_string(args.lowercase_glosses)
-    args.generalize_dgs_glosses = bool_from_string(args.generalize_dgs_glosses)
+    args.lowercase_glosses = bool_from_string(args.lowercase_glosses)  # type: ignore
+    args.generalize_dgs_glosses = bool_from_string(args.generalize_dgs_glosses)  # type: ignore
 
     with open(args.input_file, "r") as handle_input, open(args.output_file, "w") as handle_output:
 
