@@ -67,4 +67,5 @@ python $tools/transformers/examples/pytorch/translation/run_translation.py \
     --overwrite_output_dir \
     --max_target_length 250 \
     --seed $seed \
+    --num_train_epochs 10 \
     --predict_with_generate $dry_run_additional_args
