@@ -22,6 +22,7 @@ def parse_args():
     parser.add_argument("--pan-json", type=str, help="Path to local JSON file.")
     parser.add_argument("--output-file", type=str, help="Path to file to write extracted sentences.")
     parser.add_argument("--tfds-data-dir", type=str, help="Path to where a tfds data set should be saved.")
+    parser.add_argument("--use-mouthing-tier", action="store_true", required=False, default=False)
 
     args = parser.parse_args()
 
@@ -135,6 +136,15 @@ def extract_and_write(json_path: str,
             gloss_line_german = " ".join([g["gloss"] for g in glosses])
             gloss_line_english = " ".join([g["Lexeme_Sign"] for g in glosses])
 
+            if use_mouthing_tier:
+                # always add a separation symbol, even if there are no mouthing tokens
+                gloss_line_german += " |||"
+
+                mouthing_line = " ".join([g["mouthing"] for g in glosses])
+
+                if len(mouthing_line) > 0:
+                    gloss_line_german += " " + mouthing_line
+
             line_german = sentence["german"]
             line_english = sentence["english"] if sentence["english"] is not None else ""
 
@@ -184,7 +194,10 @@ def main():
     logging.basicConfig(level=logging.DEBUG)
     logging.debug(args)
 
-    extract_and_write(json_path=args.pan_json, outfile_path=args.output_file, tfds_data_dir=args.tfds_data_dir)
+    extract_and_write(json_path=args.pan_json,
+                      outfile_path=args.output_file,
+                      tfds_data_dir=args.tfds_data_dir,
+                      use_mouthing_tier=args.use_mouthing_tier)
 
 
 if __name__ == '__main__':

@@ -9,6 +9,7 @@
 # $seed
 # $bslcp_username
 # $bslcp_password
+# $use_mouthing_tier
 
 base=$1
 src=$2
@@ -18,6 +19,7 @@ training_corpora=$5
 seed=$6
 bslcp_password=$7
 bslcp_username=$8
+use_mouthing_tier=$9
 
 scripts=$base/scripts
 data=$base/data
@@ -61,12 +63,18 @@ for source in $training_corpora; do
 
         # download and extract data from UHH
 
+        if [[ $use_mouthing_tier == "true" ]]; then
+            use_mouthing_tier_arg="--use-mouthing-tier"
+        else
+            use_mouthing_tier_arg=""
+        fi
+
         wget -N https://attachment.rrz.uni-hamburg.de/b026b8c8/pan.json -P $data_sub_sub
 
         python $scripts/download/extract_uhh.py \
             --pan-json $data_sub_sub/pan.json \
             --output-file $data_sub_sub/uhh.json \
-            --tfds-data-dir $data/tfds
+            --tfds-data-dir $data/tfds $use_mouthing_tier_arg
     else
         # download and extract data from BSL corpus
 

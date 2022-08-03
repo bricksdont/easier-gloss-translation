@@ -9,8 +9,6 @@ spm_strategy="joint"
 
 dry_run="false"
 
-model_name="2.0"
-
 ## UHH
 
 training_corpora="uhh"
@@ -23,8 +21,13 @@ language_pairs=(
     "uhh dgs_de de"
 )
 
-. $scripts/running/run_generic.sh
+for use_mouthing_tier in true false; do
 
+    model_name="2.0+use_mouthing_tier.$use_mouthing_tier"
+
+    . $scripts/running/run_generic.sh
+
+done
 
 # German -> DGS
 
@@ -32,4 +35,10 @@ language_pairs=(
     "uhh de dgs_de"
 )
 
-. $scripts/running/run_generic.sh
+for use_mouthing_tier in true false; do
+
+    model_name="2.0+use_mouthing_tier.$use_mouthing_tier"
+
+    . $scripts/running/run_generic.sh
+
+done
