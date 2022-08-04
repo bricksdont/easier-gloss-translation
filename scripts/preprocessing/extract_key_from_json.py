@@ -32,6 +32,10 @@ def sanitize_mouthing_line(input_string: str) -> str:
     """
     input_string = re.sub(r"{.*?}", "", input_string)
 
+    # remove mouth gestures that are too generic to be useful
+
+    input_string = input_string.replace("[MG]", "")
+
     return " ".join(input_string.split())
 
 
