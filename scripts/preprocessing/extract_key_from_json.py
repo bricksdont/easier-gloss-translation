@@ -1,5 +1,6 @@
 #! /usr/bin/python3
 
+import re
 import argparse
 import logging
 import json
@@ -19,6 +20,19 @@ def parse_args():
     args = parser.parse_args()
 
     return args
+
+
+def sanitize_mouthing_line(input_string: str) -> str:
+    """
+    Remove content in curly brackets that was added by annotator, but was not visible
+    in the video.
+
+    :param input_string:
+    :return:
+    """
+    input_string = re.sub(r"{.*?}", "", input_string)
+
+    return " ".join(input_string.split())
 
 
 def main():
@@ -48,6 +62,7 @@ def main():
                 # add mouthing tokens with separator
 
                 mouthing_line = data["mouthing"].strip()
+                mouthing_line = sanitize_mouthing_line(mouthing_line)
 
                 extracted_string += " |||"
 
