@@ -13,6 +13,9 @@ def parse_args():
 
     parser.add_argument("--key", type=str, help="Key to extract", required=True)
 
+    parser.add_argument("--use-mouthing-tier", action="store_true",
+                        help="Add mouthing tokens to gloss line for dgs_de only", required=False, default=False)
+
     args = parser.parse_args()
 
     return args
@@ -39,6 +42,18 @@ def main():
                     extracted_string = ""
             else:
                 extracted_string = data[args.key].strip()
+
+            if args.use_mouthing_tier and args.key == "dgs_de":
+
+                # add mouthing tokens with separator
+
+                mouthing_line = data["mouthing"].strip()
+
+                extracted_string += " |||"
+
+                if len(mouthing_line) > 0:
+                    extracted_string += " " + mouthing_line
+
             handle_output.write(extracted_string + "\n")
 
 

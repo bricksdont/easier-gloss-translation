@@ -137,7 +137,7 @@ id_download=$(
     $SLURM_ARGS_GENERIC \
     $SLURM_LOG_ARGS \
     $scripts/download/download_generic.sh \
-    $base $src $trg $model_name "$training_corpora" $seed $bslcp_username $bslcp_password $use_mouthing_tier
+    $base $src $trg $model_name "$training_corpora" $seed $bslcp_username $bslcp_password
 )
 
 echo "  id_download: $id_download | $logs_sub_sub/slurm-$id_download.out" | tee -a $logs_sub_sub/MAIN
@@ -151,7 +151,7 @@ id_preprocess=$(
     $SLURM_LOG_ARGS \
     $scripts/preprocessing/preprocess_generic.sh \
     $base $src $trg $model_name $dry_run $seed $multilingual $logs_sub_sub/LANGPAIRS.sh \
-    $spm_strategy $lowercase_glosses $generalize_dgs_glosses
+    $spm_strategy $lowercase_glosses $generalize_dgs_glosses $use_mouthing_tier
 )
 
 echo "  id_preprocess: $id_preprocess | $logs_sub_sub/slurm-$id_preprocess.out" | tee -a $logs_sub_sub/MAIN

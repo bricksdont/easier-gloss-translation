@@ -86,11 +86,11 @@ elif [[ $num_lines -gt ${SMALLEST_TRAINSIZE} ]]; then
     decode_and_evaluate=500
     checkpoint_interval=1000
 else
-    echo "Warning: training data size appeaars too small to train a model"
+    echo "Warning: training data size appears too small to train a model"
     embed_dropout=0.5
     transformer_dropout=0.5
     batch_size=1024
-    decode_and_evaluate=500
+    decode_and_evaluate=1000
     checkpoint_interval=1000
 fi
 
@@ -154,13 +154,13 @@ python -m sockeye.train \
 --num-words 64000:64000 \
 --optimizer adam \
 --initial-learning-rate 0.0001 \
---learning-rate-reduce-num-not-improved 4 \
+--learning-rate-reduce-num-not-improved 8 \
 --checkpoint-interval $checkpoint_interval \
 --keep-last-params 30 \
 --max-seq-len 250:250 \
 --learning-rate-reduce-factor 0.7 \
 --decode-and-evaluate $decode_and_evaluate \
---max-num-checkpoint-not-improved 10 \
+--max-num-checkpoint-not-improved 32 \
 --min-num-epochs 0 \
 --gradient-clipping-type abs \
 --gradient-clipping-threshold 1 $dry_run_additional_args

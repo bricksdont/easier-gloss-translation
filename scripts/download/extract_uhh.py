@@ -22,7 +22,6 @@ def parse_args():
     parser.add_argument("--pan-json", type=str, help="Path to local JSON file.")
     parser.add_argument("--output-file", type=str, help="Path to file to write extracted sentences.")
     parser.add_argument("--tfds-data-dir", type=str, help="Path to where a tfds data set should be saved.")
-    parser.add_argument("--use-mouthing-tier", action="store_true", required=False, default=False)
 
     args = parser.parse_args()
 
@@ -98,14 +97,12 @@ def miliseconds_to_frame_index(ms: int, fps: int = 50) -> int:
 
 def extract_and_write(json_path: str,
                       outfile_path: str,
-                      tfds_data_dir: str,
-                      use_mouthing_tier: bool = False) -> None:
+                      tfds_data_dir: str) -> None:
     """
 
     :param json_path:
     :param outfile_path:
     :param tfds_data_dir:
-    :param use_mouthing_tier:
     :return:
     """
     outfile_handle = open(outfile_path, "w")
@@ -136,14 +133,9 @@ def extract_and_write(json_path: str,
             gloss_line_german = " ".join([g["gloss"] for g in glosses])
             gloss_line_english = " ".join([g["Lexeme_Sign"] for g in glosses])
 
-            if use_mouthing_tier:
-                # always add a separation symbol, even if there are no mouthing tokens
-                gloss_line_german += " |||"
+            # add mouthing information
 
-                mouthing_line = " ".join([g["mouthing"] for g in glosses])
-
-                if len(mouthing_line) > 0:
-                    gloss_line_german += " " + mouthing_line
+            mouthing_line = " ".join([s["mouthing"] for s in sentence["mouthings"]])
 
             line_german = sentence["german"]
             line_english = sentence["english"] if sentence["english"] is not None else ""
@@ -174,6 +166,7 @@ def extract_and_write(json_path: str,
 
             output_data = {"dgs_de": gloss_line_german,
                            "dgs_en": gloss_line_english,
+                           "mouthing": mouthing_line,
                            "de": line_german,
                            "en": line_english,
                            "start_frame": start_frame,
@@ -196,8 +189,7 @@ def main():
 
     extract_and_write(json_path=args.pan_json,
                       outfile_path=args.output_file,
-                      tfds_data_dir=args.tfds_data_dir,
-                      use_mouthing_tier=args.use_mouthing_tier)
+                      tfds_data_dir=args.tfds_data_dir)
 
 
 if __name__ == '__main__':
