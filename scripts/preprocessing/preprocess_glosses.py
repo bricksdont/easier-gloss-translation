@@ -4,12 +4,17 @@ import re
 import argparse
 import logging
 
+from typing import Tuple, Optional
+
 DGS_GLOSS_SUFFIXES = ['dgs_de', 'dgs_en']
 GLOSS_SUFFIXES = DGS_GLOSS_SUFFIXES + ['bsl', 'pan']
 SPOKEN_SUFFIXES = ['de', 'en']
 ALL_SUFFIXES = GLOSS_SUFFIXES + SPOKEN_SUFFIXES
 
 GLOSSES_TO_IGNORE = ["$GEST-OFF", "$$EXTRA-LING-MAN"]
+
+SEPARATOR = "+++"
+SEPARATOR_WITH_SPACES = " " + SEPARATOR + " "
 
 
 def parse_args():
@@ -24,6 +29,8 @@ def parse_args():
                         help="Lowercase if inputs are glosses", required=True)
     parser.add_argument("--generalize-dgs-glosses", type=str, choices=["true", "false"],
                         help="Generalize only if inputs are DGS glosses", required=True)
+    parser.add_argument("--use-mouthing-tier", action="store_true",
+                        help="Add mouthing tokens to gloss line for dgs_de only", required=False, default=False)
 
     args = parser.parse_args()
 
@@ -142,6 +149,33 @@ def bool_from_string(bool_as_string: str) -> bool:
         return False
 
 
+def separate_gloss_mouthing(line: str, use_mouthing_tier: bool) -> Tuple[str, Optional[str]]:
+    """
+
+    :param line:
+    :param use_mouthing_tier:
+    :return:
+    """
+    if use_mouthing_tier:
+        assert SEPARATOR in line
+
+        parts = line.split(SEPARATOR)
+        parts = [p.strip() for p in parts]
+
+        if len(parts) == 2:
+            gloss_line, mouthing_line = parts
+        elif len(parts) == 1:
+            gloss_line = parts[0]
+            mouthing_line = None
+        else:
+            raise ValueError("Don't understand this sequence with a separator: %s" % line)
+    else:
+        gloss_line = line
+        mouthing_line = None
+
+    return gloss_line, mouthing_line
+
+
 def main():
 
     args = parse_args()
@@ -160,13 +194,29 @@ def main():
                 # do nothing
                 handle_output.write(line + "\n")
             else:
+
+                # separate mouthing part
+
+                gloss_line, mouthing_line = separate_gloss_mouthing(line, args.use_mouthing_tier)
+
                 # preprocess glosses
 
                 if args.generalize_dgs_glosses and args.lang in DGS_GLOSS_SUFFIXES:
-                    line = generalize_dgs_glosses(line)
+                    gloss_line = generalize_dgs_glosses(gloss_line)
 
                 if args.generalize_dgs_glosses and args.lang == "pan":
-                    line = generalize_pan_glosses(line)
+                    gloss_line = generalize_pan_glosses(gloss_line)
+
+                if args.use_mouthing_tier:
+
+                    # add mouthing back in
+
+                    if mouthing_line is None:
+                        line = gloss_line + " " + SEPARATOR
+                    else:
+                        line = SEPARATOR_WITH_SPACES.join([gloss_line, mouthing_line])
+                else:
+                    line = gloss_line
 
                 if args.lowercase_glosses:
                     line = line.lower()

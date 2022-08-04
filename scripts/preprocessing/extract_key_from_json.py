@@ -64,7 +64,7 @@ def main():
                 mouthing_line = data["mouthing"].strip()
                 mouthing_line = sanitize_mouthing_line(mouthing_line)
 
-                extracted_string += " |||"
+                extracted_string += " +++"
 
                 if len(mouthing_line) > 0:
                     extracted_string += " " + mouthing_line

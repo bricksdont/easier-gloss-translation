@@ -153,7 +153,7 @@ for pair in "${language_pairs[@]}"; do
                 --output-file $data_sub/$source.$corpus.preprocessed.$lang \
                 --lang $lang \
                 --lowercase-glosses $lowercase_glosses \
-                --generalize-dgs-glosses $generalize_dgs_glosses
+                --generalize-dgs-glosses $generalize_dgs_glosses $use_mouthing_tier_arg
         done
 
         # prenormalization for all corpora
