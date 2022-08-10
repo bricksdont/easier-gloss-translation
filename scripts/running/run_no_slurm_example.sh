@@ -13,7 +13,7 @@ language_pairs=(
 
 # baseline
 
-model_name="baseline"
+model_name="baseline_no_slurm"
 
 training_corpora="uhh"
 testing_corpora="test"
