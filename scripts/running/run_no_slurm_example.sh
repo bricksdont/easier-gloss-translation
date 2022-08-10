@@ -22,4 +22,4 @@ lowercase_glosses="false"
 generalize_dgs_glosses="true"
 spm_strategy="joint"
 
-. $scripts/running/run_generic.sh
+. $scripts/running/run_generic_no_slurm.sh
