@@ -121,7 +121,7 @@ id_preprocess=$(python  -c 'import uuid; print(uuid.uuid4().hex)')
 $scripts/preprocessing/preprocess_generic.sh \
     $base $src $trg $model_name $dry_run $seed $multilingual $logs_sub_sub/LANGPAIRS.sh \
     $spm_strategy $lowercase_glosses $generalize_dgs_glosses \
-    > $logs_sub_sub/slurm-id_preprocess.out 2> $logs_sub_sub/slurm-id_preprocess.out
+    > $logs_sub_sub/slurm-$id_preprocess.out 2> $logs_sub_sub/slurm-$id_preprocess.out
 
 echo "  id_preprocess: $id_preprocess | $logs_sub_sub/slurm-$id_preprocess.out" | tee -a $logs_sub_sub/MAIN
 
@@ -131,7 +131,7 @@ id_prepare=$(python  -c 'import uuid; print(uuid.uuid4().hex)')
 
 $scripts/preprocessing/prepare_generic.sh \
     $base $src $trg $model_name $seed $spm_strategy \
-    > $logs_sub_sub/slurm-id_prepare.out 2> $logs_sub_sub/slurm-id_prepare.out
+    > $logs_sub_sub/slurm-$id_prepare.out 2> $logs_sub_sub/slurm-$id_prepare.out
 
 echo "  id_prepare: $id_prepare | $logs_sub_sub/slurm-$id_prepare.out"  | tee -a $logs_sub_sub/MAIN
 
