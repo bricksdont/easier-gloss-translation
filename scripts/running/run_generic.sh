@@ -87,7 +87,6 @@ if [ -z "$generalize_dgs_glosses" ]; then
     generalize_dgs_glosses="false"
 fi
 
-
 if [ -z "$use_mouthing_tier" ]; then
     use_mouthing_tier="false"
 fi
