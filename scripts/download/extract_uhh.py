@@ -5,7 +5,7 @@ import json
 import logging
 import argparse
 
-from typing import Dict, Tuple
+from typing import Dict, Tuple, List, Any
 
 import tensorflow_datasets as tfds
 
@@ -16,16 +16,69 @@ from sign_language_datasets.datasets.config import SignDatasetConfig
 from sign_language_datasets.datasets.dgs_corpus.dgs_utils import get_elan_sentences
 
 
+UZH_DOCUMENT_SPLIT_IDENTIFIER = "3.0.0-uzh-document"
+
+
 def parse_args():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--pan-json", type=str, help="Path to local JSON file.")
-    parser.add_argument("--output-file", type=str, help="Path to file to write extracted sentences.")
-    parser.add_argument("--tfds-data-dir", type=str, help="Path to where a tfds data set should be saved.")
+    parser.add_argument("--pan-json", type=str, help="Path to local JSON file.", required=True)
+    parser.add_argument("--use-document-split", action="store_true", required=False, default=False,
+                        help="Use an existing document split for the DGS corpus.")
+
+    parser.add_argument("--output-file", type=str, required=False, default=None,
+                        help="Path to file to write extracted sentences if no split identifier is given.")
+
+    parser.add_argument("--output-file-train", type=str, required=False, default=None,
+                        help="Path to file to write extracted train sentences for existing split.")
+    parser.add_argument("--output-file-dev", type=str, required=False, default=None,
+                        help="Path to file to write extracted dev sentences for existing split.")
+    parser.add_argument("--output-file-test", type=str, required=False, default=None,
+                        help="Path to file to write extracted test sentences for existing split.")
+
+    parser.add_argument("--tfds-data-dir", type=str, required=True,
+                        help="Path to where a tfds data set should be saved.")
 
     args = parser.parse_args()
 
     return args
+
+
+def all_are_none(arguments: List[Any]) -> bool:
+    """
+
+    :param arguments:
+    :return:
+    """
+    return all([argument is None for argument in arguments])
+
+
+def none_are_none(arguments: List[Any]) -> bool:
+    """
+
+    :param arguments:
+    :return:
+    """
+    return not any([argument is None for argument in arguments])
+
+
+def check_args(args: argparse.Namespace):
+    """
+
+    :param args:
+    :return:
+    """
+    if args.output_file is not None:
+        assert all_are_none([args.output_file_train, args.output_file_dev, args.output_file_test]), \
+            "If --output-file is given, --output-file-{train,dev,test} are not allowed"
+
+        assert not args.use_document_split, "If --output-file is given, --use-document-split is not allowed"
+
+    else:
+        assert none_are_none([args.output_file_train, args.output_file_dev, args.output_file_test]), \
+            "If --output-file is not given, all of --output-file-{train,dev,test} must be specified"
+
+        assert args.use_document_split, "If --output-file is not given, --use-document-split must be specified"
 
 
 def get_id_miliseconds_from_url(url: str) -> Tuple[str, int]:
@@ -97,26 +150,35 @@ def miliseconds_to_frame_index(ms: int, fps: int = 50) -> int:
 
 def extract_and_write(json_path: str,
                       outfile_path: str,
-                      tfds_data_dir: str) -> None:
+                      tfds_data_dir: str,
+                      subset_key: str,
+                      use_document_split: bool) -> None:
     """
 
     :param json_path:
     :param outfile_path:
     :param tfds_data_dir:
+    :param subset_key:
+    :param use_document_split:
     :return:
     """
     outfile_handle = open(outfile_path, "w")
 
     fps = 50
 
-    config = SignDatasetConfig(name="only-annotations", version="1.0.0", include_video=False, include_pose=None)
+    if use_document_split:
+        config = SignDatasetConfig(name="only-annotations", version="1.0.0", include_video=False, include_pose=None,
+                                   split=UZH_DOCUMENT_SPLIT_IDENTIFIER)
+    else:
+        config = SignDatasetConfig(name="only-annotations", version="1.0.0", include_video=False, include_pose=None)
+
     dgs_corpus = tfds.load('dgs_corpus', builder_kwargs=dict(config=config), data_dir=tfds_data_dir)
 
     pan_data = extract_pan_data(json_path=json_path)
 
     pan_stats = {"found": 0, "missing (expected)": 0, "missing (unexpected)": 0}
 
-    for datum in dgs_corpus["train"]:
+    for datum in dgs_corpus[subset_key]:
         _id = datum["id"].numpy().decode('utf-8')
 
         elan_path = datum["paths"]["eaf"].numpy().decode('utf-8')
@@ -184,12 +246,28 @@ def main():
 
     args = parse_args()
 
+    check_args(args)
+
     logging.basicConfig(level=logging.DEBUG)
     logging.debug(args)
 
-    extract_and_write(json_path=args.pan_json,
-                      outfile_path=args.output_file,
-                      tfds_data_dir=args.tfds_data_dir)
+    subset_keys = ["train", "validation", "test"]
+    outfile_paths = [args.output_file_train, args.output_file_dev, args.output_file_test]
+
+    if args.use_document_split:
+        for subset_key, outfile_path in zip(subset_keys, outfile_paths):
+            extract_and_write(json_path=args.pan_json,
+                              outfile_path=outfile_path,
+                              tfds_data_dir=args.tfds_data_dir,
+                              subset_key=subset_key,
+                              use_document_split=True)
+
+    else:
+        extract_and_write(json_path=args.pan_json,
+                          outfile_path=args.output_file,
+                          tfds_data_dir=args.tfds_data_dir,
+                          subset_key="train",
+                          use_document_split=False)
 
 
 if __name__ == '__main__':

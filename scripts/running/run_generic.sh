@@ -17,6 +17,7 @@
 # $lowercase_glosses (values: "true" or "false")
 # $generalize_dgs_glosses (values: "true" or "false")
 # $use_mouthing_tier (values: "true" or "false")
+# $dgs_use_document_split (values: "true" or "false")
 
 module load volta nvidia/cuda10.2-cudnn7.6.5 anaconda3
 
@@ -91,6 +92,10 @@ if [ -z "$use_mouthing_tier" ]; then
     use_mouthing_tier="false"
 fi
 
+if [ -z "$dgs_use_document_split" ]; then
+    dgs_use_document_split="false"
+fi
+
 # SLURM job args
 
 DRY_RUN_SLURM_ARGS="--cpus-per-task=2 --time=02:00:00 --mem=16G --partition=generic"
@@ -127,6 +132,7 @@ echo "SPM_STRATEGY: $spm_strategy" | tee -a $logs_sub_sub/MAIN
 echo "LOWERCASE_GLOSSES: $lowercase_glosses" | tee -a $logs_sub_sub/MAIN
 echo "GENERALIZE_DGS_GLOSSES: $generalize_dgs_glosses" | tee -a $logs_sub_sub/MAIN
 echo "USE_MOUTHING_TIER: $use_mouthing_tier" | tee -a $logs_sub_sub/MAIN
+echo "DGS_USE_DOCUMENT_SPLIT: $dgs_use_document_split" | tee -a $logs_sub_sub/MAIN
 echo "DRY RUN: $dry_run" | tee -a $logs_sub_sub/MAIN
 
 # download corpora
@@ -136,7 +142,7 @@ id_download=$(
     $SLURM_ARGS_GENERIC \
     $SLURM_LOG_ARGS \
     $scripts/download/download_generic.sh \
-    $base $src $trg $model_name "$training_corpora" $seed $bslcp_username $bslcp_password
+    $base $src $trg $model_name "$training_corpora" $seed $bslcp_username $bslcp_password $dgs_use_document_split
 )
 
 echo "  id_download: $id_download | $logs_sub_sub/slurm-$id_download.out" | tee -a $logs_sub_sub/MAIN
