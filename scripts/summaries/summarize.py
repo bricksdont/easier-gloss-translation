@@ -141,13 +141,6 @@ def parse_model_name(model_name: str) -> Tuple[str, str, str, str, str]:
     if model_name == "dry_run":
         return version, lowercase_glosses, generalize_dgs_glosses, spm_strategy, use_mouthing_tier
 
-    if model_name == "2.0":
-        return "2.0", lowercase_glosses, generalize_dgs_glosses, spm_strategy, use_mouthing_tier
-
-    if "2.0" in model_name:
-        version = "2.0"
-        model_name = model_name.replace("2.0+", "")
-
     pairs = model_name.split("+")
 
     for pair in pairs:
@@ -155,6 +148,8 @@ def parse_model_name(model_name: str) -> Tuple[str, str, str, str, str]:
 
         if key == "lg":
             lowercase_glosses = value
+        elif key == "version":
+            version = value
         elif key == "gdg":
             generalize_dgs_glosses = value
         elif key == "ss":

@@ -23,7 +23,7 @@ language_pairs=(
 
 for use_mouthing_tier in true false; do
 
-    model_name="2.0+use_mouthing_tier.$use_mouthing_tier"
+    model_name="version.2+use_mouthing_tier.$use_mouthing_tier"
 
     . $scripts/running/run_generic.sh
 
@@ -35,6 +35,6 @@ language_pairs=(
     "uhh de dgs_de"
 )
 
-model_name="2.0"
+model_name="version.2"
 
 . $scripts/running/run_generic.sh
