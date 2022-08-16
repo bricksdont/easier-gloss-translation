@@ -12,6 +12,7 @@
 # $spm_strategy
 # $lowercase_glosses
 # $generalize_dgs_glosses
+# $use_mouthing_tier
 
 base=$1
 src=$2
@@ -24,6 +25,7 @@ language_pairs_script=$8
 spm_strategy=$9
 lowercase_glosses=${10}
 generalize_dgs_glosses=${11}
+use_mouthing_tier=${12}
 
 data=$base/data
 venvs=$base/venvs
@@ -115,12 +117,18 @@ for pair in "${language_pairs[@]}"; do
 
         # extract data from download jsons
 
+        if [[ $use_mouthing_tier == "true" ]]; then
+            use_mouthing_tier_arg="--use-mouthing-tier"
+        else
+            use_mouthing_tier_arg=""
+        fi
+
         for corpus in $ALL_CORPORA; do
 
             python $scripts/preprocessing/extract_key_from_json.py \
                 --input-file $download_sub/$corpus.json \
                 --output-file $data_sub/$source.$corpus.$lang \
-                --key $lang
+                --key $lang $use_mouthing_tier_arg
         done
 
         # truncate all files if this is a dry run
@@ -145,7 +153,7 @@ for pair in "${language_pairs[@]}"; do
                 --output-file $data_sub/$source.$corpus.preprocessed.$lang \
                 --lang $lang \
                 --lowercase-glosses $lowercase_glosses \
-                --generalize-dgs-glosses $generalize_dgs_glosses
+                --generalize-dgs-glosses $generalize_dgs_glosses $use_mouthing_tier_arg
         done
 
         # prenormalization for all corpora

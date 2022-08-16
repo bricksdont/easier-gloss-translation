@@ -1,5 +1,6 @@
 #! /usr/bin/python3
 
+import re
 import argparse
 import logging
 import json
@@ -13,9 +14,29 @@ def parse_args():
 
     parser.add_argument("--key", type=str, help="Key to extract", required=True)
 
+    parser.add_argument("--use-mouthing-tier", action="store_true",
+                        help="Add mouthing tokens to gloss line for dgs_de only", required=False, default=False)
+
     args = parser.parse_args()
 
     return args
+
+
+def sanitize_mouthing_line(input_string: str) -> str:
+    """
+    Remove content in curly brackets that was added by annotator, but was not visible
+    in the video.
+
+    :param input_string:
+    :return:
+    """
+    input_string = re.sub(r"{.*?}", "", input_string)
+
+    # remove mouth gestures that are too generic to be useful
+
+    input_string = input_string.replace("[MG]", "")
+
+    return " ".join(input_string.split())
 
 
 def main():
@@ -39,6 +60,19 @@ def main():
                     extracted_string = ""
             else:
                 extracted_string = data[args.key].strip()
+
+            if args.use_mouthing_tier and args.key == "dgs_de":
+
+                # add mouthing tokens with separator
+
+                mouthing_line = data["mouthing"].strip()
+                mouthing_line = sanitize_mouthing_line(mouthing_line)
+
+                extracted_string += " +++"
+
+                if len(mouthing_line) > 0:
+                    extracted_string += " " + mouthing_line
+
             handle_output.write(extracted_string + "\n")
 
 

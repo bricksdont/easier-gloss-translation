@@ -133,6 +133,10 @@ def extract_and_write(json_path: str,
             gloss_line_german = " ".join([g["gloss"] for g in glosses])
             gloss_line_english = " ".join([g["Lexeme_Sign"] for g in glosses])
 
+            # add mouthing information
+
+            mouthing_line = " ".join([s["mouthing"] for s in sentence["mouthings"]])
+
             line_german = sentence["german"]
             line_english = sentence["english"] if sentence["english"] is not None else ""
 
@@ -162,6 +166,7 @@ def extract_and_write(json_path: str,
 
             output_data = {"dgs_de": gloss_line_german,
                            "dgs_en": gloss_line_english,
+                           "mouthing": mouthing_line,
                            "de": line_german,
                            "en": line_english,
                            "start_frame": start_frame,
@@ -182,7 +187,9 @@ def main():
     logging.basicConfig(level=logging.DEBUG)
     logging.debug(args)
 
-    extract_and_write(json_path=args.pan_json, outfile_path=args.output_file, tfds_data_dir=args.tfds_data_dir)
+    extract_and_write(json_path=args.pan_json,
+                      outfile_path=args.output_file,
+                      tfds_data_dir=args.tfds_data_dir)
 
 
 if __name__ == '__main__':

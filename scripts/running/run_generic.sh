@@ -16,6 +16,7 @@
 # $spm_strategy (values: "joint", "separate", "spoken-only")
 # $lowercase_glosses (values: "true" or "false")
 # $generalize_dgs_glosses (values: "true" or "false")
+# $use_mouthing_tier (values: "true" or "false")
 
 module load volta nvidia/cuda10.2-cudnn7.6.5 anaconda3
 
@@ -81,8 +82,14 @@ fi
 if [ -z "$lowercase_glosses" ]; then
     lowercase_glosses="false"
 fi
+
 if [ -z "$generalize_dgs_glosses" ]; then
     generalize_dgs_glosses="false"
+fi
+
+
+if [ -z "$use_mouthing_tier" ]; then
+    use_mouthing_tier="false"
 fi
 
 # SLURM job args
@@ -120,6 +127,7 @@ echo "MULTILINGUAL: $multilingual" | tee -a $logs_sub_sub/MAIN
 echo "SPM_STRATEGY: $spm_strategy" | tee -a $logs_sub_sub/MAIN
 echo "LOWERCASE_GLOSSES: $lowercase_glosses" | tee -a $logs_sub_sub/MAIN
 echo "GENERALIZE_DGS_GLOSSES: $generalize_dgs_glosses" | tee -a $logs_sub_sub/MAIN
+echo "USE_MOUTHING_TIER: $use_mouthing_tier" | tee -a $logs_sub_sub/MAIN
 echo "DRY RUN: $dry_run" | tee -a $logs_sub_sub/MAIN
 
 # download corpora
@@ -143,7 +151,7 @@ id_preprocess=$(
     $SLURM_LOG_ARGS \
     $scripts/preprocessing/preprocess_generic.sh \
     $base $src $trg $model_name $dry_run $seed $multilingual $logs_sub_sub/LANGPAIRS.sh \
-    $spm_strategy $lowercase_glosses $generalize_dgs_glosses
+    $spm_strategy $lowercase_glosses $generalize_dgs_glosses $use_mouthing_tier
 )
 
 echo "  id_preprocess: $id_preprocess | $logs_sub_sub/slurm-$id_preprocess.out" | tee -a $logs_sub_sub/MAIN
