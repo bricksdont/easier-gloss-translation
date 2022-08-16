@@ -122,12 +122,12 @@ def is_multilingual(langpair: str) -> bool:
     return "+" in langpair
 
 
-def parse_model_name(model_name: str) -> Tuple[str, str, str, str, str]:
+def parse_model_name(model_name: str) -> Tuple[str, str, str, str, str, str]:
     """
     Examples:
 
-    2.0
-    2.0+use_mouthing_tier.true
+    version.2
+    version.2.0+use_mouthing_tier.true
     lg.false+gdg.true+ss.joint
     lg.false+ss.spoken-only
     multilingual.true+lg.false+ss.spoken-only
@@ -136,10 +136,11 @@ def parse_model_name(model_name: str) -> Tuple[str, str, str, str, str]:
     :param model_name:
     :return:
     """
-    version, lowercase_glosses, generalize_dgs_glosses, spm_strategy, use_mouthing_tier = "-", "-", "-", "-", "-"
+    version, lowercase_glosses, generalize_dgs_glosses, spm_strategy, use_mouthing_tier, dgs_use_document_split \
+        = "-", "-", "-", "-", "-", "-"
 
     if model_name == "dry_run":
-        return version, lowercase_glosses, generalize_dgs_glosses, spm_strategy, use_mouthing_tier
+        return version, lowercase_glosses, generalize_dgs_glosses, spm_strategy, use_mouthing_tier, dgs_use_document_split
 
     pairs = model_name.split("+")
 
@@ -160,11 +161,13 @@ def parse_model_name(model_name: str) -> Tuple[str, str, str, str, str]:
             continue
         elif key == "spm_vocab_size":
             continue
+        elif key == "dgs_use_document_split":
+            dgs_use_document_split = value
         else:
             logging.warning("Could not parse (key, value:): %s, %s", key, value)
             raise NotImplementedError
 
-    return version, lowercase_glosses, generalize_dgs_glosses, spm_strategy, use_mouthing_tier
+    return version, lowercase_glosses, generalize_dgs_glosses, spm_strategy, use_mouthing_tier, dgs_use_document_split
 
 
 class Result(object):
@@ -181,6 +184,7 @@ class Result(object):
                  spm_strategy,
                  version,
                  use_mouthing_tier,
+                 dgs_use_document_split,
                  metric_names,
                  metric_values):
         self.langpair = langpair
@@ -194,6 +198,7 @@ class Result(object):
         self.spm_strategy = spm_strategy
         self.version = version
         self.use_mouthing_tier = use_mouthing_tier
+        self.dgs_use_document_split = dgs_use_document_split
         self.metric_dict = {}
 
         self.update_metrics(metric_names, metric_values)
@@ -222,6 +227,7 @@ class Result(object):
                                         self.spm_strategy,
                                         self.version,
                                         self.use_mouthing_tier,
+                                        self.dgs_use_document_split,
                                         metric_dict])
 
     def signature(self) -> str:
@@ -235,7 +241,8 @@ class Result(object):
                          self.generalize_dgs_glosses,
                          self.spm_strategy,
                          self.version,
-                         self.use_mouthing_tier])
+                         self.use_mouthing_tier,
+                         self.dgs_use_document_split])
 
 
 def collapse_metrics(results: List[Result]) -> Result:
@@ -316,7 +323,8 @@ def main():
         for model_name in model_names:
             path_model = os.path.join(path_langpair, model_name)
 
-            version, lowercase_glosses, generalize_dgs_glosses, spm_strategy, use_mouthing_tier = parse_model_name(model_name)
+            version, lowercase_glosses, generalize_dgs_glosses, spm_strategy, use_mouthing_tier, dgs_use_document_split = \
+                parse_model_name(model_name)
 
             for _, _, files in os.walk(path_model):
                 for file in files:
@@ -337,6 +345,7 @@ def main():
                                     spm_strategy,
                                     version,
                                     use_mouthing_tier,
+                                    dgs_use_document_split,
                                     metric_names,
                                     metric_values)
 
@@ -356,6 +365,7 @@ def main():
                     "SPM_STRATEGY",
                     "VERSION",
                     "USE_MOUTHING_TIER",
+                    "DGS_USE_DOCUMENT_SPLIT",
                     "BLEU",
                     "CHRF"]
 
@@ -366,7 +376,8 @@ def main():
 
     for r in results:
         values = [r.langpair, r.model_name, r.corpus, r.source, r.test_src, r.test_trg,
-                  r.lowercase_glosses, r.generalize_dgs_glosses, r.spm_strategy, r.version, r.use_mouthing_tier]
+                  r.lowercase_glosses, r.generalize_dgs_glosses, r.spm_strategy, r.version,
+                  r.use_mouthing_tier, r.dgs_use_document_split]
         metrics = [r.metric_dict.get(m, "-") for m in metric_names]
 
         print("\t".join(values + metrics))
