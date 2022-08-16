@@ -167,8 +167,8 @@ def extract_and_write(json_path: str,
     fps = 50
 
     if use_document_split:
-        config = SignDatasetConfig(name="only-annotations", version="1.0.0", include_video=False, include_pose=None,
-                                   split=UZH_DOCUMENT_SPLIT_IDENTIFIER)
+        config = SignDatasetConfig(name="only-annotations-document-split", version="1.0.0", include_video=False,
+                                   include_pose=None, split=UZH_DOCUMENT_SPLIT_IDENTIFIER)
     else:
         config = SignDatasetConfig(name="only-annotations", version="1.0.0", include_video=False, include_pose=None)
 
