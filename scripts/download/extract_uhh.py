@@ -17,6 +17,7 @@ from sign_language_datasets.datasets.dgs_corpus.dgs_utils import get_elan_senten
 
 
 UZH_DOCUMENT_SPLIT_IDENTIFIER = "3.0.0-uzh-document"
+UZH_SENTENCE_SPLIT_IDENTIFIER = "3.0.0-uzh-sentence"
 
 
 def parse_args():
@@ -148,30 +149,118 @@ def miliseconds_to_frame_index(ms: int, fps: int = 50) -> int:
     return int(fps * (ms / 1000))
 
 
-def extract_and_write(json_path: str,
-                      outfile_path: str,
-                      tfds_data_dir: str,
-                      subset_key: str,
-                      use_document_split: bool) -> None:
+def extract_and_write_sentence_split(json_path: str,
+                                     outfile_path: str,
+                                     tfds_data_dir: str,
+                                     subset_key: str) -> None:
     """
 
     :param json_path:
     :param outfile_path:
     :param tfds_data_dir:
     :param subset_key:
-    :param use_document_split:
     :return:
     """
     outfile_handle = open(outfile_path, "w")
 
     fps = 50
 
-    if use_document_split:
-        config = DgsCorpusConfig(name="only-annotations-document-split", version="1.0.0", include_video=False,
-                                   include_pose=None, split=UZH_DOCUMENT_SPLIT_IDENTIFIER, data_type="document")
-    else:
-        config = DgsCorpusConfig(name="only-annotations", version="1.0.0", include_video=False, include_pose=None,
-                                 data_type="document")
+    config = DgsCorpusConfig(name="only-annotations-sentence-split", version="1.0.0", include_video=False,
+                             include_pose=None, split=UZH_SENTENCE_SPLIT_IDENTIFIER, data_type="sentence")
+
+    dgs_corpus = tfds.load('dgs_corpus', builder_kwargs=dict(config=config), data_dir=tfds_data_dir)
+
+    pan_data = extract_pan_data(json_path=json_path)
+
+    pan_stats = {"found": 0, "missing (expected)": 0, "missing (unexpected)": 0}
+
+    for datum in dgs_corpus[subset_key]:
+        document_id = datum["document_id"].numpy().decode('utf-8')
+        sentence_id = datum["id"].numpy().decode('utf-8')
+
+        sentence = datum["sentence"]
+
+        participant = sentence["participant"].numpy().decode("utf-8").lower()
+
+        # relevant keys: EN: 'Lexeme_Sign' and DE: 'gloss'
+        german_glosses = sentence["glosses"]["gloss"].numpy().tolist()
+        english_glosses = sentence["glosses"]["Lexeme_Sign"].numpy().tolist()
+
+        if len(german_glosses) == 0:
+            continue
+
+        # relevant keys: EN: 'Lexeme_Sign' and DE: 'gloss'
+        gloss_line_german = " ".join([g.decode("utf-8") for g in german_glosses])
+        gloss_line_english = " ".join([g.decode("utf-8") for g in english_glosses])
+
+        # add mouthing information
+        mouthings = sentence["mouthings"]["mouthing"]
+
+        mouthing_line = " ".join([s.decode("utf-8") for s in mouthings])
+
+        line_german = sentence["german"].numpy().decode("utf-8")
+        line_english = sentence["english"].numpy().decode("utf-8") if sentence["english"] is not None else ""
+
+        # get timing information for sentence
+        start_frame = miliseconds_to_frame_index(sentence["start"].numpy(), fps)
+        end_frame = miliseconds_to_frame_index(sentence["end"].numpy(), fps)
+
+        # look for entry in pan data that corresponds
+
+        pan_data_for_id = pan_data[document_id]
+
+        if start_frame in pan_data_for_id.keys():
+            gloss_line_pan = pan_data[document_id][start_frame]
+
+            pan_stats["found"] += 1
+        elif line_german.endswith("/"):
+            # unfinished sentences that Thomas excluded from PAN
+            # Example: "Ich hatte mein Flugticket/" in
+            # https://www.sign-lang.uni-hamburg.de/meinedgs/html/1429910-16075041-16115817_de.html
+            gloss_line_pan = ""
+            pan_stats["missing (expected)"] += 1
+        else:
+            logging.warning("PAN entry missing unexpectedly for start frame '%d', document_id: '%s', "
+                            "sentence_id: '%s', line_german: '%s'",
+                            start_frame, document_id, sentence_id, line_german)
+            gloss_line_pan = ""
+            pan_stats["missing (unexpected)"] += 1
+
+        output_data = {"dgs_de": gloss_line_german,
+                       "dgs_en": gloss_line_english,
+                       "mouthing": mouthing_line,
+                       "de": line_german,
+                       "en": line_english,
+                       "start_frame": start_frame,
+                       "end_frame": end_frame,
+                       "participant": participant,
+                       "pan": gloss_line_pan,
+                       "document_id": document_id,
+                       "sentence_id": sentence_id}
+
+        outfile_handle.write(json.dumps(output_data) + "\n")
+
+    logging.debug("Pan stats: %s", pan_stats)
+
+
+def extract_and_write_document_split(json_path: str,
+                                     outfile_path: str,
+                                     tfds_data_dir: str,
+                                     subset_key: str) -> None:
+    """
+
+    :param json_path:
+    :param outfile_path:
+    :param tfds_data_dir:
+    :param subset_key:
+    :return:
+    """
+    outfile_handle = open(outfile_path, "w")
+
+    fps = 50
+
+    config = DgsCorpusConfig(name="only-annotations-document-split", version="1.0.0", include_video=False,
+                             include_pose=None, split=UZH_DOCUMENT_SPLIT_IDENTIFIER, data_type="document")
 
     dgs_corpus = tfds.load('dgs_corpus', builder_kwargs=dict(config=config), data_dir=tfds_data_dir)
 
@@ -259,20 +348,18 @@ def main():
     subset_keys = ["train", "validation", "test"]
     outfile_paths = [args.output_file_train, args.output_file_dev, args.output_file_test]
 
-    if args.use_document_split:
-        for subset_key, outfile_path in zip(subset_keys, outfile_paths):
-            extract_and_write(json_path=args.pan_json,
-                              outfile_path=outfile_path,
-                              tfds_data_dir=args.tfds_data_dir,
-                              subset_key=subset_key,
-                              use_document_split=True)
+    for subset_key, outfile_path in zip(subset_keys, outfile_paths):
+        if args.use_document_split:
 
-    else:
-        extract_and_write(json_path=args.pan_json,
-                          outfile_path=args.output_file,
-                          tfds_data_dir=args.tfds_data_dir,
-                          subset_key="train",
-                          use_document_split=False)
+            extract_and_write_document_split(json_path=args.pan_json,
+                                             outfile_path=outfile_path,
+                                             tfds_data_dir=args.tfds_data_dir,
+                                             subset_key=subset_key)
+        else:
+            extract_and_write_sentence_split(json_path=args.pan_json,
+                                             outfile_path=args.output_file,
+                                             tfds_data_dir=args.tfds_data_dir,
+                                             subset_key=subset_key)
 
 
 if __name__ == '__main__':
