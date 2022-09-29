@@ -28,4 +28,6 @@ pip install subword-nmt sentencepiece
 
 # install tfds SL datasets
 
-pip install sign-language-datasets==0.0.14
+# this currently fails until there is a new PyPi release
+
+pip install sign-language-datasets==0.1.2

@@ -179,12 +179,14 @@ def extract_and_write(json_path: str,
     pan_stats = {"found": 0, "missing (expected)": 0, "missing (unexpected)": 0}
 
     for datum in dgs_corpus[subset_key]:
-        _id = datum["id"].numpy().decode('utf-8')
+        document_id = datum["id"].numpy().decode('utf-8')
 
         elan_path = datum["paths"]["eaf"].numpy().decode('utf-8')
         sentences = get_elan_sentences(elan_path)
 
         for sentence in sentences:
+            sentence_id = sentence["id"]
+
             participant = sentence["participant"].lower()
             glosses = sentence["glosses"]
 
@@ -208,10 +210,10 @@ def extract_and_write(json_path: str,
 
             # look for entry in pan data that corresponds
 
-            pan_data_for_id = pan_data[_id]
+            pan_data_for_id = pan_data[document_id]
 
             if start_frame in pan_data_for_id.keys():
-                gloss_line_pan = pan_data[_id][start_frame]
+                gloss_line_pan = pan_data[document_id][start_frame]
 
                 pan_stats["found"] += 1
             elif line_german.endswith("/"):
@@ -221,8 +223,9 @@ def extract_and_write(json_path: str,
                 gloss_line_pan = ""
                 pan_stats["missing (expected)"] += 1
             else:
-                logging.warning("PAN entry missing unexpectedly for start frame '%d', id: '%s', line_german: '%s'",
-                                start_frame, _id, line_german)
+                logging.warning("PAN entry missing unexpectedly for start frame '%d', document_id: '%s', "
+                                "sentence_id: '%s', line_german: '%s'",
+                                start_frame, document_id, sentence_id, line_german)
                 gloss_line_pan = ""
                 pan_stats["missing (unexpected)"] += 1
 
@@ -235,7 +238,8 @@ def extract_and_write(json_path: str,
                            "end_frame": end_frame,
                            "participant": participant,
                            "pan": gloss_line_pan,
-                           "id": _id}
+                           "document_id": document_id,
+                           "sentence_id": sentence_id}
 
             outfile_handle.write(json.dumps(output_data) + "\n")
 
