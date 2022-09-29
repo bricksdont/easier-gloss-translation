@@ -66,21 +66,22 @@ for source in $training_corpora; do
         wget -N https://attachment.rrz.uni-hamburg.de/b026b8c8/pan.json -P $data_sub_sub
 
         if [[ $dgs_use_document_split == "true" ]]; then
-
-            python $scripts/download/extract_uhh.py \
-                --pan-json $data_sub_sub/pan.json \
-                --output-file-train $data_sub_sub/train.json \
-                --output-file-dev $data_sub_sub/dev.json \
-                --output-file-test $data_sub_sub/test.json \
-                --tfds-data-dir $data/tfds \
-                --use-document-split
-
+            use_document_split_arg="--use-document-split"
         else
-            python $scripts/download/extract_uhh.py \
-                --pan-json $data_sub_sub/pan.json \
-                --output-file $data_sub_sub/uhh.json \
-                --tfds-data-dir $data/tfds
+            use_document_split_arg=""
         fi
+
+        python $scripts/download/extract_uhh.py \
+            --pan-json $data_sub_sub/pan.json \
+            --output-file-train $data_sub_sub/train.json \
+            --output-file-dev $data_sub_sub/dev.json \
+            --output-file-test $data_sub_sub/test.json \
+            --tfds-data-dir $data/tfds $use_document_split_arg
+
+        # concat all subsets, for debugging
+
+        cat $data_sub_sub/{train,dev,test}.json > $data_sub_sub/uhh.json
+
     else
         # download and extract data from BSL corpus
 
@@ -89,11 +90,8 @@ for source in $training_corpora; do
             --tfds-data-dir $data/tfds \
             --bslcp-username $bslcp_username \
             --bslcp-password $bslcp_password
-    fi
 
-    if [[ $dgs_use_document_split != "true" ]]; then
-
-        # make fixed splits, but only if this is not DGS with a fixed, existing document split
+        # make fixed splits, but only if this is not DGS with a fixed, existing split
 
         data_sub_sub=$data_sub/$source
 

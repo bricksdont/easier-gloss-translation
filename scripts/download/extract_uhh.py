@@ -27,14 +27,11 @@ def parse_args():
     parser.add_argument("--use-document-split", action="store_true", required=False, default=False,
                         help="Use an existing document split for the DGS corpus.")
 
-    parser.add_argument("--output-file", type=str, required=False, default=None,
-                        help="Path to file to write extracted sentences if no split identifier is given.")
-
-    parser.add_argument("--output-file-train", type=str, required=False, default=None,
+    parser.add_argument("--output-file-train", type=str, required=True,
                         help="Path to file to write extracted train sentences for existing split.")
-    parser.add_argument("--output-file-dev", type=str, required=False, default=None,
+    parser.add_argument("--output-file-dev", type=str, required=True,
                         help="Path to file to write extracted dev sentences for existing split.")
-    parser.add_argument("--output-file-test", type=str, required=False, default=None,
+    parser.add_argument("--output-file-test", type=str, required=True,
                         help="Path to file to write extracted test sentences for existing split.")
 
     parser.add_argument("--tfds-data-dir", type=str, required=True,
@@ -357,7 +354,7 @@ def main():
                                              subset_key=subset_key)
         else:
             extract_and_write_sentence_split(json_path=args.pan_json,
-                                             outfile_path=args.output_file,
+                                             outfile_path=outfile_path,
                                              tfds_data_dir=args.tfds_data_dir,
                                              subset_key=subset_key)
 
