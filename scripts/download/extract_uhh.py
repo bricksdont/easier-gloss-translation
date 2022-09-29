@@ -11,7 +11,7 @@ import tensorflow_datasets as tfds
 
 # noinspection PyUnresolvedReferences
 from sign_language_datasets import datasets
-from sign_language_datasets.datasets.config import SignDatasetConfig
+from sign_language_datasets.datasets.dgs_corpus.dgs_corpus import DgsCorpusConfig
 
 from sign_language_datasets.datasets.dgs_corpus.dgs_utils import get_elan_sentences
 
@@ -167,10 +167,11 @@ def extract_and_write(json_path: str,
     fps = 50
 
     if use_document_split:
-        config = SignDatasetConfig(name="only-annotations-document-split", version="1.0.0", include_video=False,
-                                   include_pose=None, split=UZH_DOCUMENT_SPLIT_IDENTIFIER)
+        config = DgsCorpusConfig(name="only-annotations-document-split", version="1.0.0", include_video=False,
+                                   include_pose=None, split=UZH_DOCUMENT_SPLIT_IDENTIFIER, data_type="document")
     else:
-        config = SignDatasetConfig(name="only-annotations", version="1.0.0", include_video=False, include_pose=None)
+        config = DgsCorpusConfig(name="only-annotations", version="1.0.0", include_video=False, include_pose=None,
+                                 data_type="document")
 
     dgs_corpus = tfds.load('dgs_corpus', builder_kwargs=dict(config=config), data_dir=tfds_data_dir)
 
