@@ -194,12 +194,12 @@ def extract_and_write_sentence_split(json_path: str,
         gloss_line_english = " ".join([g.decode("utf-8") for g in english_glosses])
 
         # add mouthing information
-        mouthings = sentence["mouthings"]["mouthing"]
+        mouthings = sentence["mouthings"]["mouthing"].numpy().tolist()
 
         mouthing_line = " ".join([s.decode("utf-8") for s in mouthings])
 
         line_german = sentence["german"].numpy().decode("utf-8")
-        line_english = sentence["english"].numpy().decode("utf-8") if sentence["english"] is not None else ""
+        line_english = sentence["english"].numpy().decode("utf-8")
 
         # get timing information for sentence
         start_frame = miliseconds_to_frame_index(sentence["start"].numpy(), fps)
