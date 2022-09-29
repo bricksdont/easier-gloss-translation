@@ -60,25 +60,6 @@ def none_are_none(arguments: List[Any]) -> bool:
     return not any([argument is None for argument in arguments])
 
 
-def check_args(args: argparse.Namespace):
-    """
-
-    :param args:
-    :return:
-    """
-    if args.output_file is not None:
-        assert all_are_none([args.output_file_train, args.output_file_dev, args.output_file_test]), \
-            "If --output-file is given, --output-file-{train,dev,test} are not allowed"
-
-        assert not args.use_document_split, "If --output-file is given, --use-document-split is not allowed"
-
-    else:
-        assert none_are_none([args.output_file_train, args.output_file_dev, args.output_file_test]), \
-            "If --output-file is not given, all of --output-file-{train,dev,test} must be specified"
-
-        assert args.use_document_split, "If --output-file is not given, --use-document-split must be specified"
-
-
 def get_id_miliseconds_from_url(url: str) -> Tuple[str, int]:
     """
     Example: “https://www.sign-lang.uni-hamburg.de/meinedgs/html/1176340_de.html#t00000000”
@@ -336,8 +317,6 @@ def extract_and_write_document_split(json_path: str,
 def main():
 
     args = parse_args()
-
-    check_args(args)
 
     logging.basicConfig(level=logging.DEBUG)
     logging.debug(args)
