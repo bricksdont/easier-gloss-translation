@@ -51,34 +51,6 @@ for lowercase_glosses in $lowercase_glosses_options; do
     done
 done
 
-# German -> PAN
-
-language_pairs=(
-    "uhh de pan"
-)
-
-lowercase_glosses="true"
-generalize_dgs_glosses="true"
-spm_strategy="joint"
-
-model_name="lg.$lowercase_glosses+gdg.$generalize_dgs_glosses+ss.$spm_strategy"
-
-. $scripts/running/run_generic.sh
-
-# PAN -> German
-
-language_pairs=(
-    "uhh pan de"
-)
-
-lowercase_glosses="true"
-generalize_dgs_glosses="true"
-spm_strategy="joint"
-
-model_name="lg.$lowercase_glosses+gdg.$generalize_dgs_glosses+ss.$spm_strategy"
-
-. $scripts/running/run_generic.sh
-
 
 ## BSLCP
 

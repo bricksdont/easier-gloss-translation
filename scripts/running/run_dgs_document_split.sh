@@ -25,7 +25,7 @@ language_pairs=(
 
 for use_mouthing_tier in true false; do
 
-    model_name="dgs_use_document_split.true+version.2+use_mouthing_tier.$use_mouthing_tier"
+    model_name="dgs_use_document_split.true+use_mouthing_tier.$use_mouthing_tier"
 
     . $scripts/running/run_generic.sh
 
@@ -37,6 +37,6 @@ language_pairs=(
     "uhh de dgs_de"
 )
 
-model_name="dgs_use_document_split.true+version.2"
+model_name="dgs_use_document_split.true"
 
 . $scripts/running/run_generic.sh

@@ -13,6 +13,12 @@ testing_corpora="test"
 
 multilingual="true"
 
+if [[ $dry_run == "true" ]]; then
+    model_name="dry_run"
+else
+    model_name="multilingual.true+lg.$lowercase_glosses+gdg.$generalize_dgs_glosses+ss.$spm_strategy"
+fi
+
 # all German and DGS directions
 
 training_corpora="uhh"
@@ -21,12 +27,6 @@ language_pairs=(
     "uhh dgs_de de"
     "uhh de dgs_de"
 )
-
-if [[ $dry_run == "true" ]]; then
-    model_name="dry_run"
-else
-    model_name="multilingual.true+lg.$lowercase_glosses+gdg.$generalize_dgs_glosses+ss.$spm_strategy"
-fi
 
 . $scripts/running/run_generic.sh
 
@@ -49,12 +49,6 @@ language_pairs=(
     "uhh en dgs_en"
 )
 
-if [[ $dry_run == "true" ]]; then
-    model_name="dry_run"
-else
-    model_name="multilingual.true+lg.$lowercase_glosses+gdg.$generalize_dgs_glosses+ss.$spm_strategy"
-fi
-
 . $scripts/running/run_generic.sh
 
 # all directions from BSLCP
@@ -65,12 +59,6 @@ language_pairs=(
     "bslcp bsl en"
     "bslcp en bsl"
 )
-
-if [[ $dry_run == "true" ]]; then
-    model_name="dry_run"
-else
-    model_name="multilingual.true+lg.$lowercase_glosses+gdg.$generalize_dgs_glosses+ss.$spm_strategy"
-fi
 
 . $scripts/running/run_generic.sh
 
@@ -84,12 +72,6 @@ language_pairs=(
     "uhh dgs_en en"
     "uhh en dgs_en"
 )
-
-if [[ $dry_run == "true" ]]; then
-    model_name="dry_run"
-else
-    model_name="multilingual.true+lg.$lowercase_glosses+gdg.$generalize_dgs_glosses+ss.$spm_strategy"
-fi
 
 . $scripts/running/run_generic.sh
 
@@ -113,11 +95,5 @@ language_pairs=(
     "bslcp bsl en"
     "bslcp en bsl"
 )
-
-if [[ $dry_run == "true" ]]; then
-    model_name="dry_run"
-else
-    model_name="multilingual.true+lg.$lowercase_glosses+gdg.$generalize_dgs_glosses+ss.$spm_strategy"
-fi
 
 . $scripts/running/run_generic.sh
