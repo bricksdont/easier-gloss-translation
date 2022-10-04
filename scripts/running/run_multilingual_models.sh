@@ -19,7 +19,7 @@ else
     model_name="multilingual.true+lg.$lowercase_glosses+gdg.$generalize_dgs_glosses+ss.$spm_strategy"
 fi
 
-# all German and DGS directions
+# Multilingual 1: all German and DGS directions
 
 training_corpora="uhh"
 
@@ -30,7 +30,7 @@ language_pairs=(
 
 . $scripts/running/run_generic.sh
 
-# all directions from UHH
+# Multilingual 3: all directions from UHH
 
 training_corpora="uhh"
 
@@ -51,7 +51,7 @@ language_pairs=(
 
 . $scripts/running/run_generic.sh
 
-# all directions from BSLCP
+# Multilingual 2: all directions from BSLCP
 
 training_corpora="bslcp"
 
@@ -62,7 +62,7 @@ language_pairs=(
 
 . $scripts/running/run_generic.sh
 
-# all English and BSL + translated DGS glosses directions
+# Multilingual 4: all English and BSL + translated DGS glosses directions
 
 training_corpora="uhh bslcp"
 
@@ -75,7 +75,7 @@ language_pairs=(
 
 . $scripts/running/run_generic.sh
 
-# ALL directions
+# Multilingual 5: ALL directions
 
 training_corpora="uhh bslcp"
 

@@ -334,20 +334,20 @@ def main():
 
                     metric_names, metric_values = read_metric_values(metric, filepath)
 
-                    result = Result(langpair,
-                                    model_name,
-                                    corpus,
-                                    source,
-                                    test_src,
-                                    test_trg,
-                                    lowercase_glosses,
-                                    generalize_dgs_glosses,
-                                    spm_strategy,
-                                    version,
-                                    use_mouthing_tier,
-                                    dgs_use_document_split,
-                                    metric_names,
-                                    metric_values)
+                    result = Result(langpair=langpair,
+                                    model_name=model_name,
+                                    corpus=corpus,
+                                    source=source,
+                                    test_src=test_src,
+                                    test_trg=test_trg,
+                                    lowercase_glosses=lowercase_glosses,
+                                    generalize_dgs_glosses=generalize_dgs_glosses,
+                                    spm_strategy=spm_strategy,
+                                    version=version,
+                                    use_mouthing_tier=use_mouthing_tier,
+                                    dgs_use_document_split=dgs_use_document_split,
+                                    metric_names=metric_names,
+                                    metric_values=metric_values)
 
                     results.append(result)
                     logging.debug("Found result: %s", result)

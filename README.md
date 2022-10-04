@@ -65,6 +65,6 @@ The structure of each row in this array is `[source corpus] [src] [trg]`, and th
 
     ./scripts/summaries/summarize.sh
    
-## Create result tables shown in the deliverable
+## Create result tables shown in the paper
 
 https://colab.research.google.com/drive/1xDOkBI3yOoKk1CI_BBZoLtVWAaY0uhWd?usp=sharing
