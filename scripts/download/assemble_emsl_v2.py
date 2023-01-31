@@ -133,7 +133,8 @@ def write_output(emsl_strings_by_id: Dict[str, List[str]],
         emsl_strings = emsl_strings_by_id[file_id]
         subtitles = subtitles_by_id[file_id]
 
-        assert len(emsl_strings) == len(subtitles)
+        assert len(emsl_strings) == len(subtitles), "For file_id: %s number of EMSL spots (%d) and subtitles (%d) not " \
+                                                    "equal." % (file_id, len(emsl_strings), len(subtitles))
 
         for sentence_index, (emsl_string, subtitle) in enumerate(zip(emsl_strings, subtitles)):
             subtitle_string = subtitle.content
