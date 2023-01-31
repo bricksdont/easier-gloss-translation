@@ -30,7 +30,7 @@ pip install subword-nmt sentencepiece
 
 # this currently fails until there is a new PyPi release
 
-pip install sign-language-datasets==0.1.2
+pip install sign-language-datasets==0.1.6
 
 # install subtitles tool
 
