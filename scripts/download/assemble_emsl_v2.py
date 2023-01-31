@@ -11,7 +11,8 @@ from typing import List, Dict
 
 
 BOILERPLATE_SUBTITLES = ["1:1-Untertitelung.",
-                         "Livepassagen können Fehler enthalten."]
+                         "Livepassagen können Fehler enthalten.",
+                         "Mit Live-Untertiteln von SWISS TXT"]
 
 
 def parse_args():
