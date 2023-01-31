@@ -18,4 +18,6 @@ model_name="emsl_v2"
 training_corpora="srf"
 testing_corpora="test"
 
+spm_strategy="joint"
+
 . $scripts/running/run_generic.sh
