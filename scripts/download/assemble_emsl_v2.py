@@ -43,6 +43,8 @@ def read_srt(filepath: str) -> List[srt.Subtitle]:
 
             if subtitle.content.strip() in BOILERPLATE_SUBTITLES:
                 continue
+            elif subtitle.content.startswith("#"):
+                continue
 
             subtitles.append(subtitle)
 
