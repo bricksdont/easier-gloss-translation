@@ -46,6 +46,11 @@ def read_srt(filepath: str) -> List[srt.Subtitle]:
             elif subtitle.content.startswith("#"):
                 continue
 
+            # TODO: this is incorrect and needs to be removed once Surrey sends an update
+
+            elif subtitle.content.startswith("*"):
+                continue
+
             subtitles.append(subtitle)
 
     return subtitles
