@@ -43,7 +43,9 @@ TRAIN_SLICE_LARGE=5000
 
 CORPORA_EXCEPT_TRAIN="dev test"
 
-# download source, either "uhh" or "bslcp"
+# download source, either "uhh", "bslcp" or "srf"
+
+# in the case of "srf", no need to download, will link locally from our storage
 
 data_sub=$data/download
 
