@@ -19,7 +19,7 @@
 # $use_mouthing_tier (values: "true" or "false")
 # $dgs_use_document_split (values: "true" or "false")
 
-module anaconda3
+module load anaconda3
 
 # explicit unloading of  GPU modules at this point to use CPU nodes
 

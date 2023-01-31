@@ -10,6 +10,10 @@ import argparse
 from typing import List, Dict
 
 
+BOILERPLATE_SUBTITLES = ["1:1-Untertitelung.",
+                         "Livepassagen können Fehler enthalten."]
+
+
 def parse_args():
     parser = argparse.ArgumentParser()
 
@@ -36,6 +40,10 @@ def read_srt(filepath: str) -> List[srt.Subtitle]:
 
     with open(filepath, "r") as handle:
         for subtitle in srt.parse(handle.read()):
+
+            if subtitle.content.strip() in BOILERPLATE_SUBTITLES:
+                continue
+
             subtitles.append(subtitle)
 
     return subtitles
