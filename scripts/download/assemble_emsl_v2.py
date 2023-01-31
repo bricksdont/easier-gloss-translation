@@ -15,9 +15,9 @@ def parse_args():
 
     parser.add_argument("--emsl-dir", type=str, help="Path to EMSL spots (with subfolders 'train', 'dev' and 'test').")
 
-    parser.add_argument("--subtitles-dir-train", type=str, help="Path to where a tfds data set should be saved.")
-    parser.add_argument("--subtitles-dir-dev", type=str, help="Path to where a tfds data set should be saved.")
-    parser.add_argument("--subtitles-dir-test", type=str, help="Path to where a tfds data set should be saved.")
+    parser.add_argument("--subtitles-dir-train", type=str, help="Path to SRF train subtitles folder.")
+    parser.add_argument("--subtitles-dir-dev", type=str, help="Path to SRF dev subtitles folder.")
+    parser.add_argument("--subtitles-dir-test", type=str, help="Path to SRF test subtitles folder.")
 
     parser.add_argument("--output-dir", type=str, help="Path to folder to write extracted sentences (will write three"
                                                        "separate JSON files).")

@@ -19,7 +19,7 @@
 # $use_mouthing_tier (values: "true" or "false")
 # $dgs_use_document_split (values: "true" or "false")
 
-module load volta nvidia/cuda10.2-cudnn7.6.5 anaconda3
+module load v100-32g cuda/11.6.2 cudnn/8.4.0.27-11.6 anaconda3
 
 scripts=$base/scripts
 logs=$base/logs
@@ -98,11 +98,11 @@ fi
 
 # SLURM job args
 
-DRY_RUN_SLURM_ARGS="--cpus-per-task=2 --time=02:00:00 --mem=16G --partition=generic"
+DRY_RUN_SLURM_ARGS="--cpus-per-task=2 --time=02:00:00 --mem=16G"
 
-SLURM_ARGS_GENERIC="--cpus-per-task=2 --time=24:00:00 --mem=16G --partition=generic"
-SLURM_ARGS_VOLTA_TRAIN="--qos=vesta --time=36:00:00 --gres gpu:Tesla-V100-32GB:1 --cpus-per-task 1 --mem 16g"
-SLURM_ARGS_VOLTA_TRANSLATE="--qos=vesta --time=12:00:00 --gres gpu:Tesla-V100-32GB:1 --cpus-per-task 1 --mem 16g"
+SLURM_ARGS_GENERIC="--cpus-per-task=2 --time=24:00:00 --mem=16G"
+SLURM_ARGS_VOLTA_TRAIN="--time=36:00:00 --gres=gpu:V100:1 --constraint=GPUMEM32GB --cpus-per-task 1 --mem 16g"
+SLURM_ARGS_VOLTA_TRANSLATE="--time=12:00:00 --gres=gpu:V100:1 --constraint=GPUMEM32GB --cpus-per-task 1 --mem 16g"
 
 # if dry run, then all args use generic instances
 
@@ -146,6 +146,8 @@ id_download=$(
 )
 
 echo "  id_download: $id_download | $logs_sub_sub/slurm-$id_download.out" | tee -a $logs_sub_sub/MAIN
+
+exit
 
 # preprocess: Combine datasets, hold out data, normalize, SPM (depends on download)
 

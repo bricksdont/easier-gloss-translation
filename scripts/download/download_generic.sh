@@ -47,6 +47,11 @@ CORPORA_EXCEPT_TRAIN="dev test"
 
 # in the case of "srf", no need to download, will link locally from our storage
 
+EMSL_V2_DIR="/shares/easier.volk.cl.uzh/WP4/spoken-to-sign_sign-to-spoken/DSGS/SRF/Daily_news/emsl/v2.0a"
+SRF_SUBTITLES_TRAIN_DIR="/shares/easier.volk.cl.uzh/WMT_Shared_Task/srf/parallel/subtitles"
+SRF_SUBTITLES_DEV_DIR="/shares/easier.volk.cl.uzh/WMT_Shared_Task/dev/dsgs-de/subtitles"
+SRF_SUBTITLES_TEST_DIR="/shares/easier.volk.cl.uzh/WMT_Shared_Task/test/dsgs-de/subtitles"
+
 data_sub=$data/download
 
 for source in $training_corpora; do
@@ -61,7 +66,20 @@ for source in $training_corpora; do
 
     mkdir -p $data_sub_sub
 
-    if [[ $source == "uhh" ]]; then
+    if [[ $source == "srf" ]]; then
+
+        python $scripts/download/assemble_emsl_v2.py \
+            --emsl-dir $EMSL_V2_DIR \
+            --subtitles-dir-train $SRF_SUBTITLES_TRAIN_DIR \
+            --subtitles-dir-dev $SRF_SUBTITLES_DEV_DIR \
+            --subtitles-dir-test $SRF_SUBTITLES_TEST_DIR \
+            --output-dir $data_sub_sub
+
+        # concat all subsets, for debugging
+
+        cat $data_sub_sub/{train,dev,test}.json > $data_sub_sub/srf.json
+
+    elif [[ $source == "uhh" ]]; then
 
         # download and extract data from UHH
 

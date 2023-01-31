@@ -1,6 +1,6 @@
 #! /bin/bash
 
-module load anaconda3 volta nvidia/cuda10.2-cudnn7.6.5
+module load v100-32g cuda/11.6.2 cudnn/8.4.0.27-11.6 anaconda3
 
 scripts=`dirname "$0"`
 base=$scripts/../..
@@ -31,3 +31,7 @@ pip install subword-nmt sentencepiece
 # this currently fails until there is a new PyPi release
 
 pip install sign-language-datasets==0.1.2
+
+# install subtitles tool
+
+pip install srt
