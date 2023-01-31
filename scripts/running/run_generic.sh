@@ -19,7 +19,11 @@
 # $use_mouthing_tier (values: "true" or "false")
 # $dgs_use_document_split (values: "true" or "false")
 
-module load v100-32g cuda/11.6.2 cudnn/8.4.0.27-11.6 anaconda3
+module anaconda3
+
+# explicit unloading of  GPU modules at this point to use CPU nodes
+
+module unload v100-32g cuda/11.6.2 cudnn/8.4.0.27-11.6
 
 scripts=$base/scripts
 logs=$base/logs
@@ -176,6 +180,10 @@ id_prepare=$(
 
 echo "  id_prepare: $id_prepare | $logs_sub_sub/slurm-$id_prepare.out"  | tee -a $logs_sub_sub/MAIN
 
+# load GPU modules at this point
+
+module load v100-32g cuda/11.6.2 cudnn/8.4.0.27-11.6
+
 # Sockeye train (depends on prepare)
 
 id_train=$(
@@ -201,6 +209,10 @@ id_translate=$(
 )
 
 echo "  id_translate: $id_translate | $logs_sub_sub/slurm-$id_translate.out"  | tee -a $logs_sub_sub/MAIN
+
+# unload GPU modules at this point to use CPU nodes
+
+module unload v100-32g cuda/11.6.2 cudnn/8.4.0.27-11.6
 
 # evaluate BLEU and other metrics (depends on translate)
 
