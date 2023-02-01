@@ -127,13 +127,15 @@ def get_subtitles_by_id(subtitles_dir: str) -> Dict[str, List[srt.Subtitle]]:
 def write_output(emsl_strings_by_id: Dict[str, List[str]],
                  subtitles_by_id: Dict[str, List[srt.Subtitle]],
                  output_dir: str,
-                 subset_identifier: str):
+                 subset_identifier: str,
+                 skip_empty_strings: bool = True):
     """
 
     :param emsl_strings_by_id:
     :param subtitles_by_id:
     :param output_dir:
     :param subset_identifier:
+    :param skip_empty_strings:
     :return:
     """
     outfile_path = os.path.join(output_dir, "%s.json" % subset_identifier)
@@ -158,8 +160,9 @@ def write_output(emsl_strings_by_id: Dict[str, List[str]],
             subtitle_string = subtitle_string.strip()
 
             if emsl_string == "" or subtitle_string == "":
-                num_lines_skipped_because_empty += 1
-                continue
+                if skip_empty_strings:
+                    num_lines_skipped_because_empty += 1
+                    continue
 
             output_data = {"dsgs": emsl_string,
                            "de": subtitle_string,
@@ -211,7 +214,8 @@ def main():
     write_output(emsl_strings_by_id=emsl_strings_by_id,
                  subtitles_by_id=subtitles_by_id,
                  output_dir=args.output_dir,
-                 subset_identifier="test")
+                 subset_identifier="test",
+                 skip_empty_strings=False)
 
 
 if __name__ == '__main__':
