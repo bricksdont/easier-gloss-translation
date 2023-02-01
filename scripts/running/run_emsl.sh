@@ -13,7 +13,7 @@ language_pairs=(
 
 # baseline
 
-model_name="emsl_v2"
+model_name="emsl_v2a"
 
 training_corpora="srf"
 testing_corpora="test"
