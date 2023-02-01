@@ -65,7 +65,7 @@ for pair in "${language_pairs[@]}"; do
 
         ref=$data_sub_sub/$source.$corpus.$trg
 
-        if [[ $trg == "dgs_de" || $trg == "dgs_en" || $trg == "pan" || $trg == "bsl" ]]; then
+        if [[ $trg == "dgs_de" || $trg == "dgs_en" || $trg == "pan" || $trg == "bsl" || $trg == "dsgs" ]]; then
 
             # do not tokenize for evaluation
 
