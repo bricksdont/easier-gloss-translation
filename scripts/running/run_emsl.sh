@@ -3,19 +3,21 @@
 base=/shares/volk.cl.uzh/mathmu/easier-gloss-translation
 scripts=$base/scripts
 
-# DGS -> German
+# DSGS -> German
 
 # Structure: [source corpus] [src] [trg]
 
 language_pairs=(
-    "uhh dgs_de de"
+    "srf dsgs de"
 )
 
 # baseline
 
-model_name="baseline"
+model_name="emsl_v2a"
 
-training_corpora="uhh"
+training_corpora="srf"
 testing_corpora="test"
+
+spm_strategy="joint"
 
 . $scripts/running/run_generic.sh

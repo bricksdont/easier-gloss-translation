@@ -1,6 +1,6 @@
 #! /bin/bash
 
-base=/net/cephfs/shares/volk.cl.uzh/mathmu/easier-gloss-translation
+base=/shares/volk.cl.uzh/mathmu/easier-gloss-translation
 scripts=$base/scripts
 
 lowercase_glosses_options="true false"

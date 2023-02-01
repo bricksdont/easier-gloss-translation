@@ -2,8 +2,8 @@
 
 import sys
 
-SOURCES = ["uhh", "bslcp"]
-LANGUAGES = ["de", "en", "bsl", "dgs_de", "dgs_en", "pan"]
+SOURCES = ["uhh", "bslcp", "srf"]
+LANGUAGES = ["de", "en", "bsl", "dgs_de", "dgs_en", "pan", "dsgs"]
 
 
 def chunks(lst, n):

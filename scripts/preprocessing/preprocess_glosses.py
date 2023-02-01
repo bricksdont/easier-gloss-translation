@@ -7,7 +7,7 @@ import logging
 from typing import Tuple, Optional
 
 DGS_GLOSS_SUFFIXES = ['dgs_de', 'dgs_en']
-GLOSS_SUFFIXES = DGS_GLOSS_SUFFIXES + ['bsl', 'pan']
+GLOSS_SUFFIXES = DGS_GLOSS_SUFFIXES + ['bsl', 'pan', 'dsgs']
 SPOKEN_SUFFIXES = ['de', 'en']
 ALL_SUFFIXES = GLOSS_SUFFIXES + SPOKEN_SUFFIXES
 
