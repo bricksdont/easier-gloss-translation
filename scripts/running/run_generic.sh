@@ -197,8 +197,6 @@ id_train=$(
 
 echo "  id_train: $id_train | $logs_sub_sub/slurm-$id_train.out"  | tee -a $logs_sub_sub/MAIN
 
-exit
-
 # translate test set(s) (depends on train)
 
 id_translate=$(
@@ -211,6 +209,8 @@ id_translate=$(
 )
 
 echo "  id_translate: $id_translate | $logs_sub_sub/slurm-$id_translate.out"  | tee -a $logs_sub_sub/MAIN
+
+exit
 
 # unload GPU modules at this point to use CPU nodes
 
