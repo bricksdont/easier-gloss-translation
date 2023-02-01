@@ -210,8 +210,6 @@ id_translate=$(
 
 echo "  id_translate: $id_translate | $logs_sub_sub/slurm-$id_translate.out"  | tee -a $logs_sub_sub/MAIN
 
-exit
-
 # unload GPU modules at this point to use CPU nodes
 
 module unload v100-32g cuda/11.6.2 cudnn/8.4.0.27-11.6
