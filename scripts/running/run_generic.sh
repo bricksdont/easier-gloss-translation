@@ -165,8 +165,6 @@ id_preprocess=$(
 
 echo "  id_preprocess: $id_preprocess | $logs_sub_sub/slurm-$id_preprocess.out" | tee -a $logs_sub_sub/MAIN
 
-exit
-
 # Sockeye prepare (depends on preprocess)
 
 id_prepare=$(
@@ -179,6 +177,8 @@ id_prepare=$(
 )
 
 echo "  id_prepare: $id_prepare | $logs_sub_sub/slurm-$id_prepare.out"  | tee -a $logs_sub_sub/MAIN
+
+exit
 
 # load GPU modules at this point
 
