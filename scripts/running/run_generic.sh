@@ -178,9 +178,11 @@ id_prepare=$(
 
 echo "  id_prepare: $id_prepare | $logs_sub_sub/slurm-$id_prepare.out"  | tee -a $logs_sub_sub/MAIN
 
-# load GPU modules at this point
+# load GPU modules at this point, but not for dry runs which use CPU only
 
-module load v100-32g cuda/11.6.2 cudnn/8.4.0.27-11.6
+if [[ $dry_run == "false" ]]; then
+    module load v100-32g cuda/11.6.2 cudnn/8.4.0.27-11.6
+fi
 
 # Sockeye train (depends on prepare)
 
