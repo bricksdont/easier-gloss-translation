@@ -15,8 +15,6 @@ language_pairs=(
 
 dry_run="true"
 
-repeat_download_step="false"
-
 # baseline
 
 model_name="dry_run"
@@ -26,7 +24,7 @@ testing_corpora="test"
 
 # this argument is for dry runs only, set to "true" to also repeat downloads (or linking)
 
-repeat_download_step="true"
+repeat_download_step="false"
 
 # delete files for this model to rerun everything
 
