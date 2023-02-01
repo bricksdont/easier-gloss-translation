@@ -72,7 +72,7 @@ SENTENCEPIECE_VOCAB_SIZE=1000
 CORPORA_EXCEPT_TRAIN="dev test"
 ALL_CORPORA="$CORPORA_EXCEPT_TRAIN train"
 
-ALL_SOURCES="uhh bslcp"
+ALL_SOURCES="uhh bslcp srf"
 
 GLOSS_SUFFIXES="dgs_de dgs_en bsl pan dsgs"
 SPOKEN_SUFFIXES="de en"
