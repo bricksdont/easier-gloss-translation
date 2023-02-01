@@ -74,7 +74,7 @@ ALL_CORPORA="$CORPORA_EXCEPT_TRAIN train"
 
 ALL_SOURCES="uhh bslcp"
 
-GLOSS_SUFFIXES="dgs_de dgs_en bsl pan"
+GLOSS_SUFFIXES="dgs_de dgs_en bsl pan dsgs"
 SPOKEN_SUFFIXES="de en"
 ALL_SUFFIXES="$GLOSS_SUFFIXES $SPOKEN_SUFFIXES"
 
