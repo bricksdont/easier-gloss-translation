@@ -178,8 +178,6 @@ id_prepare=$(
 
 echo "  id_prepare: $id_prepare | $logs_sub_sub/slurm-$id_prepare.out"  | tee -a $logs_sub_sub/MAIN
 
-exit
-
 # load GPU modules at this point
 
 module load v100-32g cuda/11.6.2 cudnn/8.4.0.27-11.6
@@ -196,6 +194,8 @@ id_train=$(
 )
 
 echo "  id_train: $id_train | $logs_sub_sub/slurm-$id_train.out"  | tee -a $logs_sub_sub/MAIN
+
+exit
 
 # translate test set(s) (depends on train)
 
