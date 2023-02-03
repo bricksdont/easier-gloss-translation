@@ -125,7 +125,8 @@ def main():
         row = TR_TEMPLATE.format(video_url=video_url, translation=translation, reference=reference)
         rows.append(row)
 
-    logging.debug(rows)
+    logging.debug("Example row:")
+    logging.debug(rows[0])
 
     rows_as_string = "\n".join(rows)
 
