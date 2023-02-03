@@ -1,0 +1,64 @@
+<!doctype html>
+
+<html lang="en">
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <style>
+            /*https://www.w3schools.com/css/css_table.asp*/
+            #translations {
+              font-family: Arial, Helvetica, sans-serif;
+              border-collapse: collapse;
+              width: 100%;
+            }
+
+            #translations td, #translations th {
+              border: 1px solid #ddd;
+              padding: 8px;
+            }
+
+            #translations tr:nth-child(even){background-color: #f2f2f2;}
+
+            #translations tr:hover {background-color: #ddd;}
+
+            #translations th {
+              padding-top: 12px;
+              padding-bottom: 12px;
+              text-align: left;
+              background-color: #04AA6D;
+              color: white;
+            }
+        </style>
+
+  <title>Automatic translations</title>
+</head>
+
+<body>
+   <table id="translations">
+  <tr>
+    <th>Source</th>
+    <th>Machine translation</th>
+    <th>Reference</th>
+  </tr>
+  <tr>
+    <td>
+         <video width="320" height="240" controls>
+             <source src="https://files.ifi.uzh.ch/cl/archiv/2022/easier/wmtslt/dev/focusnews.166.000.mp4" type="video/mp4">
+         </video>
+    </td>
+    <td>Guten Abend meine Damen und Herren</td>
+    <td>Guten Abend</td>
+  </tr>
+  <tr>
+    <td>
+         <video width="320" height="240" controls>
+             <source src="https://files.ifi.uzh.ch/cl/archiv/2022/easier/wmtslt/dev/focusnews.166.001.mp4" type="video/mp4">
+         </video>
+    </td>
+    <td>Damit ist es schlägt, dass es auf diesem Kostens schlägt.</td>
+    <td>Das wird hohe Kosten verursachen.</td>
+  </tr>
+</table>
+</body>
+</html>
