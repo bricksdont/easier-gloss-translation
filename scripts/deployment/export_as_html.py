@@ -92,7 +92,7 @@ def read_video_urls_from_xml(url: str) -> List[str]:
     video_urls = []  # type: List[str]
 
     res = requests.get(url)
-    root = etree.fromstring(res.content).getroot()
+    root = etree.fromstring(res.content)
 
     for seg_element in root.xpath("//seg"):
         video_urls.append(seg_element.text)
