@@ -19,28 +19,28 @@ HTML_TEMPLATE = """<!doctype html>
 
         <style>
             /*https://www.w3schools.com/css/css_table.asp*/
-            #translations {
+            #translations {{
               font-family: Arial, Helvetica, sans-serif;
               border-collapse: collapse;
               width: 100%;
-            }
+            }}
 
-            #translations td, #translations th {
+            #translations td, #translations th {{
               border: 1px solid #ddd;
               padding: 8px;
-            }
+            }}
 
-            #translations tr:nth-child(even){background-color: #f2f2f2;}
+            #translations tr:nth-child(even){{background-color: #f2f2f2;}}
 
-            #translations tr:hover {background-color: #ddd;}
+            #translations tr:hover {{background-color: #ddd;}}
 
-            #translations th {
+            #translations th {{
               padding-top: 12px;
               padding-bottom: 12px;
               text-align: left;
               background-color: #04AA6D;
               color: white;
-            }
+            }}
         </style>
 
   <title>Automatic translations</title>
