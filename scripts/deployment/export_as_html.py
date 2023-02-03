@@ -115,7 +115,7 @@ def main():
 
     with open(args.references) as infile:
         references = infile.readlines()
-        references = [r.strip for r in references]
+        references = [r.strip() for r in references]
 
     assert len(video_urls) == len(translations) == len(references)
 
