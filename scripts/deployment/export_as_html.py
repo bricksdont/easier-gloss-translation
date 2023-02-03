@@ -125,6 +125,8 @@ def main():
         row = TR_TEMPLATE.format(video_url=video_url, translation=translation, reference=reference)
         rows.append(row)
 
+    logging.debug(rows)
+
     rows_as_string = "\n".join(rows)
 
     document_string = HTML_TEMPLATE.format(rows=rows_as_string)
