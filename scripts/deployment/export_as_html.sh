@@ -21,6 +21,8 @@ python $scripts/deployment/export_as_html.py \
 echo "Saved to"
 echo "$deploy/html_export/emsl_v2a.html"
 
+ssh mmueller@home.ifi.uzh.ch 'chmod a+r /home/files/cl/archiv/2023/easier/emsl_v2a.html'
+
 # upload
 
 # scp $deploy/html_export/emsl_v2a.html mmueller@home.ifi.uzh.ch:/home/files/cl/archiv/2023/easier/emsl_v2a.html
