@@ -50,9 +50,10 @@ def translate():
     beam_size = n_best
 
     tag_str = '<2{}>'.format(target_language_code)
-    command = 'echo "{} {}" | spm_encode --model={}'.format(tag_str, text, spm_path)
+    command = 'echo "{}" | spm_encode --model={}'.format(text, spm_path)
     input_ = subprocess.run(command, shell=True, check=True, capture_output=True)
     input_ = input_.stdout.decode("utf-8")
+    input_ = tag_str + " " + input_
 
     translator = inference.Translator(device=device,
                                       ensemble_mode='linear',
