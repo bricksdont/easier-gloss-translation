@@ -1,7 +1,7 @@
 #! /bin/bash
 
-scripts=`dirname "$0"`
-base=$scripts/../..
+base=$(dirname "$0")
+base=$(realpath "$base")
 
 venvs=$base/venvs
 
