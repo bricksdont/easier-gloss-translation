@@ -57,4 +57,4 @@ stdout_logfile=/home/xxx/log/gunicorn.log
 stderr_logfile=/home/xxx/log/gunicorn.err.log
 ```
 
-See [API_spec.md](https://github.com/J22Melody/signwriting-translation/blob/main/API_spec.md) for API specifications.
+See [API_spec.md](https://github.com/bricksdont/easier-gloss-translation/blob/main/api/API_spec.md) for API specifications.
