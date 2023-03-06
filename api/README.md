@@ -1,5 +1,7 @@
 # gloss translation API
 
+## Setup (do these steps only the first time)
+
 Clone this repository, move into sub-directory:
 
     git clone https://github.com/bricksdont/easier-gloss-translation.git
@@ -13,6 +15,8 @@ Create env (Anaconda must be installed):
 
     ./create_api_env.sh
 
+For all subsequent steps, the conda env must be activated.
+
 Install sentencepiece with admin privileges:
 
     sudo apt install sentencepiece
@@ -21,11 +25,15 @@ Download models here:
 
     ./download_models.sh
 
+## Start local server
+
 Then run server, instructions are based on: https://github.com/J22Melody/signwriting-translation#api-server:
 
 Run [Flask](https://flask.palletsprojects.com/) locally for debugging:
 
 `python app.py`
+
+## Deployment
 
 Run with [Gunicorn](https://gunicorn.org/) for deployment. Install with pip, for example:
 
