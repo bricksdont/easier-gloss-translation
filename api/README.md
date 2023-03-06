@@ -13,6 +13,10 @@ Create env (Anaconda must be installed):
 
     ./create_api_env.sh
 
+Install sentencepiece with admin privileges:
+
+    sudo apt install sentencepiece
+
 Download models here:
 
     ./download_models.sh
@@ -23,7 +27,11 @@ Run [Flask](https://flask.palletsprojects.com/) locally for debugging:
 
 `python app.py`
 
-Run with [Gunicorn](https://gunicorn.org/) for deployment:
+Run with [Gunicorn](https://gunicorn.org/) for deployment. Install with pip, for example:
+
+    pip install gunicorn
+
+Then
 
 `gunicorn -w 4 -b 0.0.0.0:3030 app:app`
 

@@ -3,8 +3,6 @@
 base=$(dirname "$0")
 base=$(realpath "$base")
 
-venvs=$base/venvs
-
 export TMPDIR="/var/tmp"
 
 models=$base/models

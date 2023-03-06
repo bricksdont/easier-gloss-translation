@@ -19,7 +19,7 @@ model_name = 'dgs_de'
 model_path = '{}/{}'.format(MODEL_PATH, model_name)
 
 spm_name = "sentencepiece.model"
-spm_path = './{}/{}}'.format(model_path, spm_name)
+spm_path = './{}/{}'.format(model_path, spm_name)
 
 device = pt.device('cpu')
 
