@@ -1,0 +1,7 @@
+flask
+flask-cors
+sockeye==3.1.31
+subword-nmt
+sentencepiece
+sign-language-datasets==0.1.6
+srt
