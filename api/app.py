@@ -36,7 +36,7 @@ def remove_pieces(translation: str) -> str:
     translation = translation.replace(" ", "")
     translation = translation.replace("▁", " ")
 
-    return translation
+    return translation.strip()
 
 
 @app.route('/api/translate', methods=['POST'])

@@ -13,7 +13,7 @@ requests
 {
     "source_language_code": "de",
     "target_language_code": "dgs",
-    "text": "Das ist ein Test.",
+    "text": "Das ist ein Test."
 }
 ```
 
@@ -21,12 +21,14 @@ returns
 
 ```
 {
+    "n_best": 3,
     "source_language_code": "de",
     "target_language_code": "dgs",
     "text": "Das ist ein Test.",
-    "n_best": "3",
     "translations": [
-        "TODO: fill in example"
+        " $num-einer1 $num-einer1 $num-zehner2 $index1 tinnitus1",
+        " $num-einer1 $num-einer1 $num-zehner2",
+        " $num-einer1 $num-einer1 $num-zehner2 $index1 treiben1"
     ]
 }
 ```
