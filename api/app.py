@@ -39,7 +39,7 @@ def remove_pieces(translation: str) -> str:
     return translation.strip()
 
 
-@app.route('/api/translate/', methods=['POST'])
+@app.route('/api/translate/', methods=['POST'], strict_slashes=False)
 def translate():
     payload = request.get_json()
     source_language_code = payload.get('source_language_code', 'de')
