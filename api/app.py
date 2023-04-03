@@ -1,6 +1,7 @@
 # based on: https://github.com/J22Melody/signwriting-translation/blob/main/app.py
 # written by Zifan Jiang
 
+import os
 import subprocess
 import torch as pt
 from os import environ
@@ -10,21 +11,50 @@ from typing import List
 
 from sockeye import inference, model
 
-MODEL_PATH = './models'
+MODELS_PATH = './models'
 
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-model_name = 'dgs_de'
-model_path = '{}/{}'.format(MODEL_PATH, model_name)
+# load Sockeye models ahead of time, before a request comes in
 
-spm_name = "sentencepiece.model"
-spm_path = './{}/{}'.format(model_path, spm_name)
 
-device = pt.device('cpu')
+def load_sockeye_models():
 
-sockeye_models, sockeye_source_vocabs, sockeye_target_vocabs = model.load_models(
-    device=device, dtype=None, model_folders=[model_path], inference_only=True)
+    model_name = 'dgs_de'
+    spm_name = "sentencepiece.model"
+
+    sockeye_paths_dict = {
+        "nmt-basic": {"model_name": 'dgs_de_basic',
+                      "model_path": os.path.join(MODELS_PATH, model_name),
+                      "spm_path": os.path.join(MODELS_PATH, model_name, spm_name)
+                      },
+        "nmt-augmented": {"model_name": 'dgs_de_augmented',
+                          "model_path": os.path.join(MODELS_PATH, model_name),
+                          "spm_path": os.path.join(MODELS_PATH, model_name, spm_name)
+                          }
+    }
+
+    sockeye_models_dict = {}
+
+    device = pt.device('cpu')
+
+    for model_name in sockeye_paths_dict.keys():
+
+        sockeye_paths = sockeye_paths_dict[model_name]
+        model_path = sockeye_paths["model_path"]
+
+        sockeye_models, sockeye_source_vocabs, sockeye_target_vocabs = model.load_models(
+            device=device, dtype=None, model_folders=[model_path], inference_only=True)
+
+        sockeye_models_dict[model_name] = {"sockeye_models": sockeye_models,
+                                           "sockeye_source_vocabs": sockeye_source_vocabs,
+                                           "sockeye_target_vocabs": sockeye_target_vocabs}
+
+    return device, sockeye_paths_dict, sockeye_models_dict
+
+
+device, sockeye_paths_dict, sockeye_models_dict = load_sockeye_models()
 
 
 def remove_pieces(translation: str) -> str:
@@ -39,8 +69,30 @@ def remove_pieces(translation: str) -> str:
     return translation.strip()
 
 
-@app.route('/api/translate/', methods=['POST'], strict_slashes=False)
+@app.route('/api/translate/reorder', methods=['POST'], strict_slashes=False)
 def translate():
+    return {
+        'works': 'yes! I think I am the reordering system'
+    }
+
+
+@app.route('/api/translate/nmt-augmented', methods=['POST'], strict_slashes=False)
+def translate():
+    return {
+        'works': 'yes! I think I am the NMT augmented system'
+    }
+
+
+@app.route('/api/translate/nmt-basic', methods=['POST'], strict_slashes=False)
+def translate():
+    model_name = "nmt-basic"
+
+    spm_path = sockeye_paths_dict[model_name]["spm_path"]
+
+    sockeye_models = sockeye_models_dict[model_name]["sockeye_models"]
+    sockeye_source_vocabs = sockeye_models_dict[model_name]["sockeye_source_vocabs"]
+    sockeye_target_vocabs = sockeye_models_dict[model_name]["sockeye_target_vocabs"]
+
     payload = request.get_json()
     source_language_code = payload.get('source_language_code', 'de')
     target_language_code = payload.get('target_language_code', 'dgs')
