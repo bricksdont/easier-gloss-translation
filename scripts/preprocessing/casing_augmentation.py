@@ -67,7 +67,7 @@ def get_variants(input_sentence: str) -> List[str]:
 
     variants += remove_punctuation(input_sentence.lower())
 
-    assert len(variants) == 6
+    assert len(variants) == 6, "Length of variants is not 6: %s" % (str(variants))
 
     return variants
 
