@@ -49,23 +49,23 @@ def get_variants(input_sentence: str) -> List[str]:
 
     # lowercase
 
-    variants += input_sentence.lower()
+    variants += [input_sentence.lower()]
 
     # titlecase
 
-    variants += input_sentence.title()
+    variants += [input_sentence.title()]
 
     # uppercase
 
-    variants += input_sentence.upper()
+    variants += [input_sentence.upper()]
 
     # punctuation symbols removed
 
-    variants += remove_punctuation(input_sentence)
+    variants += [remove_punctuation(input_sentence)]
 
     # punctuation symbols removed and lowercase
 
-    variants += remove_punctuation(input_sentence.lower())
+    variants += [remove_punctuation(input_sentence.lower())]
 
     assert len(variants) == 6, "Length of variants is not 6: %s" % (str(variants))
 
@@ -95,7 +95,7 @@ def main():
                 src_variants = get_variants(src_line.strip())
                 trg_variants = [src_line.strip()] * len(src_variants)
             elif args.trg_lang in SPOKEN_SUFFIXES:
-                trg_variants = get_variants(src_line.strip())
+                trg_variants = get_variants(trg_line.strip())
                 src_variants = [src_line.strip()] * len(trg_variants)
             else:
                 raise NotImplementedError("Don't know what to do without a spoken language suffix.")
