@@ -30,6 +30,10 @@ language_pairs=(
 
 . $scripts/running/run_generic.sh
 
+# only re-train this one, then exit
+
+exit 0
+
 # Multilingual 3: all directions from UHH
 
 training_corpora="uhh"
