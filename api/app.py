@@ -70,21 +70,21 @@ def remove_pieces(translation: str) -> str:
 
 
 @app.route('/api/translate/reorder', methods=['POST'], strict_slashes=False)
-def translate():
+def reorder():
     return {
         'works': 'yes! I think I am the reordering system'
     }
 
 
 @app.route('/api/translate/nmt-augmented', methods=['POST'], strict_slashes=False)
-def translate():
+def translate_augmented():
     return {
         'works': 'yes! I think I am the NMT augmented system'
     }
 
 
 @app.route('/api/translate/nmt-basic', methods=['POST'], strict_slashes=False)
-def translate():
+def translate_basic():
     model_name = "nmt-basic"
 
     spm_path = sockeye_paths_dict[model_name]["spm_path"]
