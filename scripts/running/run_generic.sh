@@ -18,6 +18,7 @@
 # $generalize_dgs_glosses (values: "true" or "false")
 # $use_mouthing_tier (values: "true" or "false")
 # $dgs_use_document_split (values: "true" or "false")
+# $casing_augmentation (values: "true" or "false")
 
 module load anaconda3
 
@@ -100,6 +101,10 @@ if [ -z "$dgs_use_document_split" ]; then
     dgs_use_document_split="false"
 fi
 
+if [ -z "$casing_augmentation" ]; then
+    casing_augmentation="false"
+fi
+
 # SLURM job args
 
 DRY_RUN_SLURM_ARGS="--cpus-per-task=2 --time=02:00:00 --mem=16G"
@@ -137,6 +142,7 @@ echo "LOWERCASE_GLOSSES: $lowercase_glosses" | tee -a $logs_sub_sub/MAIN
 echo "GENERALIZE_DGS_GLOSSES: $generalize_dgs_glosses" | tee -a $logs_sub_sub/MAIN
 echo "USE_MOUTHING_TIER: $use_mouthing_tier" | tee -a $logs_sub_sub/MAIN
 echo "DGS_USE_DOCUMENT_SPLIT: $dgs_use_document_split" | tee -a $logs_sub_sub/MAIN
+echo "CASING AUGMENTATION: $casing_augmentation" | tee -a $logs_sub_sub/MAIN
 echo "DRY RUN: $dry_run" | tee -a $logs_sub_sub/MAIN
 
 # download corpora
@@ -160,7 +166,7 @@ id_preprocess=$(
     $SLURM_LOG_ARGS \
     $scripts/preprocessing/preprocess_generic.sh \
     $base $src $trg $model_name $dry_run $seed $multilingual $logs_sub_sub/LANGPAIRS.sh \
-    $spm_strategy $lowercase_glosses $generalize_dgs_glosses $use_mouthing_tier
+    $spm_strategy $lowercase_glosses $generalize_dgs_glosses $use_mouthing_tier $casing_augmentation
 )
 
 echo "  id_preprocess: $id_preprocess | $logs_sub_sub/slurm-$id_preprocess.out" | tee -a $logs_sub_sub/MAIN

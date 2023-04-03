@@ -1,5 +1,5 @@
 # based on: https://github.com/J22Melody/signwriting-translation/blob/main/app.py
-# written by Zifan Jiang
+# originally written by Zifan Jiang
 
 import os
 import subprocess

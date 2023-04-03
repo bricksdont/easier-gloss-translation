@@ -13,6 +13,7 @@
 # $lowercase_glosses
 # $generalize_dgs_glosses
 # $use_mouthing_tier
+# $casing_augmentation
 
 base=$1
 src=$2
@@ -26,6 +27,7 @@ spm_strategy=$9
 lowercase_glosses=${10}
 generalize_dgs_glosses=${11}
 use_mouthing_tier=${12}
+casing_augmentation=${13}
 
 data=$base/data
 venvs=$base/venvs
@@ -177,6 +179,35 @@ for pair in "${language_pairs[@]}"; do
         done
     done
 
+done
+
+# potentially augment spoken language side with casing variants (training data only)
+
+for pair in "${language_pairs[@]}"; do
+
+    # if particular files appear several times in the array, processing happens twice which is negligible
+
+    pair=($pair)
+
+    source=${pair[0]}
+    src=${pair[1]}
+    trg=${pair[2]}
+
+    mv $data_sub/$source.train.normalized.$src $data_sub/$source.train.pre_casing_augmentation.$src
+    mv $data_sub/$source.train.normalized.$trg $data_sub/$source.train.pre_casing_augmentation.$trg
+
+    if [[ $casing_augmentation == "true" ]]; then
+        python $scripts/preprocessing/casing_augmentation.py \
+                --input-src $data_sub/$source.train.pre_casing_augmentation.$src \
+                --input-trg $data_sub/$source.train.pre_casing_augmentation.$trg \
+                --output-src $data_sub/$source.train.normalized.$src \
+                --output-trg $data_sub/$source.train.normalized.$trg \
+                --src-lang $src \
+                --trg-lang $trg
+    else
+        cp $data_sub/$source.train.pre_casing_augmentation.$src $data_sub/$source.train.normalized.$src
+        cp $data_sub/$source.train.pre_casing_augmentation.$trg $data_sub/$source.train.normalized.$trg
+    fi
 done
 
 # learn sentencepiece model(s) on train
