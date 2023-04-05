@@ -5,3 +5,4 @@ subword-nmt
 sentencepiece
 sign-language-datasets==0.1.6
 srt
+spacy

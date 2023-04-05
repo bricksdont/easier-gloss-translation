@@ -11,6 +11,8 @@ from typing import List
 
 from sockeye import inference, model
 
+from reordering import text_to_gloss
+
 MODELS_PATH = './models'
 
 app = Flask(__name__)
@@ -71,8 +73,23 @@ def remove_pieces(translation: str) -> str:
 
 @app.route('/api/translate/reorder', methods=['POST'], strict_slashes=False)
 def reorder():
+
+    payload = request.get_json()
+    source_language_code = payload.get('source_language_code', 'de')
+    target_language_code = payload.get('target_language_code', 'dgs')
+    text = payload.get('text', '')
+
+    if source_language_code not in ["de", "fr"]:
+        return
+
+    translations = [text_to_gloss(text, lang=source_language_code)]
+
     return {
-        'works': 'yes! I think I am the reordering system'
+        'source_language_code': source_language_code,
+        'target_language_code': target_language_code,
+        'text': text,
+        'n_best': -1,
+        'translations': translations,
     }
 
 
