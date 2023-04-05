@@ -205,7 +205,8 @@ def haben_main_verb(token):
 
 def gloss_de_poss_pronoun(token):
     # DE: mein/dein/sein/ihr/Ihr/unser/euer
-    pposat_map = {'m': 'mein', 'd': 'dein', 's': 'sein', 'i': 'ihr', 'I': 'Ihr', 'u': 'unser', 'e': 'euer'}
+    pposat_map = {'M':'mein', 'm':'mein', 'D':'dein', 'd':'dein', 'S':'sein', 's':'sein', 'i':'ihr',
+                  'I':'Ihr', 'U':'unser', 'u':'unser', 'E':'euer', 'e':'euer'}
 
     # return 'IX-'+pposat_map[token.text[0]]
     return '(' + pposat_map[token.text[0]] + ')'
