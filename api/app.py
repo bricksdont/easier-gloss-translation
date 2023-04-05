@@ -2,14 +2,18 @@
 # originally written by Zifan Jiang
 
 import os
+import spacy
 import subprocess
 import torch as pt
+
 from os import environ
 from flask import Flask, request
 from flask_cors import CORS
 from typing import List
 
 from sockeye import inference, model
+
+# local import
 
 from reordering import text_to_gloss
 
@@ -59,6 +63,19 @@ def load_sockeye_models():
 device, sockeye_paths_dict, sockeye_models_dict = load_sockeye_models()
 
 
+def load_spacy_models():
+
+    spacy_models = {
+        "de": spacy.load("de_core_news_lg"),
+        "fr": spacy.load("fr_core_news_lg")
+    }
+
+    return spacy_models
+
+
+spacy_models = load_spacy_models()
+
+
 def remove_pieces(translation: str) -> str:
     """
 
@@ -79,10 +96,9 @@ def reorder():
     target_language_code = payload.get('target_language_code', 'dgs')
     text = payload.get('text', '')
 
-    if source_language_code not in ["de", "fr"]:
-        return
+    spacy_model = spacy_models[source_language_code]
 
-    translations = [text_to_gloss(text, lang=source_language_code)]
+    translations = [text_to_gloss(text, spacy_model=spacy_model, lang=source_language_code)]
 
     return {
         'source_language_code': source_language_code,

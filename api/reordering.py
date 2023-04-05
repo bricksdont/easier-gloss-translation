@@ -1,13 +1,10 @@
 # originally written by Anne Goehring
 
 import spacy
-from spacy.tokens import Doc
 import sys
 
-de_nlp = spacy.load("de_core_news_lg")
-fr_nlp = spacy.load("fr_core_news_lg")
+from spacy.language import Language
 
-# it_nlp = spacy.load("it_core_news_lg")
 
 def print_token(token):
     print(token.text, token.ent_type_, token.lemma_, token.pos_, token.tag_, token.dep_, token.head, token.morph,
@@ -302,13 +299,13 @@ def clause_to_gloss(clause):
     return glossed_tokens
 
 
-def text_to_gloss(text, lang='de'):
+def text_to_gloss(text: str, spacy_model: Language, lang: str = 'de'):
     if lang == 'fr':
-        doc = fr_nlp(text)
+        doc = spacy_model(text)
     # elif lang == 'it':
     #    doc = it_nlp(text)
     else:
-        doc = de_nlp(text)
+        doc = spacy_model(text)
         # Rule 0: Attach separable verb particle to the verb lemma
         attach_svp(doc)
 
@@ -352,7 +349,16 @@ def main():
         text = 'Suchen Sie einen Notfalltreffpunkt auf, wenn Sie Auskünfte oder Hilfe benötigen.'
         # text = 'Wenn Sie Hilfe brauchen, dann suchen Sie einen Notfalltreffpunkt auf.'
 
-    print(f"text:\t{text}\ngloss:\t{text_to_gloss(text, lang)}")
+    if lang == "de":
+        spacy_model = spacy.load("de_core_news_lg")
+    elif lang == "fr":
+        spacy_model = spacy.load("fr_core_news_lg")
+    else:
+        raise NotImplementedError("Don't know language '%s'." % lang)
+
+    output = text_to_gloss(text, spacy_model=spacy_model, lang=lang)
+
+    print(f"text:\t{text}\ngloss:\t{output}")
 
 
 if __name__ == '__main__':
