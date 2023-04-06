@@ -193,18 +193,27 @@ for pair in "${language_pairs[@]}"; do
     src=${pair[1]}
     trg=${pair[2]}
 
-    if [[ $casing_augmentation == "true" ]]; then
-        python $scripts/preprocessing/casing_augmentation.py \
-                --input-src $data_sub/$source.train.normalized.$src \
-                --input-trg $data_sub/$source.train.normalized.$trg \
-                --output-src $data_sub/$source.train.post_casing_augmentation.$src \
-                --output-trg $data_sub/$source.train.post_casing_augmentation.$trg \
-                --src-lang $src \
-                --trg-lang $trg
-    else
-        cp $data_sub/$source.train.normalized.$src $data_sub/$source.train.post_casing_augmentation.$src
-        cp $data_sub/$source.train.normalized.$trg $data_sub/$source.train.post_casing_augmentation.$trg
-    fi
+    for corpus in $ALL_CORPORA; do
+
+        if [[ $corpus == "train" ]]; then
+
+            if [[ $casing_augmentation == "true" ]]; then
+                python $scripts/preprocessing/casing_augmentation.py \
+                        --input-src $data_sub/$source.$corpus.normalized.$src \
+                        --input-trg $data_sub/$source.$corpus.normalized.$trg \
+                        --output-src $data_sub/$source.$corpus.post_casing_augmentation.$src \
+                        --output-trg $data_sub/$source.$corpus.post_casing_augmentation.$trg \
+                        --src-lang $src \
+                        --trg-lang $trg
+            else
+                cp $data_sub/$source.$corpus.normalized.$src $data_sub/$source.$corpus.post_casing_augmentation.$src
+                cp $data_sub/$source.$corpus.normalized.$trg $data_sub/$source.$corpus.post_casing_augmentation.$trg
+            fi
+        else
+            cp $data_sub/$source.$corpus.normalized.$src $data_sub/$source.$corpus.post_casing_augmentation.$src
+            cp $data_sub/$source.$corpus.normalized.$trg $data_sub/$source.$corpus.post_casing_augmentation.$trg
+        fi
+    done
 done
 
 # learn sentencepiece model(s) on train
