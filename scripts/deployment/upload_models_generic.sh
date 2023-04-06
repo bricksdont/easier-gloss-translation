@@ -29,4 +29,6 @@ rm -f $deploy_sub.tar.gz
 
 tar -czvf $deploy_sub.tar.gz $deploy_sub
 
-scp $deploy_sub.tar.gz mmueller@home.ifi.uzh.ch:/home/files/cl/archiv/2022/easier/$deploy_name.tar.gz
+chmod o+r $deploy_sub.tar.gz
+
+scp $deploy_sub.tar.gz mmueller@home.ifi.uzh.ch:/srv/nfs/files/cl/archiv/2023/easier/$deploy_name.tar.gz

@@ -9,6 +9,19 @@ deploy=$base/deploy
 
 mkdir -p $deploy
 
+# new augmented model
+
+model_name="multilingual.true+lg.true+gdg.true+ss.joint+casing_augmentation"
+
+deploy_name="dgs_de_augmented"
+langpair="uhh.dgs_de+uhh.de-uhh.de+uhh.dgs_de"
+
+. $scripts/deployment/upload_models_generic.sh
+
+# TODO: remove
+
+exit
+
 model_name="multilingual.true+lg.true+gdg.true+ss.joint"
 
 # DGS
