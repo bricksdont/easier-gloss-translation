@@ -193,20 +193,17 @@ for pair in "${language_pairs[@]}"; do
     src=${pair[1]}
     trg=${pair[2]}
 
-    mv $data_sub/$source.train.normalized.$src $data_sub/$source.train.pre_casing_augmentation.$src
-    mv $data_sub/$source.train.normalized.$trg $data_sub/$source.train.pre_casing_augmentation.$trg
-
     if [[ $casing_augmentation == "true" ]]; then
         python $scripts/preprocessing/casing_augmentation.py \
-                --input-src $data_sub/$source.train.pre_casing_augmentation.$src \
-                --input-trg $data_sub/$source.train.pre_casing_augmentation.$trg \
-                --output-src $data_sub/$source.train.normalized.$src \
-                --output-trg $data_sub/$source.train.normalized.$trg \
+                --input-src $data_sub/$source.train.normalized.$src \
+                --input-trg $data_sub/$source.train.normalized.$trg \
+                --output-src $data_sub/$source.train.post_casing_augmentation.$src \
+                --output-trg $data_sub/$source.train.post_casing_augmentation.$trg \
                 --src-lang $src \
                 --trg-lang $trg
     else
-        cp $data_sub/$source.train.pre_casing_augmentation.$src $data_sub/$source.train.normalized.$src
-        cp $data_sub/$source.train.pre_casing_augmentation.$trg $data_sub/$source.train.normalized.$trg
+        cp $data_sub/$source.train.normalized.$src $data_sub/$source.train.post_casing_augmentation.$src
+        cp $data_sub/$source.train.normalized.$trg $data_sub/$source.train.post_casing_augmentation.$trg
     fi
 done
 
@@ -217,25 +214,25 @@ if [[ $spm_strategy == "joint" || $spm_strategy == "spoken-only" ]]; then
     # then train one spm model overall
 
     if [[ $spm_strategy == "joint" ]]; then
-        # use all normalized train files
+        # use all post_casing_augmentation train files
 
-        cat $data_sub/*.train.normalized.* > $data_sub/train.normalized.all
+        cat $data_sub/*.train.post_casing_augmentation.* > $data_sub/train.post_casing_augmentation.all
     else
         # $spm_strategy == "spoken-only"
-        # use normalized train files for all spoken languages
+        # use post_casing_augmentation train files for all spoken languages
 
-        echo -n "" > $data_sub/train.normalized.all
+        echo -n "" > $data_sub/train.post_casing_augmentation.all
 
         for source in $ALL_SOURCES; do
             for lang in $SPOKEN_SUFFIXES; do
-                if [[ -f $data_sub/$source.train.normalized.$lang ]]; then
-                  cat $data_sub/$source.train.normalized.$lang >> $data_sub/train.normalized.all
+                if [[ -f $data_sub/$source.train.post_casing_augmentation.$lang ]]; then
+                  cat $data_sub/$source.train.post_casing_augmentation.$lang >> $data_sub/train.post_casing_augmentation.all
                 fi
             done
         done
     fi
 
-    input=$data_sub/train.normalized.all
+    input=$data_sub/train.post_casing_augmentation.all
     model_prefix=$shared_models_sub/sentencepiece
 
     . $scripts/preprocessing/train_sentencepiece_generic.sh
@@ -243,26 +240,26 @@ if [[ $spm_strategy == "joint" || $spm_strategy == "spoken-only" ]]; then
 elif [[ $spm_strategy == "separate" ]]; then
     # one spm model for spoken, one for gloss suffixes
 
-    echo -n "" > $data_sub/train.normalized.spoken
-    echo -n "" > $data_sub/train.normalized.gloss
+    echo -n "" > $data_sub/train.post_casing_augmentation.spoken
+    echo -n "" > $data_sub/train.post_casing_augmentation.gloss
 
     for source in $ALL_SOURCES; do
         for lang in $SPOKEN_SUFFIXES; do
-            if [[ -f $data_sub/$source.train.normalized.$lang ]]; then
-              cat $data_sub/$source.train.normalized.$lang >> $data_sub/train.normalized.spoken
+            if [[ -f $data_sub/$source.train.post_casing_augmentation.$lang ]]; then
+              cat $data_sub/$source.train.post_casing_augmentation.$lang >> $data_sub/train.post_casing_augmentation.spoken
             fi
         done
 
         for lang in $GLOSS_SUFFIXES; do
-            if [[ -f $data_sub/$source.train.normalized.$lang ]]; then
-              cat $data_sub/$source.train.normalized.$lang >> $data_sub/train.normalized.gloss
+            if [[ -f $data_sub/$source.train.post_casing_augmentation.$lang ]]; then
+              cat $data_sub/$source.train.post_casing_augmentation.$lang >> $data_sub/train.post_casing_augmentation.gloss
             fi
         done
     done
 
     for suffix in spoken gloss; do
 
-        input=$data_sub/train.normalized.$suffix
+        input=$data_sub/train.post_casing_augmentation.$suffix
         model_prefix=$shared_models_sub/$suffix.sentencepiece
 
         . $scripts/preprocessing/train_sentencepiece_generic.sh
@@ -282,8 +279,8 @@ if [[ $spm_strategy == "joint" ]]; then
         for corpus in $ALL_CORPORA; do
             for suffix in $ALL_SUFFIXES; do
 
-                if [[ -f $data_sub/$source.$corpus.normalized.$suffix ]]; then
-                    cat $data_sub/$source.$corpus.normalized.$suffix | \
+                if [[ -f $data_sub/$source.$corpus.post_casing_augmentation.$suffix ]]; then
+                    cat $data_sub/$source.$corpus.post_casing_augmentation.$suffix | \
                         python $scripts/preprocessing/apply_sentencepiece.py \
                             --model $shared_models_sub/sentencepiece.model \
                                 > $data_sub/$source.$corpus.pieces.$suffix
@@ -298,8 +295,8 @@ elif [[ $spm_strategy == "spoken-only" ]]; then
         for corpus in $ALL_CORPORA; do
             for suffix in $SPOKEN_SUFFIXES; do
 
-                if [[ -f $data_sub/$source.$corpus.normalized.$suffix ]]; then
-                    cat $data_sub/$source.$corpus.normalized.$suffix | \
+                if [[ -f $data_sub/$source.$corpus.post_casing_augmentation.$suffix ]]; then
+                    cat $data_sub/$source.$corpus.post_casing_augmentation.$suffix | \
                         python $scripts/preprocessing/apply_sentencepiece.py \
                             --model $shared_models_sub/sentencepiece.model \
                                 > $data_sub/$source.$corpus.pieces.$suffix
@@ -308,10 +305,10 @@ elif [[ $spm_strategy == "spoken-only" ]]; then
 
             for suffix in $GLOSS_SUFFIXES; do
 
-                if [[ -f $data_sub/$source.$corpus.normalized.$suffix ]]; then
+                if [[ -f $data_sub/$source.$corpus.post_casing_augmentation.$suffix ]]; then
                     # applying spm model is a no-op for gloss data in this case
 
-                    cp $data_sub/$source.$corpus.normalized.$suffix $data_sub/$source.$corpus.pieces.$suffix
+                    cp $data_sub/$source.$corpus.post_casing_augmentation.$suffix $data_sub/$source.$corpus.pieces.$suffix
                 fi
             done
         done
@@ -323,8 +320,8 @@ else
         for corpus in $ALL_CORPORA; do
             for suffix in $SPOKEN_SUFFIXES; do
 
-                if [[ -f $data_sub/$source.$corpus.normalized.$suffix ]]; then
-                    cat $data_sub/$source.$corpus.normalized.$suffix | \
+                if [[ -f $data_sub/$source.$corpus.post_casing_augmentation.$suffix ]]; then
+                    cat $data_sub/$source.$corpus.post_casing_augmentation.$suffix | \
                         python $scripts/preprocessing/apply_sentencepiece.py \
                             --model $shared_models_sub/spoken.sentencepiece.model \
                                 > $data_sub/$source.$corpus.pieces.$suffix
@@ -333,8 +330,8 @@ else
 
             for suffix in $GLOSS_SUFFIXES; do
 
-                if [[ -f $data_sub/$source.$corpus.normalized.$suffix ]]; then
-                    cat $data_sub/$source.$corpus.normalized.$suffix | \
+                if [[ -f $data_sub/$source.$corpus.post_casing_augmentation.$suffix ]]; then
+                    cat $data_sub/$source.$corpus.post_casing_augmentation.$suffix | \
                         python $scripts/preprocessing/apply_sentencepiece.py \
                             --model $shared_models_sub/gloss.sentencepiece.model \
                                 > $data_sub/$source.$corpus.pieces.$suffix
