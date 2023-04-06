@@ -93,7 +93,7 @@ def main():
 
             if args.src_lang in SPOKEN_SUFFIXES:
                 src_variants = get_variants(src_line.strip())
-                trg_variants = [src_line.strip()] * len(src_variants)
+                trg_variants = [trg_line.strip()] * len(src_variants)
             elif args.trg_lang in SPOKEN_SUFFIXES:
                 trg_variants = get_variants(trg_line.strip())
                 src_variants = [src_line.strip()] * len(trg_variants)
