@@ -2,6 +2,8 @@
 # originally written by Zifan Jiang
 
 import os
+
+import sockeye.inference
 import spacy
 import subprocess
 import torch as pt
@@ -9,7 +11,7 @@ import torch as pt
 from os import environ
 from flask import Flask, request
 from flask_cors import CORS
-from typing import List
+from typing import List, Dict, Any
 
 from sockeye import inference, model
 
@@ -27,17 +29,16 @@ CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 def load_sockeye_models():
 
-    model_name = 'dgs_de'
     spm_name = "sentencepiece.model"
 
     sockeye_paths_dict = {
-        "nmt-basic": {"model_name": 'dgs_de_basic',
-                      "model_path": os.path.join(MODELS_PATH, model_name),
-                      "spm_path": os.path.join(MODELS_PATH, model_name, spm_name)
+        "nmt_basic": {
+                      "model_path": os.path.join(MODELS_PATH, "dgs_de"),
+                      "spm_path": os.path.join(MODELS_PATH, "dgs_de", spm_name)
                       },
-        "nmt-augmented": {"model_name": 'dgs_de_augmented',
-                          "model_path": os.path.join(MODELS_PATH, model_name),
-                          "spm_path": os.path.join(MODELS_PATH, model_name, spm_name)
+        "nmt_augmented": {
+                          "model_path": os.path.join(MODELS_PATH, "dgs_de_augmented"),
+                          "spm_path": os.path.join(MODELS_PATH, "dgs_de_augmented", spm_name)
                           }
     }
 
@@ -109,17 +110,12 @@ def reorder():
     }
 
 
-@app.route('/api/translate/nmt-augmented', methods=['POST'], strict_slashes=False)
-def translate_augmented():
-    return {
-        'works': 'yes! I think I am the NMT augmented system'
-    }
+def translate_model_agnostic(model_name: str) -> Dict[str, Any]:
+    """
 
-
-@app.route('/api/translate/nmt-basic', methods=['POST'], strict_slashes=False)
-def translate_basic():
-    model_name = "nmt-basic"
-
+    :param model_name:
+    :return:
+    """
     spm_path = sockeye_paths_dict[model_name]["spm_path"]
 
     sockeye_models = sockeye_models_dict[model_name]["sockeye_models"]
@@ -153,7 +149,7 @@ def translate_basic():
                                       target_vocabs=sockeye_target_vocabs)
 
     input_ = inference.make_input_from_plain_string(0, input_)
-    output = translator.translate([input_])[0]
+    output = translator.translate([input_])[0]  # type: sockeye.inference.TranslatorOutput
 
     translations = output.nbest_translations  # type: List[str]
     translations = [remove_pieces(t) for t in translations]
@@ -165,6 +161,24 @@ def translate_basic():
         'text': text,
         'translations': translations,
     }
+
+
+@app.route('/api/translate/nmt-augmented', methods=['POST'], strict_slashes=False)
+def translate_augmented() -> Dict[str, Any]:
+    """
+
+    :return:
+    """
+    return translate_model_agnostic(model_name="nmt_augmented")
+
+
+@app.route('/api/translate/nmt-basic', methods=['POST'], strict_slashes=False)
+def translate_basic() -> Dict[str, Any]:
+    """
+
+    :return:
+    """
+    return translate_model_agnostic(model_name="nmt_basic")
 
 
 if __name__ == '__main__':

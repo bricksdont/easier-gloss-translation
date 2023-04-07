@@ -9,11 +9,14 @@ models=$base/models
 
 mkdir -p $models
 
-MODEL_URL="https://files.ifi.uzh.ch/cl/archiv/2022/easier/dgs_de.tar.gz"
+MODEL_URLS="https://files.ifi.uzh.ch/cl/archiv/2022/easier/dgs_de.tar.gz https://files.ifi.uzh.ch/cl/archiv/2023/easier/dgs_de_augmented.tar.gz"
 
-wget $MODEL_URL -P $models
+for model_url in $MODEL_URLS; do
+    wget $model_url -P $models
+done
 
 (cd $models && tar -xzvf dgs_de.tar.gz)
+(cd $models && tar -xzvf dgs_de_augmented.tar.gz)
 
 ls -l $models
 ls -l $models/*
