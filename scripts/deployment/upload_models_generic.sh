@@ -31,4 +31,4 @@ tar -czvf $deploy_sub.tar.gz $deploy_sub
 
 chmod o+r $deploy_sub.tar.gz
 
-scp $deploy_sub.tar.gz mmueller@home.ifi.uzh.ch:/srv/nfs/files/cl/archiv/2023/easier/$deploy_name.tar.gz
+scp $deploy_sub.tar.gz mmueller@files.ifi.uzh.ch:/srv/nfs/files/cl/archiv/2023/easier/$deploy_name.tar.gz
