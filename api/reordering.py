@@ -329,7 +329,14 @@ def text_to_gloss(text: str, spacy_model: Language, lang: str = 'de'):
         glossed_clauses.append(glossed_tokens)
 
     # Final Rule: Begin sequence with a capital
-    glossed_clauses[0][0] = glossed_clauses[0][0].capitalize()
+    try:
+        glossed_clauses[0][0] = glossed_clauses[0][0].capitalize()
+    except IndexError:
+        print("text:")
+        print(text)
+        print("clauses:")
+        print(clauses)
+        raise
 
     # simply end the sentence with a period: gloss = " ".join([g for clause in glossed_clauses for g in clause])
     # or more the "glosses way":
