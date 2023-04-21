@@ -304,7 +304,11 @@ def clause_to_gloss(clause):
     return glossed_tokens
 
 
-def text_to_gloss(text: str, spacy_model: Language, lang: str = 'de'):
+def text_to_gloss(text: str, spacy_model: Language, lang: str = 'de') -> str:
+
+    if text.strip() == "":
+        return text
+
     if lang == 'fr':
         doc = spacy_model(text)
     # elif lang == 'it':
