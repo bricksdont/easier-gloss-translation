@@ -205,8 +205,8 @@ def haben_main_verb(token):
 
 def gloss_de_poss_pronoun(token):
     # DE: mein/dein/sein/ihr/Ihr/unser/euer
-    pposat_map = {'M':'mein', 'm':'mein', 'D':'dein', 'd':'dein', 'S':'sein', 's':'sein', 'i':'ihr',
-                  'I':'Ihr', 'U':'unser', 'u':'unser', 'E':'euer', 'e':'euer'}
+    pposat_map = {'M': 'mein', 'm': 'mein', 'D': 'dein', 'd': 'dein', 'S': 'sein', 's': 'sein', 'i': 'ihr',
+                  'I': 'Ihr', 'U': 'unser', 'u': 'unser', 'E': 'euer', 'e': 'euer'}
 
     # return 'IX-'+pposat_map[token.text[0]]
     return '(' + pposat_map[token.text[0]] + ')'
@@ -252,6 +252,10 @@ def glossify(tokens):
         # DE: lemma of NER-identified location entities preceded by preposition
         if t.ent_type_ == "LOC" and t.head.pos_ == "ADP":
             glossed_tokens.append(t.head.text)
+
+        # output both "wordform/lemma" to help the dictionary lookup
+        if gloss != t.text:
+            gloss = t.text + "/" + gloss
 
         glossed_tokens.append(gloss)
 
