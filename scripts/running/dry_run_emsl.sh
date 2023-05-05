@@ -24,7 +24,7 @@ testing_corpora="test"
 
 # this argument is for dry runs only, set to "true" to also repeat downloads (or linking)
 
-repeat_download_step="false"
+repeat_download_step="true"
 
 # delete files for this model to rerun everything
 
