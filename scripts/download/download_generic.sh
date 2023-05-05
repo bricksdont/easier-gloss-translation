@@ -10,10 +10,6 @@
 # $bslcp_username
 # $bslcp_password
 # $dgs_use_document_split
-# $emsl_version
-# $emsl_threshold
-# $emsl_i3d_model
-# $emsl_add_comparable_data
 
 base=$1
 src=$2
@@ -24,10 +20,6 @@ seed=$6
 bslcp_password=$7
 bslcp_username=$8
 dgs_use_document_split=$9
-emsl_version=${10}
-emsl_threshold=${11}
-emsl_i3d_model=${12}
-emsl_add_comparable_data=${13}
 
 scripts=$base/scripts
 data=$base/data
@@ -79,80 +71,83 @@ for source in $training_corpora; do
 
     if [[ $source == "srf" ]]; then
 
-        if [[ $emsl_version == "v2.0a" ]]; then
-            # only one sub-version of v2.0a
+        # 1. version 2.0a
 
-            EMSL_DIR=$EMSL_BASE/$emsl_version
+        # only one sub-version of v2.0a
 
-            python $scripts/download/assemble_emsl_v2.py \
-                --emsl-dir-train $EMSL_DIR/train \
-                --emsl-dir-dev $EMSL_DIR/dev \
-                --emsl-dir-test $EMSL_DIR/test \
-                --subtitles-dir-train $SRF_SUBTITLES_PARALLEL_TRAIN_DIR \
-                --subtitles-dir-dev $SRF_SUBTITLES_PARALLEL_DEV_DIR \
-                --subtitles-dir-test $SRF_SUBTITLES_PARALLEL_TEST_DIR \
-                --output-dir $data_sub_sub \
-                --src-lang $src \
-                --trg-lang $trg
+        EMSL_DIR=$EMSL_BASE/v2.0a
 
-        else
-            # assume version v2.0b
+        data_sub_sub_sub=$data_sub_sub/v2.0a
 
-            EMSL_DIR_SHARED_TASK=$EMSL_BASE/$emsl_version/shared_task
-            EMSL_DIR_BROADCAST=$EMSL_BASE/$emsl_version/broadcast
+        mkdir -p $data_sub_sub_sub
 
-            # distinguish between:
-            # EMSL_v2_based_on_EMSL_v1_BSL-I3D  EMSL_v2_based_on_EMSL_v1_Both-I3D  EMSL_v2_based_on_EMSL_v1_DGS-I3D
+        # only one sub-version of v2.0a
 
-            if [[ $emsl_i3d_model == "dgs" ]]; then
-                EMSL_DIR_PARALLEL=$EMSL_DIR_SHARED_TASK/EMSL_v2_based_on_EMSL_v1_DGS-I3D/"confidence_over_"$emsl_threshold
-                EMSL_DIR_COMPARABLE=$EMSL_DIR_BROADCAST/EMSL_v2_based_on_EMSL_v1_DGS-I3D/"confidence_over_"$emsl_threshold
-            elif [[ $emsl_i3d_model == "bsl" ]]; then
-                EMSL_DIR_PARALLEL=$EMSL_DIR_SHARED_TASK/EMSL_v2_based_on_EMSL_v1_BSL-I3D/"confidence_over_"$emsl_threshold
-                EMSL_DIR_COMPARABLE=$EMSL_DIR_BROADCAST/EMSL_v2_based_on_EMSL_v1_DGS-I3D/"confidence_over_"$emsl_threshold
-            else
-                # assume both models combined
+        EMSL_DIR=$EMSL_BASE/$emsl_version
 
-                EMSL_DIR_PARALLEL=$EMSL_DIR_SHARED_TASK/EMSL_v2_based_on_EMSL_v1_Both-I3D/"confidence_over_"$emsl_threshold
-                EMSL_DIR_COMPARABLE=$EMSL_DIR_BROADCAST/EMSL_v2_based_on_EMSL_v1_DGS-I3D/"confidence_over_"$emsl_threshold
-            fi
+        python $scripts/download/assemble_emsl_v2.py \
+            --emsl-dir-train $EMSL_DIR/train \
+            --emsl-dir-dev $EMSL_DIR/dev \
+            --emsl-dir-test $EMSL_DIR/test \
+            --subtitles-dir-train $SRF_SUBTITLES_PARALLEL_TRAIN_DIR \
+            --subtitles-dir-dev $SRF_SUBTITLES_PARALLEL_DEV_DIR \
+            --subtitles-dir-test $SRF_SUBTITLES_PARALLEL_TEST_DIR \
+            --output-dir $data_sub_sub_sub \
+            --src-lang $src \
+            --trg-lang $trg
 
-            python $scripts/download/assemble_emsl_v2.py \
-                --emsl-dir-train $EMSL_DIR_PARALLEL/train \
-                --emsl-dir-dev $EMSL_DIR_PARALLEL/dev \
-                --emsl-dir-test $EMSL_DIR_PARALLEL/test \
-                --subtitles-dir-train $SRF_SUBTITLES_PARALLEL_TRAIN_DIR \
-                --subtitles-dir-dev $SRF_SUBTITLES_PARALLEL_DEV_DIR \
-                --subtitles-dir-test $SRF_SUBTITLES_PARALLEL_TEST_DIR \
-                --output-dir $data_sub_sub \
-                --src-lang $src \
-                --trg-lang $trg \
-                --output-prefix parallel
+        # 2. version 2.0b
 
-            if [[ $emsl_add_comparable_data == "true" ]]; then
+        EMSL_DIR_SHARED_TASK=$EMSL_BASE/v2.0b/shared_task
+        EMSL_DIR_BROADCAST=$EMSL_BASE/v2.0b/broadcast
+
+        data_sub_sub_sub=$data_sub_sub/v2.0b
+
+        mkdir -p $data_sub_sub_sub
+
+        for i3d_model in bsl dgs both; do
+            for threshold in 0.5 0.6 0.7 0.8; do
+
+                data_unique_combination=$data_sub_sub_sub/$i3d_model/$threshold
+
+                mkdir -p $data_unique_combination
+
+                i3d_origin_name=$(python $scripts/download/map_emsl_versions.py $i3d_model)
+                threshold_origin_name=$(python $scripts/download/map_emsl_versions.py $threshold)
+
+                EMSL_DIR_PARALLEL=$EMSL_DIR_SHARED_TASK/$i3d_origin_name/$threshold_origin_name
+                EMSL_DIR_COMPARABLE=$EMSL_DIR_BROADCAST/$i3d_origin_name/$threshold_origin_name
+
+                python $scripts/download/assemble_emsl_v2.py \
+                    --emsl-dir-train $EMSL_DIR_PARALLEL/train \
+                    --emsl-dir-dev $EMSL_DIR_PARALLEL/dev \
+                    --emsl-dir-test $EMSL_DIR_PARALLEL/test \
+                    --subtitles-dir-train $SRF_SUBTITLES_PARALLEL_TRAIN_DIR \
+                    --subtitles-dir-dev $SRF_SUBTITLES_PARALLEL_DEV_DIR \
+                    --subtitles-dir-test $SRF_SUBTITLES_PARALLEL_TEST_DIR \
+                    --output-dir $data_unique_combination \
+                    --src-lang $src \
+                    --trg-lang $trg \
+                    --output-prefix parallel
+
+                # comparable data where subtitles are not human-corrected
 
                 python $scripts/download/assemble_emsl_v2.py \
                     --emsl-dir-train $EMSL_DIR_COMPARABLE/train \
                     --subtitles-dir-train $SRF_SUBTITLES_COMPARABLE_TRAIN_DIR \
-                    --output-dir $data_sub_sub \
+                    --output-dir $data_unique_combination \
                     --src-lang $src \
                     --trg-lang $trg \
                     --output-prefix comparable
 
-                # combine train data
+                # concat all subsets, for debugging
 
-                cat $data_sub_sub/parallel.train.json $data_sub_sub/comparable.train.json \
-                    > $data_sub_sub/train.json
+                cat $data_unique_combination/{train,dev,test}.parallel.json > $data_unique_combination/srf.parallel.json
+                cat $data_unique_combination/{train,dev,test}.comparable.json > $data_unique_combination/srf.comparable.json
 
-            else
-                cp $data_sub_sub/parallel.train.json $data_sub_sub/train.json
-            fi
-
-        fi
-
-        # concat all subsets, for debugging
-
-        cat $data_sub_sub/{train,dev,test}.json > $data_sub_sub/srf.json
+                cat $data_unique_combination/srf.parallel.json $data_unique_combination/srf.comparable.json > $data_unique_combination/srf.json
+            done
+        done
 
     elif [[ $source == "uhh" ]]; then
 
@@ -237,4 +232,4 @@ done
 
 echo "Sizes of files:"
 
-wc -l $data_sub/*/*
+wc -l $data_sub/*/*/*/*

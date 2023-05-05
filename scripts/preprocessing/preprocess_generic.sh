@@ -14,6 +14,10 @@
 # $generalize_dgs_glosses
 # $use_mouthing_tier
 # $casing_augmentation
+# $emsl_version
+# $emsl_threshold
+# $emsl_i3d_model
+# $emsl_add_comparable_data
 
 base=$1
 src=$2
@@ -28,6 +32,10 @@ lowercase_glosses=${10}
 generalize_dgs_glosses=${11}
 use_mouthing_tier=${12}
 casing_augmentation=${13}
+emsl_version=${14}
+emsl_threshold=${15}
+emsl_i3d_model=${16}
+emsl_add_comparable_data=${17}
 
 data=$base/data
 venvs=$base/venvs
@@ -114,6 +122,36 @@ for pair in "${language_pairs[@]}"; do
       echo "Found (source, src, trg): ($source, $src, $trg)"
 
     download_sub=$data/download/$source
+
+    if [[ $source == "srf" ]]; then
+
+        if [[ $emsl_version == "v2.0a" ]]; then
+
+            # there is only one version
+
+            emsl_folder=$download_sub/$emsl_version
+
+            ln -s $emsl_folder/train.json $download_sub/train.json
+            ln -s $emsl_folder/dev.json $download_sub/dev.json
+            ln -s $emsl_folder/test.json $download_sub/test.json
+
+        else
+
+            # link the correct combination of emsl version, i3d model and threshold
+
+            emsl_folder=$download_sub/$emsl_version/$emsl_i3d_model/$emsl_threshold
+
+            if [[ $emsl_add_comparable_data == "true" ]]; then
+                cat $emsl_folder/train.parallel.json $emsl_folder/train.comparable.json > $download_sub/train.json
+            else
+                ln -s $emsl_folder/train.parallel.json $download_sub/train.json
+            fi
+
+            ln -s $emsl_folder/dev.parallel.json $download_sub/dev.json
+            ln -s $emsl_folder/test.parallel.json $download_sub/test.json
+
+        fi
+    fi
 
     for lang in $src $trg; do
 
