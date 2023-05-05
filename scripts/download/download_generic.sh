@@ -83,8 +83,6 @@ for source in $training_corpora; do
 
         # only one sub-version of v2.0a
 
-        EMSL_DIR=$EMSL_BASE/$emsl_version
-
         python $scripts/download/assemble_emsl_v2.py \
             --emsl-dir-train $EMSL_DIR/train \
             --emsl-dir-dev $EMSL_DIR/dev \
@@ -133,7 +131,7 @@ for source in $training_corpora; do
                 # comparable data where subtitles are not human-corrected
 
                 python $scripts/download/assemble_emsl_v2.py \
-                    --emsl-dir-train $EMSL_DIR_COMPARABLE/train \
+                    --emsl-dir-train $EMSL_DIR_COMPARABLE \
                     --subtitles-dir-train $SRF_SUBTITLES_COMPARABLE_TRAIN_DIR \
                     --output-dir $data_unique_combination \
                     --src-lang $src \
