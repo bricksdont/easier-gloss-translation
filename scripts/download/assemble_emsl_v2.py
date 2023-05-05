@@ -83,11 +83,11 @@ def read_srt_emsl_v20b(filepath: str) -> List[srt.Subtitle]:
         for subtitle in srt.parse(handle.read()):
 
             if subtitle.content.strip() in BOILERPLATE_SUBTITLES:
-                subtitle = ""
+                subtitle.content = ""
             elif subtitle.content.startswith("#"):
-                subtitle = ""
+                subtitle.content = ""
             elif subtitle.content.strip() == "":
-                subtitle = ""
+                subtitle.content = ""
 
             subtitles.append(subtitle)
 
