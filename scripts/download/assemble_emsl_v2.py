@@ -18,14 +18,28 @@ BOILERPLATE_SUBTITLES = ["1:1-Untertitelung.",
 def parse_args():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--emsl-dir", type=str, help="Path to EMSL spots (with subfolders 'train', 'dev' and 'test').")
+    parser.add_argument("--emsl-dir-train", type=str,
+                        help="Path to EMSL spots for training data.")
+    parser.add_argument("--emsl-dir-dev", type=str,
+                        help="Path to EMSL spots for development data.",
+                        required=False, default=None)
+    parser.add_argument("--emsl-dir-test", type=str,
+                        help="Path to EMSL spots for testing data.",
+                        required=False, default=None)
 
-    parser.add_argument("--subtitles-dir-train", type=str, help="Path to SRF train subtitles folder.")
-    parser.add_argument("--subtitles-dir-dev", type=str, help="Path to SRF dev subtitles folder.")
-    parser.add_argument("--subtitles-dir-test", type=str, help="Path to SRF test subtitles folder.")
+    parser.add_argument("--subtitles-dir-train", type=str, help="Path to train subtitles folder.")
+    parser.add_argument("--subtitles-dir-dev", type=str, help="Path to dev subtitles folder.",
+                        required=False, default=None)
+    parser.add_argument("--subtitles-dir-test", type=str, help="Path to test subtitles folder.",
+                        required=False, default=None)
+
+    parser.add_argument("--src-lang", type=str, help="Source language.")
+    parser.add_argument("--trg-lang", type=str, help="Target language.")
 
     parser.add_argument("--output-dir", type=str, help="Path to folder to write extracted sentences (will write three"
                                                        "separate JSON files).")
+    parser.add_argument("--output-prefix", type=str, help="Prefix added to each output JSON file.",
+                        required=False, default=None)
 
     args = parser.parse_args()
 
@@ -57,7 +71,8 @@ def read_srt(filepath: str) -> List[srt.Subtitle]:
 
 def load_emsl_file(filepath: str) -> List[str]:
     """
-    Filename of the form: "2021-02-17.csv"
+    Filename of the form:
+    - "2021-02-17.csv"
 
     File content is a CSV with a header, as follows:
 
@@ -78,19 +93,16 @@ def load_emsl_file(filepath: str) -> List[str]:
     return emsl_strings
 
 
-def get_emsl_strings_by_id(emsl_dir: str, subset_identifier: str) -> Dict[str, List[str]]:
+def get_emsl_strings_by_id(emsl_dir: str) -> Dict[str, List[str]]:
     """
 
     :param emsl_dir:
-    :param subset_identifier:
     :return:
     """
-    emsl_dir_subset = os.path.join(emsl_dir, subset_identifier)
-
     emsl_strings_by_id = {}  # type: Dict[str, List[str]]
 
-    for emsl_filename in os.listdir(emsl_dir_subset):
-        filepath = os.path.join(emsl_dir_subset, emsl_filename)
+    for emsl_filename in os.listdir(emsl_dir):
+        filepath = os.path.join(emsl_dir, emsl_filename)
 
         file_id = emsl_filename.replace(".csv", "")
 
@@ -128,6 +140,9 @@ def write_output(emsl_strings_by_id: Dict[str, List[str]],
                  subtitles_by_id: Dict[str, List[srt.Subtitle]],
                  output_dir: str,
                  subset_identifier: str,
+                 src_lang: str,
+                 trg_lang: str,
+                 output_prefix: str,
                  skip_empty_strings: bool = True):
     """
 
@@ -135,10 +150,16 @@ def write_output(emsl_strings_by_id: Dict[str, List[str]],
     :param subtitles_by_id:
     :param output_dir:
     :param subset_identifier:
+    :param src_lang:
+    :param trg_lang:
+    :param output_prefix:
     :param skip_empty_strings:
     :return:
     """
-    outfile_path = os.path.join(output_dir, "%s.json" % subset_identifier)
+    if output_prefix is not None:
+        outfile_path = os.path.join(output_dir, "%s.%s.json" % (output_prefix, subset_identifier))
+    else:
+        outfile_path = os.path.join(output_dir, "%s.json" % subset_identifier)
 
     outfile_handle = open(outfile_path, "w")
 
@@ -164,8 +185,8 @@ def write_output(emsl_strings_by_id: Dict[str, List[str]],
                     num_lines_skipped_because_empty += 1
                     continue
 
-            output_data = {"dsgs": emsl_string,
-                           "de": subtitle_string,
+            output_data = {src_lang: emsl_string,
+                           trg_lang: subtitle_string,
                            "id": _id}
 
             outfile_handle.write(json.dumps(output_data) + "\n")
@@ -185,37 +206,54 @@ def main():
 
     # parse the train subset
 
-    emsl_strings_by_id = get_emsl_strings_by_id(args.emsl_dir, subset_identifier="train")
+    emsl_strings_by_id = get_emsl_strings_by_id(args.emsl_dir_train)
 
     subtitles_by_id = get_subtitles_by_id(args.subtitles_dir_train)
 
     write_output(emsl_strings_by_id=emsl_strings_by_id,
                  subtitles_by_id=subtitles_by_id,
                  output_dir=args.output_dir,
+                 src_lang=args.src_lang,
+                 trg_lang=args.trg_lang,
+                 output_prefix=args.output_prefix,
                  subset_identifier="train")
 
-    # dev
+    if args.emsl_dir_dev is not None:
 
-    emsl_strings_by_id = get_emsl_strings_by_id(args.emsl_dir, subset_identifier="dev")
+        assert args.subtitles_dir_dev is not None
 
-    subtitles_by_id = get_subtitles_by_id(args.subtitles_dir_dev)
+        # dev
 
-    write_output(emsl_strings_by_id=emsl_strings_by_id,
-                 subtitles_by_id=subtitles_by_id,
-                 output_dir=args.output_dir,
-                 subset_identifier="dev")
+        emsl_strings_by_id = get_emsl_strings_by_id(args.emsl_dir_dev)
 
-    # test
+        subtitles_by_id = get_subtitles_by_id(args.subtitles_dir_dev)
 
-    emsl_strings_by_id = get_emsl_strings_by_id(args.emsl_dir, subset_identifier="test")
+        write_output(emsl_strings_by_id=emsl_strings_by_id,
+                     subtitles_by_id=subtitles_by_id,
+                     output_dir=args.output_dir,
+                     src_lang=args.src_lang,
+                     trg_lang=args.trg_lang,
+                     output_prefix=args.output_prefix,
+                     subset_identifier="dev")
 
-    subtitles_by_id = get_subtitles_by_id(args.subtitles_dir_test)
+    if args.emsl_dir_test is not None:
 
-    write_output(emsl_strings_by_id=emsl_strings_by_id,
-                 subtitles_by_id=subtitles_by_id,
-                 output_dir=args.output_dir,
-                 subset_identifier="test",
-                 skip_empty_strings=False)
+        assert args.subtitles_dir_test is not None
+
+        # test
+
+        emsl_strings_by_id = get_emsl_strings_by_id(args.emsl_dir_test)
+
+        subtitles_by_id = get_subtitles_by_id(args.subtitles_dir_test)
+
+        write_output(emsl_strings_by_id=emsl_strings_by_id,
+                     subtitles_by_id=subtitles_by_id,
+                     output_dir=args.output_dir,
+                     src_lang=args.src_lang,
+                     trg_lang=args.trg_lang,
+                     output_prefix=args.output_prefix,
+                     subset_identifier="test",
+                     skip_empty_strings=False)
 
 
 if __name__ == '__main__':

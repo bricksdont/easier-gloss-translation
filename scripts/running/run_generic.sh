@@ -19,6 +19,10 @@
 # $use_mouthing_tier (values: "true" or "false")
 # $dgs_use_document_split (values: "true" or "false")
 # $casing_augmentation (values: "true" or "false")
+# $emsl_version (values: "v2.0a", "v2.0b")
+# $emsl_threshold (values: 0.5, 0.6, 0.7, 0.8)
+# $emsl_i3d_model (values: "dgs", "bsl", "both")
+# $emsl_add_comparable_data (values: "true" or "false")
 
 module load anaconda3
 
@@ -105,6 +109,22 @@ if [ -z "$casing_augmentation" ]; then
     casing_augmentation="false"
 fi
 
+if [ -z "$emsl_version" ]; then
+    emsl_version="v2.0b"
+fi
+
+if [ -z "$emsl_threshold" ]; then
+    emsl_threshold="0.8"
+fi
+
+if [ -z "$emsl_i3d_model" ]; then
+    emsl_i3d_model="dgs"
+fi
+
+if [ -z "$emsl_add_comparable_data" ]; then
+    emsl_add_comparable_data="false"
+fi
+
 # SLURM job args
 
 DRY_RUN_SLURM_ARGS="--cpus-per-task=2 --time=02:00:00 --mem=16G"
@@ -142,7 +162,11 @@ echo "LOWERCASE_GLOSSES: $lowercase_glosses" | tee -a $logs_sub_sub/MAIN
 echo "GENERALIZE_DGS_GLOSSES: $generalize_dgs_glosses" | tee -a $logs_sub_sub/MAIN
 echo "USE_MOUTHING_TIER: $use_mouthing_tier" | tee -a $logs_sub_sub/MAIN
 echo "DGS_USE_DOCUMENT_SPLIT: $dgs_use_document_split" | tee -a $logs_sub_sub/MAIN
-echo "CASING AUGMENTATION: $casing_augmentation" | tee -a $logs_sub_sub/MAIN
+echo "CASING_AUGMENTATION: $casing_augmentation" | tee -a $logs_sub_sub/MAIN
+echo "EMSL_VERSION: $emsl_version" | tee -a $logs_sub_sub/MAIN
+echo "EMSL_THRESHOLD: $emsl_threshold" | tee -a $logs_sub_sub/MAIN
+echo "EMSL_I3D_MODEL: $emsl_i3d_model" | tee -a $logs_sub_sub/MAIN
+echo "EMSL_ADD_COMPARABLE_DATA: $emsl_add_comparable_data" | tee -a $logs_sub_sub/MAIN
 echo "DRY RUN: $dry_run" | tee -a $logs_sub_sub/MAIN
 
 # download corpora
@@ -152,7 +176,8 @@ id_download=$(
     $SLURM_ARGS_GENERIC \
     $SLURM_LOG_ARGS \
     $scripts/download/download_generic.sh \
-    $base $src $trg $model_name "$training_corpora" $seed $bslcp_username $bslcp_password $dgs_use_document_split
+    $base $src $trg $model_name "$training_corpora" $seed $bslcp_username $bslcp_password $dgs_use_document_split \
+    $emsl_version $emsl_threshold $emsl_i3d_model $emsl_add_comparable_data
 )
 
 echo "  id_download: $id_download | $logs_sub_sub/slurm-$id_download.out" | tee -a $logs_sub_sub/MAIN

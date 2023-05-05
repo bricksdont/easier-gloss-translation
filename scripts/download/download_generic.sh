@@ -10,6 +10,10 @@
 # $bslcp_username
 # $bslcp_password
 # $dgs_use_document_split
+# $emsl_version
+# $emsl_threshold
+# $emsl_i3d_model
+# $emsl_add_comparable_data
 
 base=$1
 src=$2
@@ -20,6 +24,10 @@ seed=$6
 bslcp_password=$7
 bslcp_username=$8
 dgs_use_document_split=$9
+emsl_version=${10}
+emsl_threshold=${11}
+emsl_i3d_model=${12}
+emsl_add_comparable_data=${13}
 
 scripts=$base/scripts
 data=$base/data
@@ -43,14 +51,17 @@ TRAIN_SLICE_LARGE=5000
 
 CORPORA_EXCEPT_TRAIN="dev test"
 
-# download source, either "uhh", "bslcp" or "srf"
+# download source, currently either "uhh", "bslcp" or "srf"
 
 # in the case of "srf", no need to download, will link locally from our storage
 
-EMSL_V2_DIR="/shares/easier.volk.cl.uzh/WP4/spoken-to-sign_sign-to-spoken/DSGS/SRF/Daily_news/emsl/v2.0a"
-SRF_SUBTITLES_TRAIN_DIR="/shares/easier.volk.cl.uzh/WMT_Shared_Task/srf/parallel/subtitles"
-SRF_SUBTITLES_DEV_DIR="/shares/easier.volk.cl.uzh/WMT_Shared_Task/dev/dsgs-de/subtitles"
-SRF_SUBTITLES_TEST_DIR="/shares/easier.volk.cl.uzh/WMT_Shared_Task/test/dsgs-de/subtitles"
+EMSL_BASE="/shares/easier.volk.cl.uzh/WP4/spoken-to-sign_sign-to-spoken/DSGS/SRF/Daily_news/emsl"
+
+SRF_SUBTITLES_PARALLEL_TRAIN_DIR="/shares/easier.volk.cl.uzh/WMT_Shared_Task/srf/parallel/subtitles"
+SRF_SUBTITLES_PARALLEL_DEV_DIR="/shares/easier.volk.cl.uzh/WMT_Shared_Task/dev/dsgs-de/subtitles"
+SRF_SUBTITLES_PARALLEL_TEST_DIR="/shares/easier.volk.cl.uzh/WMT_Shared_Task/test/dsgs-de/subtitles"
+
+SRF_SUBTITLES_COMPARABLE_TRAIN_DIR="/shares/easier.volk.cl.uzh/WP4/spoken-to-sign_sign-to-spoken/DSGS/SRF/Daily_news/subtitles_sentence-segmented_Surrey"
 
 data_sub=$data/download
 
@@ -68,12 +79,76 @@ for source in $training_corpora; do
 
     if [[ $source == "srf" ]]; then
 
-        python $scripts/download/assemble_emsl_v2.py \
-            --emsl-dir $EMSL_V2_DIR \
-            --subtitles-dir-train $SRF_SUBTITLES_TRAIN_DIR \
-            --subtitles-dir-dev $SRF_SUBTITLES_DEV_DIR \
-            --subtitles-dir-test $SRF_SUBTITLES_TEST_DIR \
-            --output-dir $data_sub_sub
+        if [[ $emsl_version == "v2.0a" ]]; then
+            # only one sub-version of v2.0a
+
+            EMSL_DIR=$EMSL_BASE/$emsl_version
+
+            python $scripts/download/assemble_emsl_v2.py \
+                --emsl-dir-train $EMSL_DIR/train \
+                --emsl-dir-dev $EMSL_DIR/dev \
+                --emsl-dir-test $EMSL_DIR/test \
+                --subtitles-dir-train $SRF_SUBTITLES_PARALLEL_TRAIN_DIR \
+                --subtitles-dir-dev $SRF_SUBTITLES_PARALLEL_DEV_DIR \
+                --subtitles-dir-test $SRF_SUBTITLES_PARALLEL_TEST_DIR \
+                --output-dir $data_sub_sub \
+                --src-lang $src \
+                --trg-lang $trg
+
+        else
+            # assume version v2.0b
+
+            EMSL_DIR_SHARED_TASK=$EMSL_BASE/$emsl_version/shared_task
+            EMSL_DIR_BROADCAST=$EMSL_BASE/$emsl_version/broadcast
+
+            # distinguish between:
+            # EMSL_v2_based_on_EMSL_v1_BSL-I3D  EMSL_v2_based_on_EMSL_v1_Both-I3D  EMSL_v2_based_on_EMSL_v1_DGS-I3D
+
+            if [[ $emsl_i3d_model == "dgs" ]]; then
+                EMSL_DIR_PARALLEL=$EMSL_DIR_SHARED_TASK/EMSL_v2_based_on_EMSL_v1_DGS-I3D/"confidence_over_"$emsl_threshold
+                EMSL_DIR_COMPARABLE=$EMSL_DIR_BROADCAST/EMSL_v2_based_on_EMSL_v1_DGS-I3D/"confidence_over_"$emsl_threshold
+            elif [[ $emsl_i3d_model == "bsl" ]]; then
+                EMSL_DIR_PARALLEL=$EMSL_DIR_SHARED_TASK/EMSL_v2_based_on_EMSL_v1_BSL-I3D/"confidence_over_"$emsl_threshold
+                EMSL_DIR_COMPARABLE=$EMSL_DIR_BROADCAST/EMSL_v2_based_on_EMSL_v1_DGS-I3D/"confidence_over_"$emsl_threshold
+            else
+                # assume both models combined
+
+                EMSL_DIR_PARALLEL=$EMSL_DIR_SHARED_TASK/EMSL_v2_based_on_EMSL_v1_Both-I3D/"confidence_over_"$emsl_threshold
+                EMSL_DIR_COMPARABLE=$EMSL_DIR_BROADCAST/EMSL_v2_based_on_EMSL_v1_DGS-I3D/"confidence_over_"$emsl_threshold
+            fi
+
+            python $scripts/download/assemble_emsl_v2.py \
+                --emsl-dir-train $EMSL_DIR_PARALLEL/train \
+                --emsl-dir-dev $EMSL_DIR_PARALLEL/dev \
+                --emsl-dir-test $EMSL_DIR_PARALLEL/test \
+                --subtitles-dir-train $SRF_SUBTITLES_PARALLEL_TRAIN_DIR \
+                --subtitles-dir-dev $SRF_SUBTITLES_PARALLEL_DEV_DIR \
+                --subtitles-dir-test $SRF_SUBTITLES_PARALLEL_TEST_DIR \
+                --output-dir $data_sub_sub \
+                --src-lang $src \
+                --trg-lang $trg \
+                --output-prefix parallel
+
+            if [[ $emsl_add_comparable_data == "true" ]]; then
+
+                python $scripts/download/assemble_emsl_v2.py \
+                    --emsl-dir-train $EMSL_DIR_COMPARABLE/train \
+                    --subtitles-dir-train $SRF_SUBTITLES_COMPARABLE_TRAIN_DIR \
+                    --output-dir $data_sub_sub \
+                    --src-lang $src \
+                    --trg-lang $trg \
+                    --output-prefix comparable
+
+                # combine train data
+
+                cat $data_sub_sub/parallel.train.json $data_sub_sub/comparable.train.json \
+                    > $data_sub_sub/train.json
+
+            else
+                cp $data_sub_sub/parallel.train.json $data_sub_sub/train.json
+            fi
+
+        fi
 
         # concat all subsets, for debugging
 
