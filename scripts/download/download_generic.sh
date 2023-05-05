@@ -92,7 +92,8 @@ for source in $training_corpora; do
             --subtitles-dir-test $SRF_SUBTITLES_PARALLEL_TEST_DIR \
             --output-dir $data_sub_sub_sub \
             --src-lang $src \
-            --trg-lang $trg
+            --trg-lang $trg \
+            --emsl-version v2.0a
 
         # 2. version 2.0b
 
@@ -126,7 +127,8 @@ for source in $training_corpora; do
                     --output-dir $data_unique_combination \
                     --src-lang $src \
                     --trg-lang $trg \
-                    --output-prefix parallel
+                    --output-prefix parallel \
+                    --emsl-version v2.0b
 
                 # comparable data where subtitles are not human-corrected
 
@@ -136,7 +138,8 @@ for source in $training_corpora; do
                     --output-dir $data_unique_combination \
                     --src-lang $src \
                     --trg-lang $trg \
-                    --output-prefix comparable
+                    --output-prefix comparable \
+                    --emsl-version v2.0b
 
                 # concat all subsets, for debugging
 

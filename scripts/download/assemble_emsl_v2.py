@@ -36,6 +36,8 @@ def parse_args():
     parser.add_argument("--src-lang", type=str, help="Source language.")
     parser.add_argument("--trg-lang", type=str, help="Target language.")
 
+    parser.add_argument("--emsl-version", type=str, help="EMSL version.", choices=["v2.0a", "v2.0b"])
+
     parser.add_argument("--output-dir", type=str, help="Path to folder to write extracted sentences (will write three"
                                                        "separate JSON files).")
     parser.add_argument("--output-prefix", type=str, help="Prefix added to each output JSON file.",
@@ -46,8 +48,9 @@ def parse_args():
     return args
 
 
-def read_srt(filepath: str) -> List[srt.Subtitle]:
+def read_srt_emsl_v20a(filepath: str) -> List[srt.Subtitle]:
     """
+
     :param filepath:
     :return:
     """
@@ -60,9 +63,31 @@ def read_srt(filepath: str) -> List[srt.Subtitle]:
                 continue
             elif subtitle.content.startswith("#"):
                 continue
-
             elif subtitle.content.strip() == "":
                 continue
+
+            subtitles.append(subtitle)
+
+    return subtitles
+
+
+def read_srt_emsl_v20b(filepath: str) -> List[srt.Subtitle]:
+    """
+
+    :param filepath:
+    :return:
+    """
+    subtitles = []
+
+    with open(filepath, "r") as handle:
+        for subtitle in srt.parse(handle.read()):
+
+            if subtitle.content.strip() in BOILERPLATE_SUBTITLES:
+                subtitle = ""
+            elif subtitle.content.startswith("#"):
+                subtitle = ""
+            elif subtitle.content.strip() == "":
+                subtitle = ""
 
             subtitles.append(subtitle)
 
@@ -113,15 +138,21 @@ def get_emsl_strings_by_id(emsl_dir: str) -> Dict[str, List[str]]:
     return emsl_strings_by_id
 
 
-def get_subtitles_by_id(subtitles_dir: str) -> Dict[str, List[srt.Subtitle]]:
+def get_subtitles_by_id(subtitles_dir: str, emsl_version: str) -> Dict[str, List[srt.Subtitle]]:
     """
     Filename structure:
     - srf.2020-05-27.srt (for train)
     - dev.215.srt (for dev and test)
 
     :param subtitles_dir:
+    :param emsl_version:
     :return:
     """
+    if emsl_version == "v2.0a":
+        read_srt_function = read_srt_emsl_v20a
+    else:
+        read_srt_function = read_srt_emsl_v20b
+
     subtitles_by_id = {}  # type: Dict[str, List[srt.Subtitle]]
 
     for subtitle_filename in os.listdir(subtitles_dir):
@@ -129,7 +160,7 @@ def get_subtitles_by_id(subtitles_dir: str) -> Dict[str, List[srt.Subtitle]]:
 
         file_id = subtitle_filename.replace(".srt", "").replace("srf.", "")
 
-        subtitles = read_srt(filepath)
+        subtitles = read_srt_function(filepath)
 
         subtitles_by_id[file_id] = subtitles
 
@@ -208,7 +239,7 @@ def main():
 
     emsl_strings_by_id = get_emsl_strings_by_id(args.emsl_dir_train)
 
-    subtitles_by_id = get_subtitles_by_id(args.subtitles_dir_train)
+    subtitles_by_id = get_subtitles_by_id(args.subtitles_dir_train, emsl_version=args.emsl_version)
 
     write_output(emsl_strings_by_id=emsl_strings_by_id,
                  subtitles_by_id=subtitles_by_id,
@@ -226,7 +257,7 @@ def main():
 
         emsl_strings_by_id = get_emsl_strings_by_id(args.emsl_dir_dev)
 
-        subtitles_by_id = get_subtitles_by_id(args.subtitles_dir_dev)
+        subtitles_by_id = get_subtitles_by_id(args.subtitles_dir_dev, emsl_version=args.emsl_version)
 
         write_output(emsl_strings_by_id=emsl_strings_by_id,
                      subtitles_by_id=subtitles_by_id,
@@ -244,7 +275,7 @@ def main():
 
         emsl_strings_by_id = get_emsl_strings_by_id(args.emsl_dir_test)
 
-        subtitles_by_id = get_subtitles_by_id(args.subtitles_dir_test)
+        subtitles_by_id = get_subtitles_by_id(args.subtitles_dir_test, emsl_version=args.emsl_version)
 
         write_output(emsl_strings_by_id=emsl_strings_by_id,
                      subtitles_by_id=subtitles_by_id,
