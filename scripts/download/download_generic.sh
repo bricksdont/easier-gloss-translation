@@ -141,6 +141,14 @@ for source in $training_corpora; do
                     --output-prefix comparable \
                     --emsl-version v2.0b
 
+                # concat parallel and comparable
+
+                cat $data_unique_combination/train.parallel.json $data_unique_combination/train.comparable.json \
+                    > $data_unique_combination/train.all.json
+
+                ln -s $data_unique_combination/dev.parallel.json $data_unique_combination/dev.all.json
+                ln -s $data_unique_combination/test.parallel.json $data_unique_combination/test.all.json
+
                 # concat all subsets, for debugging
 
                 cat $data_unique_combination/{train,dev,test}.parallel.json > $data_unique_combination/srf.parallel.json

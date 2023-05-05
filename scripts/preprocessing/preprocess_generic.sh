@@ -165,8 +165,20 @@ for pair in "${language_pairs[@]}"; do
 
         for corpus in $ALL_CORPORA; do
 
+            if [[ $source == "srf" ]]; then
+                # find the correct combination of emsl version, i3d model and threshold
+
+                if [[ $emsl_add_comparable_data == "true" ]]; then
+                    input_file=$download_sub/$emsl_version/$emsl_i3d_model/$emsl_threshold/$corpus.all.json
+                else
+                    input_file=$download_sub/$emsl_version/$emsl_i3d_model/$emsl_threshold/$corpus.parallel.json
+                fi
+            else
+                input_file=$download_sub/$corpus.json
+            fi
+
             python $scripts/preprocessing/extract_key_from_json.py \
-                --input-file $download_sub/$corpus.json \
+                --input-file $input_file \
                 --output-file $data_sub/$source.$corpus.$lang \
                 --key $lang $use_mouthing_tier_arg
         done
