@@ -129,7 +129,7 @@ def get_emsl_strings_by_id(emsl_dir: str) -> Dict[str, List[str]]:
     for emsl_filename in os.listdir(emsl_dir):
         filepath = os.path.join(emsl_dir, emsl_filename)
 
-        file_id = emsl_filename.replace(".csv", "")
+        file_id = emsl_filename.replace(".csv", "").replace(".masked", "")
 
         emsl_strings = load_emsl_file(filepath)
 
