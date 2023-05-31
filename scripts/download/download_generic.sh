@@ -152,7 +152,7 @@ for source in $training_corpora; do
                 # concat all subsets, for debugging
 
                 cat $data_unique_combination/parallel.{train,dev,test}.json > $data_unique_combination/srf.parallel.json
-                cat $data_unique_combination/comparable.{train,dev,test}.json > $data_unique_combination/srf.comparable.json
+                cat $data_unique_combination/comparable.train.json > $data_unique_combination/srf.comparable.json
 
                 cat $data_unique_combination/srf.parallel.json $data_unique_combination/srf.comparable.json > $data_unique_combination/srf.json
             done
@@ -241,4 +241,5 @@ done
 
 echo "Sizes of files:"
 
-wc -l $data_sub/*/*/*/*
+wc -l $data_sub/*/*/*
+wc -l $data_sub/*/*/*/*/*
