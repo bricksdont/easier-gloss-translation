@@ -43,9 +43,9 @@ TRAIN_SLICE_LARGE=5000
 
 CORPORA_EXCEPT_TRAIN="dev test"
 
-# download source, currently either "uhh", "bslcp" or "srf"
+# download source, currently either "uhh", "bslcp", "srf", "rts" or "rsi"
 
-# in the case of "srf", no need to download, will link locally from our storage
+# in the case of "srf"/"rts"/"rsi", no need to download, will link locally from our storage
 
 EMSL_BASE="/shares/easier.volk.cl.uzh/WP4/spoken-to-sign_sign-to-spoken/DSGS/SRF/Daily_news/emsl"
 
@@ -143,16 +143,16 @@ for source in $training_corpora; do
 
                 # concat parallel and comparable
 
-                cat $data_unique_combination/train.parallel.json $data_unique_combination/train.comparable.json \
-                    > $data_unique_combination/train.all.json
+                cat $data_unique_combination/parallel.train.json $data_unique_combination/comparable.train.json \
+                    > $data_unique_combination/all.train.json
 
-                ln -s $data_unique_combination/dev.parallel.json $data_unique_combination/dev.all.json
-                ln -s $data_unique_combination/test.parallel.json $data_unique_combination/test.all.json
+                ln -s $data_unique_combination/parallel.dev.json $data_unique_combination/all.dev.json
+                ln -s $data_unique_combination/parallel.test.json $data_unique_combination/all.test.json
 
                 # concat all subsets, for debugging
 
-                cat $data_unique_combination/{train,dev,test}.parallel.json > $data_unique_combination/srf.parallel.json
-                cat $data_unique_combination/{train,dev,test}.comparable.json > $data_unique_combination/srf.comparable.json
+                cat $data_unique_combination/parallel.{train,dev,test}.json > $data_unique_combination/srf.parallel.json
+                cat $data_unique_combination/comparable.{train,dev,test}.json > $data_unique_combination/srf.comparable.json
 
                 cat $data_unique_combination/srf.parallel.json $data_unique_combination/srf.comparable.json > $data_unique_combination/srf.json
             done
