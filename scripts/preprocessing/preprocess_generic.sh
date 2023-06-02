@@ -137,6 +137,8 @@ for pair in "${language_pairs[@]}"; do
 
         else
 
+            # assume version 2.0b
+
             # link the correct combination of emsl version, i3d model and threshold
 
             emsl_folder=$download_sub/$emsl_version/$emsl_i3d_model/$emsl_threshold
