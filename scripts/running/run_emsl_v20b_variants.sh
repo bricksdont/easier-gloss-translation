@@ -22,7 +22,10 @@ spm_strategy="joint"
 
 emsl_version="v2.0b"
 
-lowercase_glosses_options="false true"
+# not worth testing without lowercasing
+
+lowercase_glosses_options="true"
+
 emsl_add_comparable_data_options="false true"
 
 emsl_i3d_models="bsl dgs both"
