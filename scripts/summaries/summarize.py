@@ -185,10 +185,13 @@ def parse_model_name(model_name: str) -> Dict:
 
     for pair in pairs:
 
-        if pair == "emsl_v2b":
-            continue
-
-        key, value = pair.split(".")
+        parts = pair.split(".")
+        
+        if len(parts) == 1:
+            key = pair
+            value = None
+        else:
+            key, value = parts
 
         extracted_model_attributes[key] = value
 
