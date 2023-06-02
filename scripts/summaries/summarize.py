@@ -76,7 +76,7 @@ def parse_filename(filename: str):
     return source, corpus, test_src, test_trg, metric
 
 
-def read_bleu(filename: str) -> str:
+def read_bleu_json(filename: str) -> str:
     """
     Example file:
 
@@ -104,7 +104,7 @@ def read_bleu(filename: str) -> str:
     return eval_dict.get("score", "-")
 
 
-def read_chrf(filename: str) -> str:
+def read_chrf_json(filename: str) -> str:
     """
     Example file:
 
@@ -131,6 +131,69 @@ def read_chrf(filename: str) -> str:
     assert eval_dict["name"] == "chrF2"
 
     return eval_dict.get("score", "-")
+
+
+def read_bleu_txt(filename: str) -> str:
+    """
+
+    :param filename:
+    :return:
+    """
+    with open(filename, "r") as infile:
+        line = infile.readline().strip()
+
+        parts = line.split(" ")
+
+    if len(parts) < 3:
+        return "-"
+
+    return parts[2]
+
+
+def read_chrf_txt(filename: str) -> str:
+    """
+    Example content: #chrF2+numchars.6+space.false+version.1.4.14 = 0.47
+    :param filename:
+    :return:
+    """
+
+    with open(filename, "r") as infile:
+        line = infile.readline().strip()
+
+        parts = line.split(" ")
+
+    if len(parts) < 3:
+        return "-"
+
+    return parts[2]
+
+
+def read_bleu(filename: str) -> str:
+    """
+
+    :param filename:
+    :return:
+    """
+    try:
+        bleu = read_bleu_json(filename)
+    except json.decoder.JSONDecodeError:
+        bleu = read_bleu_txt(filename)
+
+    return bleu
+
+
+def read_chrf(filename: str) -> str:
+    """
+
+    :param filename:
+    :return:
+    """
+    try:
+        chrf = read_chrf_json(filename)
+    except json.decoder.JSONDecodeError:
+        chrf = read_chrf_txt(filename)
+
+    return chrf
 
 
 def read_metric_values(metric: str, filepath: str):
