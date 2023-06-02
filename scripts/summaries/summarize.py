@@ -7,7 +7,7 @@ import logging
 import itertools
 import operator
 
-from typing import List, Tuple, Dict
+from typing import List, Tuple, Dict, Optional
 
 
 KNOWN_MODEL_ATTRIBUTES = [
@@ -298,9 +298,14 @@ class Result(object):
         assert metric_name not in self.metric_dict.keys(), "Refusing to overwrite existing metric key!"
         self.metric_dict[metric_name] = metric_value
 
-    def _get_relevant_values(self) -> List[str]:
+    def _get_relevant_values(self, exclude_keys: Optional[List[str]] = None) -> List[str]:
 
-        relevant_values = [value for key, value in self.__dict__.items() if not key.startswith("__")]
+        relevant_keys = [k for k in self.__dict__.keys() if not k.startswith("__")]
+
+        if exclude_keys is not None:
+            relevant_keys = [k for k in relevant_keys if not k in exclude_keys]
+
+        relevant_values = [self.__dict__[key] for key in relevant_keys]
         relevant_values = [str(v) for v in relevant_values]
         relevant_values.sort()
 
@@ -314,7 +319,7 @@ class Result(object):
         return "Result(%s)" % "+".join(relevant_values)
 
     def signature(self) -> str:
-        relevant_values = self._get_relevant_values()
+        relevant_values = self._get_relevant_values(exclude_keys=["metric_dict"])
 
         return "+".join(relevant_values)
 
