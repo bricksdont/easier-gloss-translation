@@ -17,8 +17,6 @@ KNOWN_MODEL_ATTRIBUTES = [
     "version",
     "use_mouthing_tier",
     "dgs_use_document_split",
-    "bleu",
-    "chrf",
     "threshold",
     "i3d",
     "lowercase",
@@ -284,8 +282,6 @@ class Result(object):
 
         self.__dict__.update(kwargs)
 
-        print(self.__dict__)
-
         self.metric_dict = {}
 
         self.update_metrics(metric_names, metric_values)
@@ -307,9 +303,10 @@ class Result(object):
         if exclude_keys is not None:
             relevant_keys = [k for k in relevant_keys if not k in exclude_keys]
 
+        relevant_keys.sort()
+
         relevant_values = [self.__dict__[key] for key in relevant_keys]
         relevant_values = [str(v) for v in relevant_values]
-        relevant_values.sort()
 
         return relevant_values
 
