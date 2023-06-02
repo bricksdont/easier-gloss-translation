@@ -1,6 +1,7 @@
 #! /usr/bin/python3
 
 import os
+import sys
 import json
 import argparse
 import logging
@@ -280,9 +281,15 @@ class Result(object):
         self.test_src = test_src
         self.test_trg = test_trg
 
+        print(self.__dict__)
+
         # set all variable object attributes
 
         self.__dict__.update(kwargs)
+
+        print(self.__dict__)
+
+        sys.exit()
 
         self.metric_dict = {}
 
