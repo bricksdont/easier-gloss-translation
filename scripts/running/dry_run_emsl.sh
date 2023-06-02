@@ -22,6 +22,8 @@ model_name="dry_run"
 training_corpora="srf"
 testing_corpora="test"
 
+emsl_add_comparable_data="true"
+
 # this argument is for dry runs only, set to "true" to also repeat downloads (or linking)
 
 repeat_download_step="true"

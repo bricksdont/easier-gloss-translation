@@ -84,8 +84,8 @@ ALL_CORPORA="$CORPORA_EXCEPT_TRAIN train"
 
 ALL_SOURCES="uhh bslcp srf"
 
-GLOSS_SUFFIXES="dgs_de dgs_en bsl pan dsgs"
-SPOKEN_SUFFIXES="de en"
+GLOSS_SUFFIXES="dgs_de dgs_en bsl pan dsgs lis lsf"
+SPOKEN_SUFFIXES="de en fr it"
 ALL_SUFFIXES="$GLOSS_SUFFIXES $SPOKEN_SUFFIXES"
 
 echo "data_sub: $data_sub"
@@ -153,6 +153,8 @@ for pair in "${language_pairs[@]}"; do
                     emsl_folder=$download_sub/$emsl_version/$emsl_i3d_model/$emsl_threshold
 
                 fi
+
+                echo "emsl_folder: $emsl_folder"
 
                 if [[ $emsl_add_comparable_data == "true" ]]; then
                     input_file=$emsl_folder/all.$corpus.json
