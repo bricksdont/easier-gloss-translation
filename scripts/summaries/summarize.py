@@ -298,25 +298,25 @@ class Result(object):
         assert metric_name not in self.metric_dict.keys(), "Refusing to overwrite existing metric key!"
         self.metric_dict[metric_name] = metric_value
 
-    def _get_relevant_keys(self) -> List[str]:
+    def _get_relevant_values(self) -> List[str]:
 
-        relevant_keys = [key for key, value in self.__dict__.items() if not key.startswith("__")]
-        relevant_keys = [str(k) for k in relevant_keys]
-        relevant_keys.sort()
+        relevant_values = [value for key, value in self.__dict__.items() if not key.startswith("__")]
+        relevant_values = [str(v) for v in relevant_values]
+        relevant_values.sort()
 
-        return relevant_keys
+        return relevant_values
 
 
     def __repr__(self):
 
-        relevant_keys = self._get_relevant_keys()
+        relevant_values = self._get_relevant_values()
 
-        return "Result(%s)" % "+".join(relevant_keys)
+        return "Result(%s)" % "+".join(relevant_values)
 
     def signature(self) -> str:
-        relevant_keys = self._get_relevant_keys()
+        relevant_values = self._get_relevant_values()
 
-        return "+".join(relevant_keys)
+        return "+".join(relevant_values)
 
 
 def collapse_metrics(results: List[Result]) -> Result:
