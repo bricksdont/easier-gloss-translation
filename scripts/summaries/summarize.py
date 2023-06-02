@@ -186,7 +186,7 @@ def parse_model_name(model_name: str) -> Dict:
     for pair in pairs:
 
         parts = pair.split(".")
-        
+
         if len(parts) == 1:
             key = pair
             value = None
@@ -366,7 +366,7 @@ def main():
                     "TEST_SRC",
                     "TEST_TRG"]
 
-    header_names += KNOWN_MODEL_ATTRIBUTES
+    header_names += [k.upper() for k in KNOWN_MODEL_ATTRIBUTES]
 
     metric_names = ["BLEU",
                     "CHRF"]
