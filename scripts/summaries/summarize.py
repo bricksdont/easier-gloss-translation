@@ -1,12 +1,29 @@
 #! /usr/bin/python3
 
 import os
+import json
 import argparse
 import logging
 import itertools
 import operator
 
-from typing import List, Tuple
+from typing import List, Tuple, Dict
+
+
+KNOWN_MODEL_ATTRIBUTES = [
+    "lowercase_glosses",
+    "generalize_dgs_glosses",
+    "spm_strategy",
+    "version",
+    "use_mouthing_tier",
+    "dgs_use_document_split",
+    "bleu",
+    "chrf",
+    "threshold",
+    "i3d",
+    "lowercase",
+    "add_comparable"
+]
 
 
 def parse_args():
@@ -61,37 +78,59 @@ def parse_filename(filename: str):
 
 def read_bleu(filename: str) -> str:
     """
+    Example file:
+
+    {
+     "name": "BLEU",
+     "score": 0.115,
+     "signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.3.1",
+     "verbose_score": "16.6/0.3/0.0/0.0 (BP = 0.491 ratio = 0.584 hyp_len = 3944 ref_len = 6750)",
+     "nrefs": "1",
+     "case": "mixed",
+     "eff": "no",
+     "tok": "13a",
+     "smooth": "exp",
+     "version": "2.3.1"
+    }
 
     :param filename:
     :return:
     """
     with open(filename, "r") as infile:
-        line = infile.readline().strip()
+        eval_dict = json.load(infile)
 
-        parts = line.split(" ")
+    assert eval_dict["name"] == "BLEU"
 
-    if len(parts) < 3:
-        return "-"
-
-    return parts[2]
+    return eval_dict.get("score", "-")
 
 
 def read_chrf(filename: str) -> str:
     """
-    Example content: #chrF2+numchars.6+space.false+version.1.4.14 = 0.47
+    Example file:
+
+    {
+     "name": "chrF2",
+     "score": 12.304,
+     "signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:0|space:no|version:2.3.1",
+     "nrefs": "1",
+     "case": "mixed",
+     "eff": "yes",
+     "nc": "6",
+     "nw": "0",
+     "space": "no",
+     "version": "2.3.1"
+    }
+
     :param filename:
     :return:
     """
 
     with open(filename, "r") as infile:
-        line = infile.readline().strip()
+        eval_dict = json.load(infile)
 
-        parts = line.split(" ")
+    assert eval_dict["name"] == "chrF2"
 
-    if len(parts) < 3:
-        return "-"
-
-    return parts[2]
+    return eval_dict.get("score", "-")
 
 
 def read_metric_values(metric: str, filepath: str):
@@ -122,7 +161,7 @@ def is_multilingual(langpair: str) -> bool:
     return "+" in langpair
 
 
-def parse_model_name(model_name: str) -> Tuple[str, str, str, str, str, str]:
+def parse_model_name(model_name: str) -> Dict:
     """
     Examples:
 
@@ -132,42 +171,28 @@ def parse_model_name(model_name: str) -> Tuple[str, str, str, str, str, str]:
     lg.false+ss.spoken-only
     multilingual.true+lg.false+ss.spoken-only
     dry_run
+    emsl_v2b+threshold.0.7+i3d.both+lowercase.true+add_comparable.false
 
     :param model_name:
     :return:
     """
-    version, lowercase_glosses, generalize_dgs_glosses, spm_strategy, use_mouthing_tier, dgs_use_document_split \
-        = "-", "-", "-", "-", "-", "-"
+    extracted_model_attributes = {}
 
     if model_name == "dry_run":
-        return version, lowercase_glosses, generalize_dgs_glosses, spm_strategy, use_mouthing_tier, dgs_use_document_split
+        return extracted_model_attributes
 
     pairs = model_name.split("+")
 
     for pair in pairs:
+
+        if pair == "emsl_v2b":
+            continue
+
         key, value = pair.split(".")
 
-        if key == "lg":
-            lowercase_glosses = value
-        elif key == "version":
-            version = value
-        elif key == "gdg":
-            generalize_dgs_glosses = value
-        elif key == "ss":
-            spm_strategy = value
-        elif key == "use_mouthing_tier":
-            use_mouthing_tier = value
-        elif key == "multilingual":
-            continue
-        elif key == "spm_vocab_size":
-            continue
-        elif key == "dgs_use_document_split":
-            dgs_use_document_split = value
-        else:
-            logging.warning("Could not parse (key, value:): %s, %s", key, value)
-            raise NotImplementedError
+        extracted_model_attributes[key] = value
 
-    return version, lowercase_glosses, generalize_dgs_glosses, spm_strategy, use_mouthing_tier, dgs_use_document_split
+    return extracted_model_attributes
 
 
 class Result(object):
@@ -179,26 +204,20 @@ class Result(object):
                  source,
                  test_src,
                  test_trg,
-                 lowercase_glosses,
-                 generalize_dgs_glosses,
-                 spm_strategy,
-                 version,
-                 use_mouthing_tier,
-                 dgs_use_document_split,
                  metric_names,
-                 metric_values):
+                 metric_values,
+                 **kwargs):
         self.langpair = langpair
         self.model_name = model_name
         self.corpus = corpus
         self.source = source
         self.test_src = test_src
         self.test_trg = test_trg
-        self.lowercase_glosses = lowercase_glosses
-        self.generalize_dgs_glosses = generalize_dgs_glosses
-        self.spm_strategy = spm_strategy
-        self.version = version
-        self.use_mouthing_tier = use_mouthing_tier
-        self.dgs_use_document_split = dgs_use_document_split
+
+        # set all variable object attributes
+
+        self.__dict__.update(kwargs)
+
         self.metric_dict = {}
 
         self.update_metrics(metric_names, metric_values)
@@ -213,36 +232,25 @@ class Result(object):
         assert metric_name not in self.metric_dict.keys(), "Refusing to overwrite existing metric key!"
         self.metric_dict[metric_name] = metric_value
 
-    def __repr__(self):
-        metric_dict = str(self.metric_dict)
+    def _get_relevant_keys(self) -> List[str]:
 
-        return "Result(%s)" % "+".join([self.langpair,
-                                        self.model_name,
-                                        self.corpus,
-                                        self.source,
-                                        self.test_src,
-                                        self.test_trg,
-                                        self.lowercase_glosses,
-                                        self.generalize_dgs_glosses,
-                                        self.spm_strategy,
-                                        self.version,
-                                        self.use_mouthing_tier,
-                                        self.dgs_use_document_split,
-                                        metric_dict])
+        relevant_keys = [key for key, value in self.__dict__.items() if not key.startswith("__")]
+        relevant_keys = [str(k) for k in relevant_keys]
+        relevant_keys.sort()
+
+        return relevant_keys
+
+
+    def __repr__(self):
+
+        relevant_keys = self._get_relevant_keys()
+
+        return "Result(%s)" % "+".join(relevant_keys)
 
     def signature(self) -> str:
-        return "+".join([self.langpair,
-                         self.model_name,
-                         self.corpus,
-                         self.source,
-                         self.test_src,
-                         self.test_trg,
-                         self.lowercase_glosses,
-                         self.generalize_dgs_glosses,
-                         self.spm_strategy,
-                         self.version,
-                         self.use_mouthing_tier,
-                         self.dgs_use_document_split])
+        relevant_keys = self._get_relevant_keys()
+
+        return "+".join(relevant_keys)
 
 
 def collapse_metrics(results: List[Result]) -> Result:
@@ -323,8 +331,7 @@ def main():
         for model_name in model_names:
             path_model = os.path.join(path_langpair, model_name)
 
-            version, lowercase_glosses, generalize_dgs_glosses, spm_strategy, use_mouthing_tier, dgs_use_document_split = \
-                parse_model_name(model_name)
+            extracted_model_attributes = parse_model_name(model_name)
 
             for _, _, files in os.walk(path_model):
                 for file in files:
@@ -340,14 +347,9 @@ def main():
                                     source=source,
                                     test_src=test_src,
                                     test_trg=test_trg,
-                                    lowercase_glosses=lowercase_glosses,
-                                    generalize_dgs_glosses=generalize_dgs_glosses,
-                                    spm_strategy=spm_strategy,
-                                    version=version,
-                                    use_mouthing_tier=use_mouthing_tier,
-                                    dgs_use_document_split=dgs_use_document_split,
                                     metric_names=metric_names,
-                                    metric_values=metric_values)
+                                    metric_values=metric_values,
+                                    **extracted_model_attributes)
 
                     results.append(result)
                     logging.debug("Found result: %s", result)
@@ -359,25 +361,23 @@ def main():
                     "CORPUS",
                     "SOURCE",
                     "TEST_SRC",
-                    "TEST_TRG",
-                    "LOWERCASE_GLOSSES",
-                    "GENERALIZE_DGS_GLOSSES",
-                    "SPM_STRATEGY",
-                    "VERSION",
-                    "USE_MOUTHING_TIER",
-                    "DGS_USE_DOCUMENT_SPLIT",
-                    "BLEU",
-                    "CHRF"]
+                    "TEST_TRG"]
+
+    header_names += KNOWN_MODEL_ATTRIBUTES
 
     metric_names = ["BLEU",
                     "CHRF"]
 
+    header_names += metric_names
+
     print("\t".join(header_names))
 
     for r in results:
-        values = [r.langpair, r.model_name, r.corpus, r.source, r.test_src, r.test_trg,
-                  r.lowercase_glosses, r.generalize_dgs_glosses, r.spm_strategy, r.version,
-                  r.use_mouthing_tier, r.dgs_use_document_split]
+        values = [r.langpair, r.model_name, r.corpus, r.source, r.test_src, r.test_trg]
+
+        for known_model_attribute in KNOWN_MODEL_ATTRIBUTES:
+            values += getattr(r, known_model_attribute, "-")
+
         metrics = [r.metric_dict.get(m, "-") for m in metric_names]
 
         print("\t".join(values + metrics))
