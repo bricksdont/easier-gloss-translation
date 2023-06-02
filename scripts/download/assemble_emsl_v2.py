@@ -225,7 +225,7 @@ def write_output(emsl_strings_by_id: Dict[str, List[str]],
             num_lines_seen += 1
 
     logging.debug("Skipped %d lines that have empty strings." % num_lines_skipped_because_empty)
-    logging.debug("Wrote %d valid lines to %s." % (num_lines_seen, outfile_path))
+    logging.debug("Wrote %d valid lines to %s" % (num_lines_seen, outfile_path))
 
 
 def main():

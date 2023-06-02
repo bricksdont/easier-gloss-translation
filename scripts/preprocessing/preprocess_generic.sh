@@ -123,38 +123,6 @@ for pair in "${language_pairs[@]}"; do
 
     download_sub=$data/download/$source
 
-    if [[ $source == "srf" ]]; then
-
-        if [[ $emsl_version == "v2.0a" ]]; then
-
-            # there is only one version
-
-            emsl_folder=$download_sub/$emsl_version
-
-            ln -s $emsl_folder/train.json $download_sub/train.json
-            ln -s $emsl_folder/dev.json $download_sub/dev.json
-            ln -s $emsl_folder/test.json $download_sub/test.json
-
-        else
-
-            # assume version 2.0b
-
-            # link the correct combination of emsl version, i3d model and threshold
-
-            emsl_folder=$download_sub/$emsl_version/$emsl_i3d_model/$emsl_threshold
-
-            if [[ $emsl_add_comparable_data == "true" ]]; then
-                cat $emsl_folder/train.parallel.json $emsl_folder/train.comparable.json > $download_sub/train.json
-            else
-                ln -s $emsl_folder/train.parallel.json $download_sub/train.json
-            fi
-
-            ln -s $emsl_folder/dev.parallel.json $download_sub/dev.json
-            ln -s $emsl_folder/test.parallel.json $download_sub/test.json
-
-        fi
-    fi
-
     for lang in $src $trg; do
 
         # extract data from download jsons
@@ -168,12 +136,28 @@ for pair in "${language_pairs[@]}"; do
         for corpus in $ALL_CORPORA; do
 
             if [[ $source == "srf" ]]; then
-                # find the correct combination of emsl version, i3d model and threshold
+
+                # then assume the text strings should be taken from EMSL 2.0 data,
+                # either v2.0a or v2.0b
+
+                if [[ $emsl_version == "v2.0a" ]]; then
+
+                    # there is only one version
+
+                    emsl_folder=$download_sub/$emsl_version
+
+                else
+                    # assume version 2.0b
+                    # find the correct combination of emsl version, i3d model and threshold
+
+                    emsl_folder=$download_sub/$emsl_version/$emsl_i3d_model/$emsl_threshold
+
+                fi
 
                 if [[ $emsl_add_comparable_data == "true" ]]; then
-                    input_file=$download_sub/$emsl_version/$emsl_i3d_model/$emsl_threshold/$corpus.all.json
+                    input_file=$emsl_folder/all.$corpus.json
                 else
-                    input_file=$download_sub/$emsl_version/$emsl_i3d_model/$emsl_threshold/$corpus.parallel.json
+                    input_file=$emsl_folder/parallel.$corpus.json
                 fi
             else
                 input_file=$download_sub/$corpus.json

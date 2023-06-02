@@ -95,6 +95,12 @@ for source in $training_corpora; do
             --trg-lang de \
             --emsl-version v2.0a
 
+        # create copies that are called "parallel", for consistency with the naming of EMSL 2.0b versions below
+
+        ln -s $data_sub_sub_sub/train.json $data_sub_sub_sub/parallel.train.json
+        ln -s $data_sub_sub_sub/dev.json $data_sub_sub_sub/parallel.dev.json
+        ln -s $data_sub_sub_sub/test.json $data_sub_sub_sub/parallel.test.json
+
         # 2. version 2.0b
 
         EMSL_DIR_SHARED_TASK=$EMSL_BASE/v2.0b/shared_task
