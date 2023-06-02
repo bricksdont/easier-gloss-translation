@@ -101,7 +101,7 @@ def read_bleu_json(filename: str) -> str:
 
     assert eval_dict["name"] == "BLEU"
 
-    return eval_dict.get("score", "-")
+    return str(eval_dict.get("score", "-"))
 
 
 def read_chrf_json(filename: str) -> str:
@@ -130,7 +130,7 @@ def read_chrf_json(filename: str) -> str:
 
     assert eval_dict["name"] == "chrF2"
 
-    return eval_dict.get("score", "-")
+    return str(eval_dict.get("score", "-"))
 
 
 def read_bleu_txt(filename: str) -> str:
