@@ -26,7 +26,7 @@
 
 module load anaconda3
 
-# explicit unloading of  GPU modules at this point to use CPU nodes
+# explicit unloading of GPU modules at this point to use CPU nodes
 
 module unload v100-32g cuda/11.6.2 cudnn/8.4.0.27-11.6
 
@@ -195,8 +195,6 @@ id_preprocess=$(
 )
 
 echo "  id_preprocess: $id_preprocess | $logs_sub_sub/slurm-$id_preprocess.out" | tee -a $logs_sub_sub/MAIN
-
-exit
 
 # Sockeye prepare (depends on preprocess)
 

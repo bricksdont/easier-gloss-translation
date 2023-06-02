@@ -13,11 +13,15 @@ language_pairs=(
 
 # baseline
 
-model_name="emsl_v2a"
+model_name="emsl_v2b_baseline"
 
 training_corpora="srf"
 testing_corpora="test"
 
 spm_strategy="joint"
+
+emsl_version="v2.0b"
+
+emsl_add_comparable_data="false"
 
 . $scripts/running/run_generic.sh
