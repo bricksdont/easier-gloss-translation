@@ -251,6 +251,9 @@ def parse_model_name(model_name: str) -> Dict:
         if len(parts) == 1:
             key = pair
             value = None
+        elif pair.startswith("threshold"):
+            key = parts[0]
+            value = parts[1] + "." + parts[2]
         else:
             key, value = parts
 

@@ -15,4 +15,4 @@ python3 $scripts/summaries/summarize.py --eval-folder $evaluations > $summaries/
 # upload to home.ifi.uzh.ch
 
 scp $summaries/summary.tsv \
-    mmueller@home.ifi.uzh.ch:/home/files/cl/archiv/2022/easier/gloss_translation_models_summary.tsv
+    mmueller@files.ifi.uzh.ch:/home/files/cl/archiv/2022/easier/gloss_translation_models_summary.tsv
