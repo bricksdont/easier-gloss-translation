@@ -449,7 +449,7 @@ def main():
         values = [r.langpair, r.model_name, r.corpus, r.source, r.test_src, r.test_trg]
 
         for known_model_attribute in KNOWN_MODEL_ATTRIBUTES:
-            values += getattr(r, known_model_attribute, "-")
+            values += [getattr(r, known_model_attribute, "-")]
 
         metrics = [r.metric_dict.get(m, "-") for m in metric_names]
 
