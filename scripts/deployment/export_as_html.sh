@@ -1,28 +1,63 @@
 #! /bin/bash
 
-base=/net/cephfs/shares/volk.cl.uzh/mathmu/easier-gloss-translation
+base=/shares/volk.cl.uzh/arios/easier-gloss-translation
+base_scripts=/net/cephfs/shares/volk.cl.uzh/mathmu/easier-gloss-translation
 
-scripts=$base/scripts
-data=$base/data
-translations=$base/translations
-venvs=$base/venvs
 deploy=$base/deploy
 
 mkdir -p $deploy
-mkdir -p $deploy/html_export
 
-source activate $venvs/sockeye3
+# constant for all language pairs
 
-python $scripts/deployment/export_as_html.py \
-    --translations $translations/srf.dsgs-srf.de/emsl_v2a/srf.test.dsgs-de.de \
-    --references $data/srf.dsgs-srf.de/emsl_v2a/srf.test.de \
-    > $deploy/html_export/emsl_v2a.html
+model_names="emsl_v2b+threshold.0.5+i3d.dgs+lowercase.true+add_comparable.true emsl_v2b+threshold.0.5+i3d.bsl+lowercase.true+add_comparable.true emsl_v2b+threshold.0.5+i3d.both+lowercase.true+add_comparable.true"
 
-echo "Saved to"
-echo "$deploy/html_export/emsl_v2a.html"
+for model_name in $model_names; do
 
-ssh mmueller@home.ifi.uzh.ch 'chmod a+r /home/files/cl/archiv/2023/easier/emsl_v2a.html'
+    # DSGS -> DE
 
-# upload
+    src="dsgs"
+    trg="de"
+    corpus="srf"
+    langpair="srf.dsgs-srf.de"
 
-# scp $deploy/html_export/emsl_v2a.html mmueller@home.ifi.uzh.ch:/home/files/cl/archiv/2023/easier/emsl_v2a.html
+    . $base_scripts/scripts/deployment/export_as_html_generic.sh
+
+    exit 0
+
+    # DGS -> DE
+
+    src="dgs"
+    trg="de"
+    corpus="web"
+    langpair="dgs_web.dgs_de-dgs_web.de"
+
+    . $base_scripts/scripts/deployment/export_as_html_generic.sh
+
+    # BSL -> EN
+
+    src="bsl"
+    trg="en"
+    corpus="bobsl"
+    langpair="bobsl.bsl-bobsl.en"
+
+    . $base_scripts/scripts/deployment/export_as_html_generic.sh
+
+    # LSF -> FR
+
+    src="lsf"
+    trg="fr"
+    corpus="rts"
+    langpair="rts.lsf-rts.fr"
+
+    . $base_scripts/scripts/deployment/export_as_html_generic.sh
+
+    # LIS -> IT
+
+    src="lis"
+    trg="it"
+    corpus="rsi"
+    langpair="rsi.lis-rsi.it"
+
+    . $base_scripts/scripts/deployment/export_as_html_generic.sh
+
+done

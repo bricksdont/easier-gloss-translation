@@ -49,6 +49,7 @@ HTML_TEMPLATE = """<!doctype html>
 <body>
    <table id="translations">
   <tr>
+    <th>Video</th>
     <th>Source</th>
     <th>Machine translation</th>
     <th>Reference</th>
@@ -65,16 +66,18 @@ TR_TEMPLATE = """<tr>
              <source src="{video_url}" type="video/mp4">
          </video>
     </td>
+    <td>{source}</td>
     <td>{translation}</td>
     <td>{reference}</td>
   </tr>"""
-
-REFERENCE_XML_URL = "https://raw.githubusercontent.com/WMT-SLT/wmt-slt22/main/automatic_evaluation/xml/slttest2022.dsgs-de.dsgs-de.REFERENCE.xml"
 
 
 def parse_args():
     parser = argparse.ArgumentParser()
 
+    parser.add_argument("--xml-url", type=str, help="Public URL of XML with video links", required=True)
+
+    parser.add_argument("--sources", type=str, help="Inputs to MT system", required=True)
     parser.add_argument("--translations", type=str, help="Model translations", required=True)
     parser.add_argument("--references", type=str, help="Reference translations", required=True)
 
@@ -107,7 +110,11 @@ def main():
     logging.basicConfig(level=logging.DEBUG)
     logging.debug(args)
 
-    video_urls = read_video_urls_from_xml(REFERENCE_XML_URL)
+    video_urls = read_video_urls_from_xml(args.xml_url)
+
+    with open(args.sources) as infile:
+        sources = infile.readlines()
+        sources = [s.strip() for s in sources]
 
     with open(args.translations) as infile:
         translations = infile.readlines()
@@ -117,12 +124,12 @@ def main():
         references = infile.readlines()
         references = [r.strip() for r in references]
 
-    assert len(video_urls) == len(translations) == len(references)
+    assert len(video_urls) == len(translations) == len(references) == len(sources)
 
     rows = []
 
-    for video_url, translation, reference in zip(video_urls, translations, references):
-        row = TR_TEMPLATE.format(video_url=video_url, translation=translation, reference=reference)
+    for video_url, source, translation, reference in zip(video_urls, sources, translations, references):
+        row = TR_TEMPLATE.format(video_url=video_url, source=source, translation=translation, reference=reference)
         rows.append(row)
 
     logging.debug("Example row:")
