@@ -1,5 +1,7 @@
 #! /bin/bash
 
+module load anaconda3
+
 base=/shares/volk.cl.uzh/arios/easier-gloss-translation
 base_scripts=/net/cephfs/shares/volk.cl.uzh/mathmu/easier-gloss-translation
 
