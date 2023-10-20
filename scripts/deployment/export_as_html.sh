@@ -33,15 +33,6 @@ for model_name in $model_names; do
 
     . $base_scripts/scripts/deployment/export_as_html_generic.sh
 
-    # BSL -> EN
-
-    src="bsl"
-    trg="en"
-    corpus="bobsl"
-    langpair="bobsl.bsl-bobsl.en"
-
-    . $base_scripts/scripts/deployment/export_as_html_generic.sh
-
     # LSF -> FR
 
     src="lsf"
@@ -63,3 +54,14 @@ for model_name in $model_names; do
     exit 0
 
 done
+
+# for BSL-EN, just one model exists
+
+model_name="emsl_v2b+lowercase.true+add_comparable.true"
+
+src="bsl"
+trg="en"
+corpus="bobsl"
+langpair="bobsl.bsl-bobsl.en"
+
+. $base_scripts/scripts/deployment/export_as_html_generic.sh
