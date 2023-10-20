@@ -28,7 +28,7 @@ for model_name in $model_names; do
 
     src="dgs"
     trg="de"
-    corpus="web"
+    corpus="dgs_web"
     langpair="dgs_web.dgs_de-dgs_web.de"
 
     . $base_scripts/scripts/deployment/export_as_html_generic.sh
