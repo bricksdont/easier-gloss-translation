@@ -11,7 +11,7 @@ scripts=$base_scripts/scripts
 data=$base/data
 translations=$base/translations
 venvs=$base_scripts/venvs
-deploy=$base/deploy
+deploy=$base_scripts/deploy
 
 html_name="$langpair+$model_name.html"
 
