@@ -24,8 +24,6 @@ for model_name in $model_names; do
 
     . $base_scripts/scripts/deployment/export_as_html_generic.sh
 
-    exit 0
-
     # DGS -> DE
 
     src="dgs"
@@ -61,5 +59,7 @@ for model_name in $model_names; do
     langpair="rsi.lis-rsi.it"
 
     . $base_scripts/scripts/deployment/export_as_html_generic.sh
+
+    exit 0
 
 done
