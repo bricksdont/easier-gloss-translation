@@ -51,8 +51,6 @@ for model_name in $model_names; do
 
     . $base_scripts/scripts/deployment/export_as_html_generic.sh
 
-    exit 0
-
 done
 
 # for BSL-EN, just one model exists
