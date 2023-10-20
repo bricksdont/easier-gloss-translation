@@ -81,6 +81,9 @@ def parse_args():
     parser.add_argument("--translations", type=str, help="Model translations", required=True)
     parser.add_argument("--references", type=str, help="Reference translations", required=True)
 
+    parser.add_argument("--num-sentences", type=int, help="Limit number of sentences shown (default: all)",
+                        required=False, default=-1)
+
     args = parser.parse_args()
 
     return args
@@ -124,8 +127,14 @@ def main():
         references = infile.readlines()
         references = [r.strip() for r in references]
 
-    assert len(video_urls) == len(translations) == len(references) == len(sources), \
-        "video_urls: %d, translations: %d, references: %d, sources: %d" % (len(video_urls), len(translations), len(references), len(sources))
+    if args.num_sentences > 0:
+        # then in all lists there must be at least the requested number of items
+        for l in [sources, translations, references, video_urls]:
+            assert len(l) >= args.num_sentences
+    else:
+        # else all lists must have the same length
+        assert len(video_urls) == len(translations) == len(references) == len(sources), \
+            "video_urls: %d, translations: %d, references: %d, sources: %d" % (len(video_urls), len(translations), len(references), len(sources))
 
     rows = []
 

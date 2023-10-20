@@ -39,6 +39,7 @@ python $scripts/deployment/export_as_html.py \
     --sources $sources \
     --translations $translations \
     --references $references \
+    --num-sentences 200 \
     > $deploy_sub/$html_name
 
 echo "Saved to"
