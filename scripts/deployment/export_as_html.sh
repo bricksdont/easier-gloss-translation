@@ -26,7 +26,7 @@ for model_name in $model_names; do
 
     # DGS -> DE
 
-    src="dgs"
+    src="dgs_de"
     trg="de"
     corpus="dgs_web"
     langpair="dgs_web.dgs_de-dgs_web.de"
