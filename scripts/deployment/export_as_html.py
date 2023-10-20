@@ -124,7 +124,8 @@ def main():
         references = infile.readlines()
         references = [r.strip() for r in references]
 
-    assert len(video_urls) == len(translations) == len(references) == len(sources)
+    assert len(video_urls) == len(translations) == len(references) == len(sources), \
+        "video_urls: %d, translations: %d, references: %d, sources: %d" % (len(video_urls), len(translations), len(references), len(sources))
 
     rows = []
 

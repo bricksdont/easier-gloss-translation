@@ -53,4 +53,4 @@ scp $deploy_sub/$html_name mmueller@files.ifi.uzh.ch:/srv/nfs/files/cl/archiv/20
 ssh mmueller@files.ifi.uzh.ch "chmod a+r /srv/nfs/files/cl/archiv/2023/easier/final_eval/signed-to-spoken/$src-$trg/$html_name"
 
 echo "Uploaded to"
-echo "https://files.ifi.uzh.ch/cl/archiv/2023/easier/final_eval/signed-to-spoken/bsl-en/$html_name"
+echo "https://files.ifi.uzh.ch/cl/archiv/2023/easier/final_eval/signed-to-spoken/$src-$trg/$html_name"
