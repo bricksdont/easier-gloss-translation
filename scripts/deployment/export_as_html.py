@@ -113,7 +113,11 @@ def main():
     logging.basicConfig(level=logging.DEBUG)
     logging.debug(args)
 
-    video_urls = read_video_urls_from_xml(args.xml_url)
+    # fix potential problem with URL
+
+    xml_url = args.xml_url.replace("dgs_de", "dgs")
+
+    video_urls = read_video_urls_from_xml(xml_url)
 
     with open(args.sources) as infile:
         sources = infile.readlines()
