@@ -62,7 +62,7 @@ HTML_TEMPLATE = """<!doctype html>
 
 TR_TEMPLATE = """<tr>
     <td>
-         <video width="320" height="240" controls>
+         <video preload="none" width="320" height="240" controls>
              <source src="{video_url}" type="video/mp4">
          </video>
     </td>
